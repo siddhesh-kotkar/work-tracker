@@ -1867,6 +1867,65 @@
     .sync-block-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
     .sync-block-actions .btn-save, .sync-block-actions .btn-cancel { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:42px; padding:0 18px; }
     @media (max-width:520px) { .sync-block { align-items:flex-end; padding:0; } .sync-block-card { border-radius:var(--r-xl) var(--r-xl) 0 0; padding:24px 20px calc(24px + var(--safe-b)); } .sync-block-actions > * { flex:1 1 100%; } }
+
+    /* calendar week grid scrolls inside its own frame */
+    .tg-body { overflow-y:auto; max-height:calc(100dvh - 330px); min-height:420px; scrollbar-width:thin; }
+    @media (max-width:820px) { .tg-body { max-height:calc(100dvh - 360px); } }
+
+    /* films list view + unrated bits */
+    .mv-list-item .mv-li-year { font-weight:500; color:var(--text2); margin-left:4px; }
+    .mv-li-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; min-width:150px; }
+    .mv-li-sub { font-size:var(--fs-xs); color:var(--text2); white-space:nowrap; }
+    .mv-li-poster { width:44px; height:66px; border-radius:var(--r-sm); flex:none; }
+    .mv-li-info { min-width:0; flex:1; }
+    .mv-li-title, .mv-li-meta { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mv-list { gap:8px; display:flex; flex-direction:column; }
+    .mv-badge-quiet { background:color-mix(in srgb, var(--bg) 70%, transparent); color:var(--text); border:1px solid var(--hair); backdrop-filter:none; }
+    .mv-needs-rating { color:var(--med); font-weight:600; font-style:normal; }
+    .mv-genre-hdr { cursor:pointer; }
+    .mv-genre-hdr .ic { color:var(--text2); transition:transform .2s var(--ease); }
+    .mv-genre-section { margin-bottom:var(--sp-5, 24px); }
+    @media (max-width:820px) { .mv-li-right { min-width:0; } .mv-li-sub { display:none; } }
+
+    /* tv parity pieces */
+    .tv-header { display:flex; align-items:center; gap:10px; padding:4px var(--pad) 12px; flex-wrap:wrap; }
+    .tv-title-lbl { font-size:var(--fs-lg); font-family:var(--font-display); font-weight:600; letter-spacing:-.02em; margin-right:6px; }
+    .tv-push { flex:1; }
+    .mv-kpi-text { font-size:var(--fs-lg) !important; line-height:1.2; }
+    .tv-content .mv-stats-kpi-row, .tv-content .mv-map-card, .tv-content .mv-charts-2col { margin-bottom:14px; }
+    .tv-content .mv-stats-kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:12px; }
+    .enrich-list { margin-top:12px; }
+    .enrich-detail { max-width:50%; }
+
+    /* ── use the whole screen on PC ── */
+    :root { --shell:2400px; }
+    .home-wrap { max-width:var(--shell); }
+    .home-nav-grid { grid-template-columns:repeat(3, 1fr); }
+    @media (max-width:1100px) { .home-nav-grid { grid-template-columns:repeat(2, 1fr); } }
+    @media (max-width:820px) { .home-nav-grid { grid-template-columns:1fr; } }
+    .mv-rankings-wrap, .tv-rank-list, .tv-unranked-section { max-width:none; }
+    .mv-rank-list, .tv-rank-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(440px, 1fr)); gap:10px 16px; }
+    .tv-rank-list { max-width:none !important; }
+    @media (max-width:820px) { .mv-rank-list, .tv-rank-list { grid-template-columns:1fr; } }
+    .budget-wrap .bw-main { grid-template-columns:minmax(0,1fr) 380px; }
+    @media (max-width:1100px) { .budget-wrap .bw-main { grid-template-columns:1fr; } }
+    .mv-charts-2col { grid-template-columns:repeat(auto-fit, minmax(420px, 1fr)); }
+    @media (max-width:820px) { .mv-charts-2col { grid-template-columns:1fr; } }
+
+    /* ── travel: countries in columns, no scrolling a single list ── */
+    .travel-groups { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px; align-items:start; }
+    .travel-country-group { margin:0; padding:16px; background:var(--panel-hi), var(--surface); border:1px solid var(--hair); border-radius:var(--r-lg); box-shadow:var(--lift); }
+    .travel-country-hdr { margin-bottom:12px; padding-bottom:10px; }
+    .travel-visits-grid { grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px; }
+    .travel-visit-card { padding:10px 12px; background:color-mix(in srgb, var(--text) 3.5%, transparent); }
+
+    /* ── settings: cards flow into columns ── */
+    .settings-wrap { max-width:none !important; margin-left:auto !important; margin-right:auto; column-width:520px; column-gap:20px; }
+    .settings-section { break-inside:avoid; -webkit-column-break-inside:avoid; margin-bottom:20px; display:inline-block; width:100%; }
+    @media (max-width:820px) { .settings-wrap { column-width:auto; columns:1; } }
+
+    .mv-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(520px, 1fr)); gap:8px 14px; }
+    @media (max-width:820px) { .mv-list { grid-template-columns:1fr; } }
   </style>
 </head>
 <body class="dark">
@@ -2055,8 +2114,11 @@
     if (!r.ok) throw new Error('Fetch failed');
     return r.json();
   }
-  async function tmdbGetWatchProviders(tmdbId, apiKey) {
-    const r = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}/watch/providers?api_key=${encodeURIComponent(apiKey)}`);
+  function langLabel(code) {
+    try { return code ? (new Intl.DisplayNames(['en'], { type:'language' }).of(code) || code) : ''; } catch { return code || ''; }
+  }
+  async function tmdbGetWatchProviders(tmdbId, apiKey, kind='movie') {
+    const r = await fetch(`https://api.themoviedb.org/3/${kind}/${tmdbId}/watch/providers?api_key=${encodeURIComponent(apiKey)}`);
     if (!r.ok) throw new Error('Fetch failed');
     return (await r.json()).results || {};
   }
@@ -2263,7 +2325,7 @@
       <div style={{display:'flex',flexDirection:'column',gap:7}}>
         {data.map(d=>(
           <div key={d.label} style={{display:'flex',alignItems:'center',gap:8}}>
-            <div style={{fontSize:12,color:'var(--text2)',width:maxW,flexShrink:0,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{d.label}</div>
+            <div title={d.label} style={{fontSize:13,color:'var(--text2)',width:maxW,flexShrink:0,textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{d.label}</div>
             <div style={{flex:1,background:'var(--surface2)',borderRadius:4,height:16,overflow:'hidden',minWidth:60}}>
               <div style={{width:`${(d.value/max)*100}%`,height:'100%',background:color,borderRadius:4,transition:'width .4s ease'}}/>
             </div>
@@ -2274,40 +2336,49 @@
     );
   }
 
-  function LineChart({ data, color='#5b96e8', fillColor='rgba(91,150,232,0.12)' }) {
-    if (!data || data.length < 2) return null;
-    const W = 480, H = 110, PL = 28, PR = 12, PT = 20, PB = 28;
+  function LineChart({ data, color='#5b96e8', fillColor='rgba(91,150,232,0.12)', height=176 }) {
+    const ref = React.useRef(null);
+    const [W, setW] = React.useState(560);
+    React.useEffect(() => {
+      const el = ref.current; if (!el) return;
+      const upd = () => setW(Math.max(280, Math.floor(el.clientWidth)));
+      upd();
+      if (typeof ResizeObserver === 'undefined') return;
+      const ro = new ResizeObserver(upd); ro.observe(el);
+      return () => ro.disconnect();
+    }, []);
+    if (!data || data.length < 2) return <div ref={ref} />;
+    const H = height, PL = 38, PR = 16, PT = 26, PB = 32;
     const iW = W - PL - PR, iH = H - PT - PB;
-    const max = Math.max(...data.map(d=>d.value), 1);
+    const max = Math.max(...data.map(d => d.value), 1);
     const xs = data.map((_, i) => PL + (i / (data.length - 1)) * iW);
     const ys = data.map(d => PT + iH - (d.value / max) * iH);
     const linePath = xs.map((x, i) => `${i===0?'M':'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
     const fillPath = `${linePath} L${xs[xs.length-1].toFixed(1)},${(PT+iH).toFixed(1)} L${xs[0].toFixed(1)},${(PT+iH).toFixed(1)} Z`;
-    // y-axis gridlines at 0, 50%, 100%
-    const gridVals = [0, Math.round(max/2), max];
+    const gridVals = [...new Set([0, Math.round(max/2), max])];
+    const labelStep = Math.max(1, Math.ceil(data.length / Math.max(2, Math.floor(iW / 52))));  // x labels never collide
+    const showValues = iW / data.length >= 26;                                                // value labels only when they fit
     return (
-      <svg viewBox={`0 0 ${W} ${H}`} style={{width:'100%',display:'block',overflow:'visible'}}>
-        {/* Grid */}
-        {gridVals.map(v=>{
-          const y = PT + iH - (v/max)*iH;
-          return <g key={v}>
-            <line x1={PL} y1={y} x2={W-PR} y2={y} stroke='var(--border)' strokeWidth='1'/>
-            <text x={PL-4} y={y+4} textAnchor='end' fontSize='9' fill='var(--text3)'>{v}</text>
-          </g>;
-        })}
-        {/* Fill */}
-        <path d={fillPath} fill={fillColor}/>
-        {/* Line */}
-        <path d={linePath} fill='none' stroke={color} strokeWidth='2' strokeLinejoin='round' strokeLinecap='round'/>
-        {/* Dots + labels */}
-        {data.map((d,i)=>(
-          <g key={d.label}>
-            <circle cx={xs[i]} cy={ys[i]} r='3.5' fill={color}/>
-            {d.value > 0 && <text x={xs[i]} y={ys[i]-7} textAnchor='middle' fontSize='9' fontWeight='700' fill='var(--text2)'>{d.value}</text>}
-            <text x={xs[i]} y={H-2} textAnchor='middle' fontSize='9' fill='var(--text3)'>{d.label}</text>
-          </g>
-        ))}
-      </svg>
+      <div ref={ref} style={{width:'100%'}}>
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{display:'block'}} role="img">
+          {gridVals.map(v => {
+            const y = PT + iH - (v/max)*iH;
+            return <g key={v}>
+              <line x1={PL} y1={y} x2={W-PR} y2={y} stroke='var(--border)' strokeWidth='1' strokeDasharray={v===0?undefined:'3 4'}/>
+              <text x={PL-8} y={y+4} textAnchor='end' fontSize='12' fill='var(--text2)'>{v}</text>
+            </g>;
+          })}
+          <path d={fillPath} fill={fillColor}/>
+          <path d={linePath} fill='none' stroke={color} strokeWidth='2' strokeLinejoin='round' strokeLinecap='round'/>
+          {data.map((d, i) => (
+            <g key={d.label}>
+              <circle cx={xs[i]} cy={ys[i]} r='3.5' fill={color}/>
+              {showValues && d.value > 0 && <text x={xs[i]} y={ys[i]-9} textAnchor='middle' fontSize='12' fontWeight='600' fill='var(--text)'>{d.value}</text>}
+              {(i % labelStep === 0 || i === data.length - 1) && <text x={xs[i]} y={H-8} textAnchor={i===0?'start':i===data.length-1?'end':'middle'} fontSize='12' fill='var(--text2)'>{d.label}</text>}
+            </g>
+          ))}
+        </svg>
+      </div>
     );
   }
 
@@ -2316,12 +2387,12 @@
     const max = Math.max(...data.map(d=>d.value), 1);
     const barH = 70;
     return (
-      <div style={{display:'flex',alignItems:'flex-end',gap:3,paddingTop:16,paddingBottom:18,position:'relative'}}>
+      <div style={{display:'flex',alignItems:'flex-end',gap:6,paddingTop:16,paddingBottom:22,position:'relative'}}>
         {data.map(d=>(
-          <div key={d.label} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:2,position:'relative'}}>
-            {d.value > 0 && <div style={{fontSize:9,fontWeight:700,color:'var(--text2)',marginBottom:2}}>{d.value}</div>}
+          <div key={d.label} style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',alignItems:'center',gap:2,position:'relative'}}>
+            {d.value > 0 && <div style={{fontSize:12,fontWeight:600,color:'var(--text)',marginBottom:2}}>{d.value}</div>}
             <div style={{width:'100%',background:'var(--accent)',opacity:d.value?1:0.12,borderRadius:'3px 3px 0 0',height:`${Math.max((d.value/max)*barH,d.value?4:2)}px`,transition:'height .4s ease'}}/>
-            <div style={{fontSize:9,color:'var(--text3)',marginTop:3,whiteSpace:'nowrap'}}>{d.label}</div>
+            <div style={{fontSize:12,color:'var(--text2)',marginTop:3,whiteSpace:'nowrap'}}>{d.label}</div>
           </div>
         ))}
       </div>
@@ -2333,12 +2404,12 @@
     const max = Math.max(...data.map(d=>d.value), 1);
     const barH = 80;
     return (
-      <div style={{display:'flex',alignItems:'flex-end',gap:6,paddingTop:16,paddingBottom:2}}>
+      <div style={{display:'flex',alignItems:'flex-end',gap:8,paddingTop:16,paddingBottom:2,overflowX:'auto'}}>
         {data.map(d=>(
-          <div key={d.label} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,flex:'1 0 28px',minWidth:28}}>
-            <div style={{fontSize:10,fontWeight:700,color:'var(--text2)'}}>{d.value||''}</div>
+          <div key={d.label} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,flex:'1 0 44px',minWidth:44}}>
+            <div style={{fontSize:12,fontWeight:600,color:'var(--text)'}}>{d.value||''}</div>
             <div style={{width:'100%',background:color,borderRadius:'4px 4px 0 0',height:`${Math.max((d.value/max)*barH,d.value?3:0)}px`,transition:'height .4s ease'}}/>
-            <div style={{fontSize:10,color:'var(--text3)',whiteSpace:'nowrap',textOverflow:'ellipsis',overflow:'hidden',maxWidth:36,textAlign:'center'}}>{d.label}</div>
+            <div style={{fontSize:12,color:'var(--text2)',whiteSpace:'nowrap',textAlign:'center'}}>{d.label}</div>
           </div>
         ))}
       </div>
@@ -3388,13 +3459,22 @@
     const [selDay,    setSelDay]    = useState(() => localDateStr(new Date()));
     const timeGridRef = React.useRef(null);
 
-    // No auto-scroll needed — time grid is sized to fit without scrolling
     const [weekStart, setWeekStart] = useState(() => {
       const d = new Date(today);
       d.setDate(d.getDate() - d.getDay()); // back to Sunday
       d.setHours(0,0,0,0);
       return d;
     });
+
+    // open the week grid around the current time (or 7am for other weeks)
+    React.useEffect(() => {
+      if (calView !== 'week') return;
+      const el = timeGridRef.current; if (!el) return;
+      const sun = new Date(weekStart), end = new Date(weekStart); end.setDate(end.getDate() + 7);
+      const now = new Date();
+      const startHour = (now >= sun && now < end) ? Math.max(0, now.getHours() - 2) : 7;
+      el.scrollTop = startHour * 40;
+    }, [calView, weekStart]);
 
     const MONTHS_LONG  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -3644,9 +3724,9 @@
 
         {/* TIME-GRID WEEK VIEW */}
         {calView === 'week' && (() => {
-          const HOUR_START = 6;
-          const HOUR_END   = 23;
-          const HOUR_H     = 36; // px per hour — compact to fit full day without scrolling
+          const HOUR_START = 0;
+          const HOUR_END   = 24;
+          const HOUR_H     = 40; // px per hour; the grid scrolls and opens near the current time
           const TOTAL_H    = (HOUR_END - HOUR_START) * HOUR_H;
           const hours      = Array.from({length: HOUR_END - HOUR_START + 1}, (_,i) => HOUR_START + i);
           const GUTTER_W   = 52;
@@ -3657,6 +3737,7 @@
             return (h - HOUR_START) * HOUR_H + (m / 60) * HOUR_H;
           }
           function fmtHour(h) {
+            h = h % 24;
             if (h === 0) return '12am';
             if (h === 12) return '12pm';
             return h > 12 ? `${h-12}pm` : `${h}am`;
@@ -4234,7 +4315,11 @@
   }
 
   function UniSemBlock({ sem, onUpdateSem, onDeleteSem }) {
-    const [open,  setOpen]  = React.useState(sem.id === 'y2s1');
+    const [open,  setOpen]  = React.useState(() => {
+      const now = localDateStr(new Date());
+      const byDate = sem.startDate && sem.endDate && sem.startDate <= now && sem.endDate >= now;
+      return !!byDate || (sem.subjects || []).some(x => x.status === 'inprogress');
+    });
     const [modal, setModal] = React.useState(null);
 
     const gpaInfo = semGPA(sem);
@@ -4601,7 +4686,7 @@
     ['ES','Spain'],['SE','Sweden'],['GB','United Kingdom'],['US','United States'],
   ];
 
-  function WatchProviders({ tmdbId, tmdbKey, title }) {
+  function WatchProviders({ tmdbId, tmdbKey, title, kind='movie' }) {
     const [region, setRegion] = React.useState('US');
     const [detected, setDetected] = React.useState(false);
     const [data, setData] = React.useState(null);
@@ -4622,10 +4707,10 @@
     React.useEffect(() => {
       if (!tmdbId || !tmdbKey) return;
       setLoading(true); setErr(''); setData(null);
-      tmdbGetWatchProviders(tmdbId, tmdbKey)
+      tmdbGetWatchProviders(tmdbId, tmdbKey, kind)
         .then(results => { setData(results); setLoading(false); })
         .catch(() => { setErr('Could not load streaming info.'); setLoading(false); });
-    }, [tmdbId, tmdbKey]);
+    }, [tmdbId, tmdbKey, kind]);
 
     const jwUrl = `https://www.justwatch.com/us/search?q=${encodeURIComponent(title||'')}`;
     const regionData = data ? data[region] : null;
@@ -4706,9 +4791,10 @@
     const [showSearch, setShowSearch] = React.useState(!!tmdbKey);
 
     const defaultWatchDate = (defaultTrackYear && Number.isInteger(defaultTrackYear) && defaultTrackYear > 1900) ? String(defaultTrackYear) : '';
-    const blank = { title:'', director:'', releaseYear:defaultTrackYear, trackYear:null, genres:[], runtime:'', posterPath:'', tmdbId:null, overview:'', rating:null, watchDate:defaultWatchDate, notes:'', language:'', country:'', studio:'', isAllTime:false, honourableMention:false };
-    const [form, setForm] = React.useState(isEdit ? { ...blank, ...movie, genres:Array.isArray(movie.genres)?movie.genres:[], runtime:movie.runtime||'' } : blank);
+    const blank = { title:'', director:'', actors:[], releaseYear:defaultTrackYear, trackYear:null, genres:[], runtime:'', posterPath:'', tmdbId:null, overview:'', rating:null, watchDate:defaultWatchDate, notes:'', language:'', country:'', studio:'', isAllTime:false, honourableMention:false };
+    const [form, setForm] = React.useState(isEdit ? { ...blank, ...movie, genres:Array.isArray(movie.genres)?movie.genres:[], actors:Array.isArray(movie.actors)?movie.actors:[], runtime:movie.runtime||'' } : blank);
     const [genresStr, setGenresStr] = React.useState((form.genres||[]).join(', '));
+    const [actorsStr, setActorsStr] = React.useState((form.actors||[]).join(', '));
 
     async function doSearch() {
       if (!q.trim()) return;
@@ -4721,11 +4807,12 @@
     async function pickResult(r) {
       setLoadingDetails(true);
       const yr = r.release_date ? parseInt(r.release_date.slice(0,4)) : defaultTrackYear;
-      let director='', genres=[], runtime='', language='', country='';
+      let director='', genres=[], runtime='', language='', country='', actors=[];
       if (tmdbKey) {
         try {
           const d = await tmdbGetDetails(r.id, tmdbKey);
           director = (d.credits?.crew||[]).find(c=>c.job==='Director')?.name || '';
+          actors = (d.credits?.cast||[]).slice(0,6).map(c=>c.name);
           genres = (d.genres||[]).map(g=>g.name);
           runtime = d.runtime || '';
           language = d.original_language || r.original_language || '';
@@ -4738,8 +4825,9 @@
         genres=(r.genre_ids||[]).map(id=>TMDB_GENRES[id]).filter(Boolean);
         language = r.original_language || '';
       }
-      setForm(f=>({...f, tmdbId:r.id, title:r.title, releaseYear:yr, director, genres, runtime, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
+      setForm(f=>({...f, tmdbId:r.id, title:r.title, releaseYear:yr, director, actors, genres, runtime, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
       setGenresStr(genres.join(', '));
+      setActorsStr(actors.join(', '));
       setLoadingDetails(false);
       setResults([]);
       setShowSearch(false);
@@ -4749,7 +4837,7 @@
       if (!form.title.trim()) return;
       const wd = form.watchDate ? String(parseInt(form.watchDate)) : '';
       const isValidYear = wd && !isNaN(parseInt(wd));
-      onSave({ id:movie?.id||uid(), ...form, watchDate: isValidYear ? wd : '', trackYear: isValidYear ? parseInt(wd) : null, genres:genresStr.split(',').map(s=>s.trim()).filter(Boolean) });
+      onSave({ id:movie?.id||uid(), ...form, watchDate: isValidYear ? wd : '', trackYear: isValidYear ? parseInt(wd) : null, genres:genresStr.split(',').map(s=>s.trim()).filter(Boolean), actors:actorsStr.split(',').map(s=>s.trim()).filter(Boolean) });
     }
     return (
       <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
@@ -4835,6 +4923,10 @@
                 <input className="mv-form-in" type="number" min="1900" max="2099" placeholder="e.g. 2024" value={form.watchDate} onChange={e=>setForm(f=>({...f,watchDate:e.target.value}))} />
               </div>
               <div className="mv-form-field full">
+                <div className="mv-form-lbl">Cast (comma separated, lead first)</div>
+                <input className="mv-form-in" value={actorsStr} onChange={e=>setActorsStr(e.target.value)} placeholder="Actor one, Actor two, Actor three" />
+              </div>
+              <div className="mv-form-field full">
                 <div className="mv-form-lbl">Genres (comma separated)</div>
                 <input className="mv-form-in" value={genresStr} onChange={e=>syncGenres(e.target.value)} placeholder="Drama, Thriller, Crime" />
               </div>
@@ -4885,7 +4977,7 @@
               </div>
             </div>
           </div>
-          <div style={{padding:'0 20px'}}>
+          <div>
             <WatchProviders tmdbId={form.tmdbId} tmdbKey={tmdbKey} title={form.title}/>
           </div>
           <div className="modal-footer">
@@ -5117,7 +5209,7 @@
   function BulkEnrichModal({ movies, tmdbKey, onApply, onClose }) {
     // Films that are missing any of: country, language, runtime, director, releaseYear, studio
     const needsEnrich = React.useMemo(()=>
-      movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || m.watchAtRelease),
+      movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || !(m.actors && m.actors.length) || m.watchAtRelease),
       [movies]
     );
 
@@ -5172,6 +5264,7 @@
 
           if (details) {
             const director = (details.credits?.crew||[]).find(c=>c.job==='Director')?.name || '';
+            const actors   = (details.credits?.cast||[]).slice(0,6).map(c=>c.name);
             const country  = (details.production_countries||[])[0]?.name || '';
             const language = details.original_language || '';
             const runtime  = details.runtime ? String(details.runtime) : '';
@@ -5191,6 +5284,7 @@
             if (!orig.language  && language)  patch.language  = language;
             if (!orig.runtime   && runtime)   patch.runtime   = runtime;
             if (!orig.director  && director)  patch.director  = director;
+            if ((!orig.actors||!orig.actors.length) && actors.length) patch.actors = actors;
             if ((!orig.genres||!orig.genres.length) && genres.length) patch.genres = genres;
             if (!orig.posterPath && posterPath) patch.posterPath = posterPath;
             if (!orig.overview  && overview)  patch.overview  = overview;
@@ -5230,9 +5324,9 @@
     const noKey = !tmdbKey;
 
     return (
-      <div className="modal-overlay" onClick={e=>{ if(e.target===e.currentTarget) onClose(); }}>
-        <div className="modal-box" style={{maxWidth:560,maxHeight:'80vh',display:'flex',flexDirection:'column'}}>
-          <div className="modal-header">
+      <div className="overlay" onClick={e=>{ if(e.target===e.currentTarget) onClose(); }}>
+        <div className="modal">
+          <div className="modal-hdr">
             <div className="modal-title">Bulk Enrich Films</div>
             <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
@@ -5308,6 +5402,7 @@
     const searchFilter = m => !search.trim() ||
       m.title.toLowerCase().includes(search.toLowerCase()) ||
       (m.director||'').toLowerCase().includes(search.toLowerCase()) ||
+      (m.actors||[]).some(a => a.toLowerCase().includes(search.toLowerCase())) ||
       (m.studio||'').toLowerCase().includes(search.toLowerCase());
 
     // Count per watch-year for sidebar badges
@@ -5389,7 +5484,7 @@
     // Unrated films — all movies with no rating, sorted newest year first then title
     const [collapsedGenres, setCollapsedGenres] = React.useState({});
     const toggleGenre = g => setCollapsedGenres(c => ({ ...c, [g]: !c[g] }));
-    const [unratedSort, setUnratedSort] = React.useState('year');
+    const [unratedSort, setUnratedSort] = React.useState('release');
     const [pickedMovie, setPickedMovie] = React.useState(null);
 
     function pickRandom(pool) {
@@ -5399,22 +5494,39 @@
       setModal({ movie: m });
     }
     const unratedMovies = React.useMemo(() => {
-      const unr = movies.filter(m => m.rating == null);
-      if (unratedSort === 'year') {
-        return [...unr].sort((a,b) => {
-          const ay = a.watchDate ? parseInt(a.watchDate) : (a.trackYear||0);
-          const by = b.watchDate ? parseInt(b.watchDate) : (b.trackYear||0);
-          return by - ay || a.title.localeCompare(b.title);
-        });
+      const pool = movies.filter(m => m.rating == null && searchFilter(m));
+      const byTitle = (a, b) => a.title.localeCompare(b.title);
+      const watchYr = m => m.watchDate ? parseInt(m.watchDate) : (m.trackYear || 0);
+      if (unratedSort === 'release') return [...pool].sort((a,b) => (b.releaseYear||0) - (a.releaseYear||0) || byTitle(a,b));
+      if (unratedSort === 'year')    return [...pool].sort((a,b) => watchYr(b) - watchYr(a) || byTitle(a,b));
+      if (unratedSort === 'runtime_asc')  return [...pool].sort((a,b) => (parseInt(a.runtime)||0) - (parseInt(b.runtime)||0));
+      if (unratedSort === 'runtime_desc') return [...pool].sort((a,b) => (parseInt(b.runtime)||0) - (parseInt(a.runtime)||0));
+      if (unratedSort === 'director') return [...pool].sort((a,b) => (a.director||'~').localeCompare(b.director||'~') || byTitle(a,b));
+      if (unratedSort === 'language') return [...pool].sort((a,b) => (a.language||'~').localeCompare(b.language||'~') || byTitle(a,b));
+      if (unratedSort === 'actor')    return [...pool].sort((a,b) => ((a.actors||[])[0]||'~').localeCompare((b.actors||[])[0]||'~') || byTitle(a,b));
+      return [...pool].sort(byTitle);
+    }, [JSON.stringify(movies.map(m => m.id + m.rating + m.runtime + (m.actors||[]).length)), unratedSort, search]);
+
+    // groups for the unrated view: year / director / language / actor sorts split into collapsible sections
+    const unratedGroups = React.useMemo(() => {
+      const langName = c => { try { return c ? (new Intl.DisplayNames(['en'], { type:'language' }).of(c) || c) : 'Unknown language'; } catch { return c || 'Unknown language'; } };
+      const keyOf = {
+        release:  m => m.releaseYear ? String(m.releaseYear) : 'Unknown release year',
+        year:     m => { const w = m.watchDate ? parseInt(m.watchDate) : m.trackYear; return w ? 'Watched ' + w : 'No watch year'; },
+        director: m => m.director || 'Unknown director',
+        language: m => langName(m.language),
+        actor:    m => (m.actors||[])[0] || 'No cast data (run Enrich)',
+      }[unratedSort];
+      if (!keyOf) return null;
+      const groups = [];
+      for (const m of unratedMovies) {
+        const k = keyOf(m);
+        let g = groups[groups.length - 1];
+        if (!g || g.key !== k) { g = groups.find(x => x.key === k) || (groups.push({ key:k, items:[] }), groups[groups.length - 1]); }
+        g.items.push(m);
       }
-      if (unratedSort === 'runtime_asc') {
-        return [...unr].sort((a,b) => (parseInt(a.runtime)||0) - (parseInt(b.runtime)||0));
-      }
-      if (unratedSort === 'runtime_desc') {
-        return [...unr].sort((a,b) => (parseInt(b.runtime)||0) - (parseInt(a.runtime)||0));
-      }
-      return [...unr].sort((a,b) => a.title.localeCompare(b.title));
-    }, [JSON.stringify(movies.map(m => m.id + m.rating + m.runtime)), unratedSort]);
+      return groups;
+    }, [unratedMovies, unratedSort]);
 
     function saveMovie(m) {
       const exists = movies.find(x=>x.id===m.id);
@@ -5434,7 +5546,7 @@
       }));
     }
 
-    const enrichCount = movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || m.watchAtRelease).length;
+    const enrichCount = movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || !(m.actors && m.actors.length) || m.watchAtRelease).length;
 
     // Year rankings DnD
     function onRankDragStart(e,id) { setDragId(id); e.dataTransfer.effectAllowed='move'; }
@@ -5868,18 +5980,24 @@
                   </div>
                 ) : gridMode === 'list' ? (
                   <div className="mv-list">
-                    {allFiltered.map(movie => (
-                      <div key={movie.id} className="mv-list-row" onClick={()=>setModal({movie})}>
-                        <div className="mv-list-poster"><Poster movie={movie}/></div>
-                        <div className="mv-list-info">
-                          <div className="mv-list-title">{movie.title}</div>
-                          <div className="mv-list-meta">{[movie.director, movie.releaseYear, movie.runtime?`${movie.runtime}m`:null].filter(Boolean).join(' · ')}</div>
+                    {allFiltered.map(movie => {
+                      const wy = movie.watchDate ? movie.watchDate : null;
+                      return (
+                        <div key={movie.id} className="mv-list-item" onClick={()=>setModal({movie})}>
+                          <div className="mv-li-poster"><Poster movie={movie}/></div>
+                          <div className="mv-li-info">
+                            <div className="mv-li-title">{movie.title}{movie.releaseYear ? <span className="mv-li-year"> {movie.releaseYear}</span> : null}</div>
+                            <div className="mv-li-meta">{[movie.director, (movie.actors||[]).slice(0,3).join(', '), movie.runtime?`${movie.runtime}m`:null].filter(Boolean).join(' · ')}</div>
+                          </div>
+                          <div className="mv-li-right">
+                            {movie.rating
+                              ? <StarRating value={movie.rating} readOnly size={14}/>
+                              : <span className="mv-no-rating">Unrated</span>}
+                            <div className="mv-li-sub">{[(movie.genres||[])[0], wy ? 'Watched ' + wy : 'Undated'].filter(Boolean).join(' · ')}</div>
+                          </div>
                         </div>
-                        {movie.rating
-                          ? <StarRating value={movie.rating} readOnly size={13}/>
-                          : <span className="mv-no-rating" style={{fontSize:11}}>Unrated</span>}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="mv-grid">
@@ -6080,7 +6198,11 @@
                 <div className="mv-unrated-hdr">
                   <span className="mv-unrated-count-pill">{unratedMovies.length} films</span>
                   <select className="mv-unrated-sort" value={unratedSort} onChange={e => setUnratedSort(e.target.value)}>
-                    <option value="year">Sort by year</option>
+                    <option value="release">Group by release year</option>
+                    <option value="year">Group by watch year</option>
+                    <option value="director">Group by director</option>
+                    <option value="language">Group by language</option>
+                    <option value="actor">Group by lead actor</option>
                     <option value="title">Sort by title</option>
                     <option value="runtime_asc">Runtime ↑ (shortest first)</option>
                     <option value="runtime_desc">Runtime ↓ (longest first)</option>
@@ -6092,8 +6214,8 @@
                     <Icon name="dice" size={16} /> Pick one
                   </button>
                 </div>
-                <div className="mv-grid">
-                  {unratedMovies.map(movie => {
+                {(() => {
+                  const card = movie => {
                     const wy = movie.watchDate ? parseInt(movie.watchDate) : movie.trackYear;
                     return (
                       <div key={movie.id} className="mv-card" onClick={() => setModal({ movie })}>
@@ -6101,17 +6223,31 @@
                           {movie.posterPath
                             ? <img src={TMDB_IMG + movie.posterPath} alt={movie.title} />
                             : <div className="mv-poster-fb"><Icon name="film" size={26} /></div>}
-                          {wy && <div className="mv-rank-badge" style={{ background:'var(--surface2)', color:'var(--text2)', border:'1px solid var(--border)' }}>{wy}</div>}
+                          {wy && <div className="mv-rank-badge mv-badge-quiet">{wy}</div>}
                         </div>
                         <div className="mv-card-body">
                           <div className="mv-card-title" title={movie.title}>{movie.title}</div>
-                          <div className="mv-card-sub">{[[movie.director, movie.releaseYear].filter(Boolean).join(' · '), movie.runtime && (unratedSort==='runtime_asc'||unratedSort==='runtime_desc') ? `${movie.runtime}m` : ''].filter(Boolean).join(' · ')}</div>
-                          <div className="mv-no-rating" style={{ color:'var(--med)', fontWeight:600 }}>⚠ Needs rating</div>
+                          <div className="mv-card-sub">{[movie.director, movie.releaseYear, (unratedSort==='runtime_asc'||unratedSort==='runtime_desc') && movie.runtime ? `${movie.runtime}m` : ''].filter(Boolean).join(' · ')}</div>
+                          <div className="mv-no-rating mv-needs-rating">Needs rating</div>
                         </div>
                       </div>
                     );
-                  })}
-                </div>
+                  };
+                  if (!unratedGroups) return <div className="mv-grid">{unratedMovies.map(card)}</div>;
+                  return unratedGroups.map(g => {
+                    const closed = !!collapsedGenres['un-' + g.key];
+                    return (
+                      <div key={g.key} className="mv-genre-section">
+                        <div className="mv-genre-hdr" onClick={() => toggleGenre('un-' + g.key)}>
+                          <Icon name="chev" size={14} className={closed ? '' : 'chev-open'} />
+                          <span className="mv-genre-name">{g.key}</span>
+                          <span className="mv-genre-count">{g.items.length}</span>
+                        </div>
+                        {!closed && <div className="mv-grid">{g.items.map(card)}</div>}
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             )
           )}
@@ -6479,9 +6615,10 @@
     const [loadingDetails, setLoadingDetails] = React.useState(false);
     const [searchErr, setSearchErr] = React.useState('');
     const [showSearch, setShowSearch] = React.useState(!!tmdbKey);
-    const blank = { title:'', creator:'', genres:[], seasons:'', posterPath:'', tmdbId:null, overview:'', rating:null, notes:'', language:'', country:'', status:'plan', isAllTime:false, allTimeRank:null };
-    const [form, setForm] = React.useState(isEdit ? { ...blank, ...show, genres:Array.isArray(show.genres)?show.genres:[] } : blank);
+    const blank = { title:'', creator:'', actors:[], network:'', firstAired:'', genres:[], seasons:'', posterPath:'', tmdbId:null, overview:'', rating:null, notes:'', language:'', country:'', status:'plan', isAllTime:false, allTimeRank:null };
+    const [form, setForm] = React.useState(isEdit ? { ...blank, ...show, genres:Array.isArray(show.genres)?show.genres:[], actors:Array.isArray(show.actors)?show.actors:[] } : blank);
     const [genresStr, setGenresStr] = React.useState((form.genres||[]).join(', '));
+    const [actorsStr, setActorsStr] = React.useState((form.actors||[]).join(', '));
 
     async function doSearch() {
       if (!q.trim()) return;
@@ -6493,11 +6630,13 @@
     }
     async function pickResult(r) {
       setLoadingDetails(true);
-      let creator='', genres=[], seasons='', language='', country='';
+      let creator='', genres=[], seasons='', language='', country='', actors=[], network='';
       if (tmdbKey) {
         try {
           const d = await tmdbTVGetDetails(r.id, tmdbKey);
           creator = (d.created_by||[]).map(c=>c.name).join(', ');
+          actors = (d.credits?.cast||[]).slice(0,6).map(c=>c.name);
+          network = (d.networks||[])[0]?.name || '';
           genres = (d.genres||[]).map(g=>g.name);
           seasons = d.number_of_seasons || '';
           language = d.original_language || r.original_language || '';
@@ -6505,14 +6644,15 @@
         } catch(e) { language = r.original_language || ''; }
       } else { language = r.original_language || ''; }
       const yr = r.first_air_date ? r.first_air_date.slice(0,4) : '';
-      setForm(f=>({...f, tmdbId:r.id, title:r.name||r.title||'', firstAired:yr, creator, genres, seasons, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
+      setForm(f=>({...f, tmdbId:r.id, title:r.name||r.title||'', firstAired:yr, creator, actors, network, genres, seasons, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
       setGenresStr(genres.join(', '));
+      setActorsStr(actors.join(', '));
       setLoadingDetails(false); setResults([]); setShowSearch(false);
     }
     function syncGenres(str) { setGenresStr(str); setForm(f=>({...f, genres:str.split(',').map(s=>s.trim()).filter(Boolean)})); }
     function save() {
       if (!form.title.trim()) return;
-      onSave({ id:show?.id||uid(), ...form, genres:genresStr.split(',').map(s=>s.trim()).filter(Boolean) });
+      onSave({ id:show?.id||uid(), ...form, genres:genresStr.split(',').map(s=>s.trim()).filter(Boolean), actors:actorsStr.split(',').map(s=>s.trim()).filter(Boolean) });
     }
     const statusOpt = TV_STATUS_OPTS.find(s=>s.id===form.status) || TV_STATUS_OPTS[0];
     return (
@@ -6585,6 +6725,22 @@
                 <input className="mv-form-in" type="number" min="1" value={form.seasons||''} onChange={e=>setForm(f=>({...f,seasons:parseInt(e.target.value)||''}))} placeholder="e.g. 3"/>
               </div>
               <div className="mv-form-field full">
+                <div className="mv-form-lbl">Cast (comma separated, lead first)</div>
+                <input className="mv-form-in" value={actorsStr} onChange={e=>setActorsStr(e.target.value)} placeholder="Actor one, Actor two, Actor three"/>
+              </div>
+              <div className="mv-form-field">
+                <div className="mv-form-lbl">Network / platform</div>
+                <input className="mv-form-in" value={form.network||''} onChange={e=>setForm(f=>({...f,network:e.target.value}))} placeholder="HBO, Netflix…"/>
+              </div>
+              <div className="mv-form-field">
+                <div className="mv-form-lbl">First aired (year)</div>
+                <input className="mv-form-in" type="number" min="1930" max="2099" value={form.firstAired||''} onChange={e=>setForm(f=>({...f,firstAired:e.target.value}))} placeholder="e.g. 2019"/>
+              </div>
+              <div className="mv-form-field">
+                <div className="mv-form-lbl">Country</div>
+                <input className="mv-form-in" value={form.country||''} onChange={e=>setForm(f=>({...f,country:e.target.value}))} placeholder="United States…"/>
+              </div>
+              <div className="mv-form-field full">
                 <div className="mv-form-lbl">Genres (comma separated)</div>
                 <input className="mv-form-in" value={genresStr} onChange={e=>syncGenres(e.target.value)} placeholder="Drama, Crime, Thriller"/>
               </div>
@@ -6613,6 +6769,9 @@
                 </label>
               </div>
             </div>
+          </div>
+          <div>
+            <WatchProviders tmdbId={form.tmdbId} tmdbKey={tmdbKey} title={form.title} kind="tv"/>
           </div>
           <div className="modal-footer">
             <div className="modal-actions">
@@ -6728,9 +6887,95 @@
     );
   }
 
+
+  function TVEnrichModal({ shows, tmdbKey, onApply, onClose }) {
+    const needs = React.useMemo(() => shows.filter(sh => !sh.country || !sh.language || !sh.creator || !(sh.actors && sh.actors.length) || !sh.network || !sh.firstAired || !(sh.genres && sh.genres.length) || !sh.seasons || !sh.posterPath), [shows]);
+    const [phase, setPhase] = React.useState('idle');
+    const [rows, setRows] = React.useState(() => needs.map(sh => ({ id:sh.id, title:sh.title, status:'pending', detail:'' })));
+    const [summary, setSummary] = React.useState(null);
+    const cancelRef = React.useRef(false);
+    const setRow = (id, patch) => setRows(rs => rs.map(r => r.id === id ? { ...r, ...patch } : r));
+    async function run() {
+      setPhase('running'); cancelRef.current = false;
+      const patches = {}; let done = 0, failed = 0;
+      for (const row of needs) {
+        if (cancelRef.current) break;
+        setRow(row.id, { status:'running', detail:'Looking up…' });
+        try {
+          let d = null;
+          const orig = shows.find(x => x.id === row.id) || {};
+          let id = orig.tmdbId;
+          if (!id) {
+            const r = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${encodeURIComponent(tmdbKey)}&query=${encodeURIComponent(orig.title)}${orig.firstAired ? '&first_air_date_year=' + orig.firstAired : ''}`);
+            if (r.ok) id = ((await r.json()).results || [])[0]?.id;
+          }
+          if (id) { const r2 = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${encodeURIComponent(tmdbKey)}&append_to_response=credits`); if (r2.ok) d = await r2.json(); }
+          if (!d) { setRow(row.id, { status:'failed', detail:'Not found on TMDB' }); failed++; }
+          else {
+            const patch = { tmdbId:d.id };
+            const creator = (d.created_by || []).map(c => c.name).join(', ');
+            const actors = (d.credits?.cast || []).slice(0, 6).map(c => c.name);
+            const network = (d.networks || [])[0]?.name || '';
+            const first = d.first_air_date ? d.first_air_date.slice(0, 4) : '';
+            const country = (d.production_countries || [])[0]?.name || '';
+            const genres = (d.genres || []).map(g => g.name);
+            if (!orig.creator && creator) patch.creator = creator;
+            if ((!orig.actors || !orig.actors.length) && actors.length) patch.actors = actors;
+            if (!orig.network && network) patch.network = network;
+            if (!orig.firstAired && first) patch.firstAired = first;
+            if (!orig.country && country) patch.country = country;
+            if (!orig.language && d.original_language) patch.language = d.original_language;
+            if ((!orig.genres || !orig.genres.length) && genres.length) patch.genres = genres;
+            if (!orig.seasons && d.number_of_seasons) patch.seasons = d.number_of_seasons;
+            if (!orig.posterPath && d.poster_path) patch.posterPath = d.poster_path;
+            if (!orig.overview && d.overview) patch.overview = d.overview;
+            patches[row.id] = patch; done++;
+            setRow(row.id, { status:'done', detail:'Filled: ' + (Object.keys(patch).filter(k => k !== 'tmdbId').join(', ') || 'nothing new') });
+          }
+        } catch (e) { setRow(row.id, { status:'failed', detail:'Error: ' + e.message }); failed++; }
+        await new Promise(r => setTimeout(r, 220));
+      }
+      setSummary({ done, failed }); setPhase('done');
+      if (Object.keys(patches).length) onApply(patches);
+    }
+    return (
+      <div className="overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+        <div className="modal">
+          <div className="modal-hdr">
+            <div className="modal-title">Enrich shows from TMDB</div>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
+          </div>
+          <div className="section-desc">Fills missing creator, cast, network, first-aired year, country, language, genres, seasons and poster for {needs.length} show{needs.length !== 1 ? 's' : ''}. Existing values are never overwritten.</div>
+          {!tmdbKey && <div className="gh-err">Add your TMDB API key in Settings first.</div>}
+          <div className="enrich-list">
+            {rows.map(r => (
+              <div key={r.id} className="enrich-row">
+                <span className={`enrich-status ${r.status}`}>{r.status === 'done' ? '✓' : r.status === 'failed' ? '!' : r.status === 'running' ? '…' : ''}</span>
+                <span className="enrich-title">{r.title}</span>
+                <span className="enrich-detail">{r.detail}</span>
+              </div>
+            ))}
+          </div>
+          {summary && <div className="section-desc" style={{marginTop:12}}>{summary.done} updated · {summary.failed} not found</div>}
+          <div className="modal-footer">
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => { cancelRef.current = true; onClose(); }}>{phase === 'done' ? 'Close' : 'Cancel'}</button>
+              {phase !== 'done' && <button className="btn-save" onClick={run} disabled={!tmdbKey || phase === 'running' || !needs.length}>{phase === 'running' ? 'Working…' : 'Start'}</button>}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function TVView({ tvData, onUpdate, tmdbKey }) {
     const [statusFilter, setStatusFilter] = React.useState('all');
-    const [view, setView] = React.useState('library'); // 'library' | 'rankings'
+    const [view, setView] = React.useState('library'); // library | rankings | stats | release | network | unrated
+    const [tvSearchStr, setTvSearchStr] = React.useState('');
+    const [gridMode, setGridMode] = React.useState('grid');
+    const [enrichOpen, setEnrichOpen] = React.useState(false);
+    const [collapsedGroups, setCollapsedGroups] = React.useState({});
+    const [unratedSort, setUnratedSort] = React.useState('release');
     const [modal, setModal] = React.useState(null);
     const [bulkAddModal, setBulkAddModal] = React.useState(false);
     const [dupesModal, setDupesModal] = React.useState(false);
@@ -6740,7 +6985,55 @@
     const shows = tvData.shows || [];
     const allTimeShows = [...shows].filter(s=>s.isAllTime).sort((a,b)=>(a.allTimeRank||999)-(b.allTimeRank||999));
     const notRanked = shows.filter(s=>!s.isAllTime);
-    const filteredShows = statusFilter==='all' ? shows : shows.filter(s=>s.status===statusFilter);
+    const q = tvSearchStr.trim().toLowerCase();
+    const matchesSearch = sh => !q || (sh.title||'').toLowerCase().includes(q) || (sh.creator||'').toLowerCase().includes(q) || (sh.network||'').toLowerCase().includes(q) || (sh.actors||[]).some(a => a.toLowerCase().includes(q)) || (sh.genres||[]).some(g => g.toLowerCase().includes(q));
+    const filteredShows = (statusFilter==='all' ? shows : shows.filter(s=>s.status===statusFilter)).filter(matchesSearch);
+    const enrichCount = shows.filter(sh => !sh.country || !sh.language || !sh.creator || !(sh.actors && sh.actors.length) || !sh.network || !sh.firstAired || !(sh.genres && sh.genres.length) || !sh.seasons || !sh.posterPath).length;
+    function pickShow(pool) { if (!pool.length) return; setModal({ show: pool[Math.floor(Math.random() * pool.length)] }); }
+    const unratedShows = shows.filter(sh => sh.rating == null && matchesSearch(sh));
+    const toggleGroup = k => setCollapsedGroups(c => ({ ...c, [k]: !c[k] }));
+    const leadCreator = sh => (sh.creator || '').split(',')[0].trim();
+    const groupBy = (list, keyFn, order) => {
+      const m = new Map();
+      list.forEach(sh => { const k = keyFn(sh); if (!m.has(k)) m.set(k, []); m.get(k).push(sh); });
+      let groups = [...m.entries()].map(([key, items]) => ({ key, items: items.sort((a, b) => (a.title || '').localeCompare(b.title || '')) }));
+      if (order) groups.sort(order);
+      return groups;
+    };
+    const yearKey = sh => sh.firstAired ? String(sh.firstAired) : 'Unknown year';
+    const byYearDesc = (a, b) => (b.key === 'Unknown year') - (a.key === 'Unknown year') || (b.key).localeCompare(a.key);
+    const releaseGroups = groupBy(filteredShows, yearKey, (a, b) => (a.key === 'Unknown year') - (b.key === 'Unknown year') || b.key.localeCompare(a.key));
+    const networkGroups = groupBy(filteredShows, sh => sh.network || 'Unknown network', (a, b) => (a.key === 'Unknown network') - (b.key === 'Unknown network') || b.items.length - a.items.length || a.key.localeCompare(b.key));
+    const unratedGroups = unratedSort === 'title' ? null : groupBy(unratedShows, {
+      release:  yearKey,
+      network:  sh => sh.network || 'Unknown network',
+      creator:  sh => leadCreator(sh) || 'Unknown creator',
+      language: sh => langLabel(sh.language) || 'Unknown language',
+      actor:    sh => (sh.actors || [])[0] || 'No cast data (run Enrich)',
+    }[unratedSort], (a, b) => unratedSort === 'release' ? ((a.key === 'Unknown year') - (b.key === 'Unknown year') || b.key.localeCompare(a.key)) : a.key.localeCompare(b.key));
+
+    const tvStats = React.useMemo(() => {
+      const rated = shows.filter(sh => sh.rating != null);
+      const tally = fn => { const m = {}; shows.forEach(sh => { const v = fn(sh); (Array.isArray(v) ? v : [v]).filter(Boolean).forEach(k => { m[k] = (m[k] || 0) + 1; }); }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+      const bars = (arr, n) => arr.slice(0, n).map(([label, value]) => ({ label, value }));
+      const yearMap = {}; shows.forEach(sh => { const y = parseInt(sh.firstAired); if (y > 1900) yearMap[y] = (yearMap[y] || 0) + 1; });
+      const countries = tally(sh => sh.country);
+      return {
+        avg: rated.length ? (rated.reduce((a, sh) => a + sh.rating, 0) / rated.length).toFixed(1) : null,
+        ratedN: rated.length,
+        seasons: shows.reduce((a, sh) => a + (parseInt(sh.seasons) || 0), 0),
+        genres: bars(tally(sh => sh.genres), 8),
+        langs: bars(tally(sh => langLabel(sh.language)), 6),
+        networks: bars(tally(sh => sh.network), 8),
+        creators: tally(sh => (sh.creator || '').split(',').map(x => x.trim())).filter(([, c]) => c > 1).slice(0, 8).map(([label, value]) => ({ label, value })),
+        actors: tally(sh => sh.actors).filter(([, c]) => c > 1).slice(0, 8).map(([label, value]) => ({ label, value })),
+        years: Object.entries(yearMap).sort((a, b) => a[0] - b[0]).map(([label, value]) => ({ label, value })),
+        ratingDist: [0.5,1,1.5,2,2.5,3,3.5,4,4.5,5].map(v => ({ label:String(v), value: rated.filter(sh => sh.rating === v).length })),
+        countriesSet: new Set(countries.map(([c]) => c)),
+        countryCounts: Object.fromEntries(countries),
+        topGenre: tally(sh => sh.genres)[0],
+      };
+    }, [JSON.stringify(shows.map(sh => sh.id + sh.rating + sh.status + (sh.genres || []).join() + sh.country + sh.network + sh.firstAired + (sh.actors || []).length))]);
 
     function saveShow(s) {
       const exists = shows.find(x=>x.id===s.id);
@@ -6825,33 +7118,62 @@
 
     return (
       <div className="tv-wrap">
-        <div className="tv-header">
-          <div className="tv-view-tabs">
-            <button className={`tv-vtab ${view==='library'?'active':''}`} onClick={()=>setView('library')}>Library</button>
-            <button className={`tv-vtab ${view==='rankings'?'active':''}`} onClick={()=>setView('rankings')}>All Time</button>
+        <div className="subnav">
+          <div className="subnav-tabs" role="tablist">
+            <button role="tab" className={`subnav-tab ${view==='library'?'active':''}`} onClick={()=>setView('library')}><Icon name="tv" size={16} />Library<span className="subnav-count">{shows.length}</span></button>
+            <button role="tab" className={`subnav-tab ${view==='rankings'?'active':''}`} onClick={()=>setView('rankings')}><Icon name="star" size={16} />All Time</button>
+            <button role="tab" className={`subnav-tab ${view==='stats'?'active':''}`} onClick={()=>setView('stats')}><Icon name="chart" size={16} />Stats</button>
+            <button role="tab" className={`subnav-tab ${view==='release'?'active':''}`} onClick={()=>setView('release')}><Icon name="calendar" size={16} />By first aired</button>
+            <button role="tab" className={`subnav-tab ${view==='network'?'active':''}`} onClick={()=>setView('network')}><Icon name="layers" size={16} />Networks</button>
+            <button role="tab" className={`subnav-tab ${view==='unrated'?'active':''}`} onClick={()=>setView('unrated')}><Icon name="alert" size={16} />Unrated<span className="subnav-count">{shows.filter(sh=>sh.rating==null).length}</span></button>
+            <span className="subnav-spacer" />
+            <input className="mv-sb-search subnav-search" placeholder="Search shows" value={tvSearchStr} onChange={e=>setTvSearchStr(e.target.value)} />
           </div>
           {view === 'library' && (
-            <div className="tv-status-tabs">
-              <button className={`tv-stab ${statusFilter==='all'?'active':''}`} onClick={()=>setStatusFilter('all')}>All ({counts.all})</button>
+            <div className="subnav-years">
+              <span className="subnav-years-lbl">Status</span>
+              <button className={`subnav-chip ${statusFilter==='all'?'active':''}`} onClick={()=>setStatusFilter('all')}>All<span className="subnav-count">{counts.all}</span></button>
               {TV_STATUS_OPTS.map(opt=>(
-                counts[opt.id] > 0 && <button key={opt.id} className={`tv-stab ${statusFilter===opt.id?'active':''}`} onClick={()=>setStatusFilter(opt.id)}>{opt.label} ({counts[opt.id]})</button>
+                counts[opt.id] > 0 && <button key={opt.id} className={`subnav-chip ${statusFilter===opt.id?'active':''}`} onClick={()=>setStatusFilter(opt.id)}>{opt.label}<span className="subnav-count">{counts[opt.id]}</span></button>
               ))}
             </div>
           )}
-          <button className="ghost-btn tv-push" onClick={()=>setDupesModal(true)} title="Find duplicate shows"><Icon name="alert" size={15} /> Dupes</button>
+        </div>
+        <div className="tv-header">
+          <div className="tv-title-lbl">{view==='library' ? 'Library' : view==='rankings' ? 'All Time' : view==='stats' ? 'Stats' : view==='release' ? 'By first aired' : view==='network' ? 'Networks' : 'Unrated'}</div>
+          {view === 'library' && (
+            <div className="mv-view-toggle">
+              <button className={`mv-vtab ${gridMode==='grid'?'active':''}`} onClick={()=>setGridMode('grid')} aria-label="Grid view">Grid</button>
+              <button className={`mv-vtab ${gridMode==='list'?'active':''}`} onClick={()=>setGridMode('list')} aria-label="List view">List</button>
+            </div>
+          )}
+          {view === 'unrated' && (
+            <select className="mv-unrated-sort" value={unratedSort} onChange={e=>setUnratedSort(e.target.value)}>
+              <option value="release">Group by first aired</option>
+              <option value="network">Group by network</option>
+              <option value="creator">Group by creator</option>
+              <option value="language">Group by language</option>
+              <option value="actor">Group by lead actor</option>
+              <option value="title">Sort by title</option>
+            </select>
+          )}
+          <span className="tv-push" />
+          <button className="ghost-btn" onClick={()=>pickShow(view==='unrated' ? unratedShows : (shows.filter(sh=>sh.status==='plan').length ? shows.filter(sh=>sh.status==='plan') : shows))} title="Pick a random show from your plan-to-watch list"><Icon name="dice" size={16} /> Pick one</button>
+          <button className="ghost-btn" onClick={()=>setDupesModal(true)} title="Find duplicate shows"><Icon name="alert" size={15} /> Dupes</button>
           <button className="ghost-btn" onClick={()=>setBulkAddModal(true)}>+ Bulk Add</button>
+          {shows.length > 0 && <button className={`mv-enrich-btn${enrichCount>0?' has-gap':''}`} onClick={()=>setEnrichOpen(true)} title="Auto-fill missing details from TMDB">{enrichCount > 0 ? <><Icon name="bolt" size={14} /> Enrich {enrichCount}</> : <><Icon name="check" size={14} /> All enriched</>}</button>}
           <button className="tv-add-btn" onClick={()=>setModal('add')}>+ Add Show</button>
         </div>
 
         {/* KPI strip */}
-        {shows.length > 0 && (
+        {shows.length > 0 && view === 'library' && (
           <div className="tv-kpi-strip">
-            <div className="tv-kpi"><div className="tv-kpi-val">{counts.all}</div><div className="tv-kpi-lbl">Total Shows</div></div>
+            <div className="tv-kpi"><div className="tv-kpi-val">{counts.all}</div><div className="tv-kpi-lbl">Total shows</div></div>
             {counts.watching > 0 && <div className="tv-kpi"><div className="tv-kpi-val" style={{color:'#4aac76'}}>{counts.watching}</div><div className="tv-kpi-lbl">Watching</div></div>}
             {counts.completed > 0 && <div className="tv-kpi"><div className="tv-kpi-val" style={{color:'#5b96e8'}}>{counts.completed}</div><div className="tv-kpi-lbl">Completed</div></div>}
-            {counts.plan > 0 && <div className="tv-kpi"><div className="tv-kpi-val" style={{color:'#9070d8'}}>{counts.plan}</div><div className="tv-kpi-lbl">Plan to Watch</div></div>}
-            {allTimeShows.length > 0 && <div className="tv-kpi"><div className="tv-kpi-val" style={{color:'var(--accent)'}}>{allTimeShows.length}</div><div className="tv-kpi-lbl">All Time</div></div>}
-            {avgRating && <div className="tv-kpi"><div className="tv-kpi-val">{avgRating} ★</div><div className="tv-kpi-lbl">Avg Rating</div></div>}
+            {counts.plan > 0 && <div className="tv-kpi"><div className="tv-kpi-val" style={{color:'#9070d8'}}>{counts.plan}</div><div className="tv-kpi-lbl">Plan to watch</div></div>}
+            {allTimeShows.length > 0 && <div className="tv-kpi"><div className="tv-kpi-val" style={{color:'var(--accent)'}}>{allTimeShows.length}</div><div className="tv-kpi-lbl">All time</div></div>}
+            {avgRating && <div className="tv-kpi"><div className="tv-kpi-val">{avgRating} ★</div><div className="tv-kpi-lbl">Avg rating</div></div>}
           </div>
         )}
 
@@ -6863,6 +7185,78 @@
               <div className="tv-empty-sub">Add shows you're watching, have completed, or plan to watch.</div>
             </div>
 
+          ) : view === 'stats' ? (
+            <>
+              <div className="mv-stats-kpi-row">
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Total shows</div><div className="mv-kpi-value">{shows.length}</div><div className="mv-kpi-sub">{counts.completed} completed · {counts.watching} watching</div></div>
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Seasons</div><div className="mv-kpi-value">{tvStats.seasons}</div><div className="mv-kpi-sub">across your library</div></div>
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Avg rating</div><div className="mv-kpi-value">{tvStats.avg || '–'}</div><div className="mv-kpi-sub">{tvStats.ratedN} rated</div></div>
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Countries</div><div className="mv-kpi-value">{tvStats.countriesSet.size}</div><div className="mv-kpi-sub">of origin</div></div>
+                {tvStats.topGenre && <div className="mv-kpi-card"><div className="mv-kpi-label">Top genre</div><div className="mv-kpi-value mv-kpi-text">{tvStats.topGenre[0]}</div><div className="mv-kpi-sub">{tvStats.topGenre[1]} shows</div></div>}
+              </div>
+              {tvStats.countriesSet.size > 0 && (
+                <div className="mv-map-card">
+                  <div className="mv-chart-title">Countries of origin</div>
+                  <WorldMapView countriesSet={tvStats.countriesSet} countryCounts={tvStats.countryCounts} />
+                </div>
+              )}
+              <div className="mv-charts-2col">
+                <div className="mv-chart-card"><div className="mv-chart-title">Top genres</div><HorizBar data={tvStats.genres} maxW={120} /></div>
+                <div className="mv-chart-card"><div className="mv-chart-title">Languages</div><HorizBar data={tvStats.langs} color="#9070d8" maxW={120} /></div>
+              </div>
+              {tvStats.years.length > 1 && (
+                <div className="mv-chart-card" style={{marginBottom:14}}><div className="mv-chart-title">Shows by first-aired year</div><LineChart data={tvStats.years} /></div>
+              )}
+              <div className="mv-charts-2col">
+                <div className="mv-chart-card"><div className="mv-chart-title">Rating distribution</div><RatingBars data={tvStats.ratingDist} /></div>
+                <div className="mv-chart-card"><div className="mv-chart-title">By status</div><HorizBar data={TV_STATUS_OPTS.map(o=>({label:o.label,value:counts[o.id]})).filter(d=>d.value>0)} color="#5b96e8" maxW={120} /></div>
+              </div>
+              <div className="mv-charts-2col">
+                {tvStats.networks.length > 0 && <div className="mv-chart-card"><div className="mv-chart-title">Top networks</div><HorizBar data={tvStats.networks} color="#4aac76" maxW={120} /></div>}
+                {tvStats.actors.length > 0 && <div className="mv-chart-card"><div className="mv-chart-title">Most-watched actors</div><HorizBar data={tvStats.actors} color="#c98a10" maxW={140} /></div>}
+                {tvStats.creators.length > 0 && <div className="mv-chart-card"><div className="mv-chart-title">Creators you return to</div><HorizBar data={tvStats.creators} color="#e05252" maxW={140} /></div>}
+              </div>
+            </>
+          ) : (view === 'release' || view === 'network' || view === 'unrated') ? ((() => {
+            const groups = view === 'release' ? releaseGroups : view === 'network' ? networkGroups : unratedGroups;
+            const flat = view === 'unrated' && !groups ? [...unratedShows].sort((a,b)=>(a.title||'').localeCompare(b.title||'')) : null;
+            const total = view === 'unrated' ? unratedShows.length : filteredShows.length;
+            if (!total) return (
+              <div className="tv-empty">
+                <div className="tv-empty-icon"><Icon name={view==='unrated'?'star':'tv'} size={40} /></div>
+                <div className="tv-empty-ttl">{view === 'unrated' ? 'Every show is rated' : 'No shows match'}</div>
+                <div className="tv-empty-sub">{view === 'unrated' ? 'Nothing is waiting for a rating.' : 'Try a different search.'}</div>
+              </div>
+            );
+            const card = show => (
+              <div key={show.id} className="tv-card" onClick={()=>setModal({show})}>
+                <div className="tv-card-poster">
+                  {show.posterPath ? <img src={TMDB_IMG+show.posterPath} alt={show.title}/> : <div className="tv-card-poster-fb"><Icon name="tv" size={26} /></div>}
+                  {show.isAllTime && <div className="tv-at-badge"><Icon name="star" size={15} fill /></div>}
+                </div>
+                <div className="tv-card-body">
+                  <div className="tv-card-title" title={show.title}>{show.title}</div>
+                  <div className="tv-card-meta">{[show.firstAired, show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : ''].filter(Boolean).join(' · ') || show.creator || ''}</div>
+                  {show.rating ? <div className="tv-card-meta">{show.rating}★</div> : <div className="mv-needs-rating tv-card-meta">Needs rating</div>}
+                </div>
+              </div>
+            );
+            if (flat) return <div className="tv-card-grid">{flat.map(card)}</div>;
+            return groups.map(g => {
+              const k = view + '-' + g.key; const closed = !!collapsedGroups[k];
+              return (
+                <div key={k} className="tv-genre-section">
+                  <div className="mv-genre-hdr" onClick={()=>toggleGroup(k)}>
+                    <Icon name="chev" size={14} className={closed ? '' : 'chev-open'} />
+                    <span className="mv-genre-name">{g.key}</span>
+                    <span className="mv-genre-count">{g.items.length}</span>
+                  </div>
+                  {!closed && <div className="tv-card-grid">{g.items.map(card)}</div>}
+                </div>
+              );
+            });
+          })()
+
           ) : view === 'library' ? (
             /* ── LIBRARY: cards grouped by genre ───────────────────── */
             filteredShows.length === 0 ? (
@@ -6870,6 +7264,22 @@
                 <div className="tv-empty-icon"><Icon name="tv" size={40} /></div>
                 <div className="tv-empty-ttl">No {TV_STATUS_OPTS.find(s=>s.id===statusFilter)?.label.toLowerCase()} shows</div>
                 <div className="tv-empty-sub">Switch filter or add a new show.</div>
+              </div>
+            ) : gridMode === 'list' ? (
+              <div className="mv-list">
+                {filteredShows.map(show => (
+                  <div key={show.id} className="mv-list-item" onClick={()=>setModal({show})}>
+                    <div className="mv-li-poster">{show.posterPath ? <img src={TMDB_IMG+show.posterPath} alt={show.title}/> : <div className="tv-poster-fb"><Icon name="tv" size={18} /></div>}</div>
+                    <div className="mv-li-info">
+                      <div className="mv-li-title">{show.title}{show.firstAired ? <span className="mv-li-year"> {show.firstAired}</span> : null}</div>
+                      <div className="mv-li-meta">{[show.creator, (show.actors||[]).slice(0,3).join(', '), show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : null, show.network].filter(Boolean).join(' · ')}</div>
+                    </div>
+                    <div className="mv-li-right">
+                      {show.rating ? <StarRating value={show.rating} readOnly size={14}/> : <span className="mv-no-rating">Unrated</span>}
+                      <StatusBadge status={show.status}/>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : sortedGenres.map(genre => (
               <div key={genre} className="tv-genre-section">
@@ -6984,6 +7394,11 @@
             onDelete={deleteShow}
             onClose={()=>setModal(null)}
           />
+        )}
+        {enrichOpen && (
+          <TVEnrichModal shows={shows} tmdbKey={tmdbKey}
+            onApply={patches => onUpdate(d => ({ ...d, shows: d.shows.map(sh => patches[sh.id] ? { ...sh, ...patches[sh.id] } : sh) }))}
+            onClose={()=>setEnrichOpen(false)} />
         )}
         {bulkAddModal && (
           <BulkAddTVModal
@@ -8096,6 +8511,7 @@
             <div className="travel-section-hdr" style={{ marginBottom:16 }}>
               <span className="travel-section-title">Visits by Country</span>
             </div>
+            <div className="travel-groups">
             {byCountry.map(([country, cvs]) => (
               <div key={country} className="travel-country-group">
                 <div className="travel-country-hdr">
@@ -8123,6 +8539,7 @@
                 </div>
               </div>
             ))}
+            </div>
           </div>
         )}
 
