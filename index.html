@@ -13,7 +13,7 @@
   <title>Sidd — Work Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400..700&family=Bricolage+Grotesque:opsz,wght@12..96,500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23000'/><rect x='5' y='8' width='9' height='7' rx='2' fill='%236470f5'/><rect x='18' y='8' width='9' height='7' rx='2' fill='%236470f5' opacity='.45'/><rect x='5' y='18' width='9' height='7' rx='2' fill='%236470f5' opacity='.45'/><rect x='18' y='18' width='9' height='7' rx='2' fill='%236470f5'/></svg>">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -137,7 +137,7 @@
 
     /* MATRIX CARD */
     .mcard { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:12px 12px 12px 16px; position:relative; cursor:pointer; transition:border-color .15s,box-shadow .15s; }
-    .mcard:hover { border-color:var(--accent); box-shadow:0 2px 12px rgba(91,106,240,.15); }
+    .mcard:hover { border-color:var(--accent); box-shadow:0 6px 16px -8px rgba(0,0,0,.6); }
     .mcard.stale { border-color:rgba(201,138,16,.4); }
     .mcard-bar { position:absolute; left:0; top:0; bottom:0; width:4px; border-radius:8px 0 0 8px; }
     .mcard-title { font-size:14px; font-weight:600; color:var(--text); line-height:1.35; margin-bottom:7px; }
@@ -298,11 +298,10 @@
     /* TIME BLOCKS */
     .cal-block-btn { padding:7px 13px; border-radius:8px; border:1px solid var(--border); background:none; color:var(--text2); font-size:13px; font-weight:600; transition:all .15s; display:flex; align-items:center; gap:5px; }
     .cal-block-btn:hover { border-color:var(--accent); color:var(--accent); }
-    .tb-chip { font-size:10px; font-weight:700; padding:2px 5px 2px 4px; border-radius:4px; color:#fff; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:2px; margin-bottom:1px; transition:opacity .12s; background-image:repeating-linear-gradient(45deg,rgba(0,0,0,0.10) 0,rgba(0,0,0,0.10) 1px,transparent 1px,transparent 50%); background-size:6px 6px; }
+    .tb-chip { font-size:10px; font-weight:700; padding:2px 5px 2px 4px; border-radius:4px; color:#fff; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:2px; margin-bottom:1px; transition:opacity .12s;   }
     .tb-chip:hover { opacity:.75; }
     .tb-evt { border-radius:7px; padding:9px 10px; cursor:pointer; transition:opacity .15s; position:relative; overflow:hidden; }
     .tb-evt:hover { opacity:.8; }
-    .tb-evt::after { content:''; position:absolute; inset:0; background:repeating-linear-gradient(45deg,rgba(0,0,0,0.08) 0,rgba(0,0,0,0.08) 2px,transparent 2px,transparent 8px); pointer-events:none; }
     .tb-evt-time { font-size:10px; font-weight:700; color:rgba(255,255,255,0.75); margin-bottom:3px; letter-spacing:.3px; }
     .tb-evt-title { font-size:13px; font-weight:700; color:#fff; line-height:1.3; }
     .tb-evt-notes { font-size:11px; color:rgba(255,255,255,0.65); margin-top:3px; }
@@ -354,7 +353,6 @@
     .tg-half-line { position:absolute; left:0; right:0; border-top:1px dashed var(--border); opacity:.35; pointer-events:none; }
     .tg-block-pos { position:absolute; left:2px; right:2px; border-radius:6px; overflow:hidden; cursor:pointer; transition:opacity .15s; padding:3px 6px; box-sizing:border-box; }
     .tg-block-pos:hover { opacity:.82; }
-    .tg-block-pos::after { content:''; position:absolute; inset:0; background:repeating-linear-gradient(45deg,rgba(0,0,0,0.07) 0,rgba(0,0,0,0.07) 2px,transparent 2px,transparent 7px); pointer-events:none; }
     .tg-bp-time { font-size:9px; font-weight:700; color:rgba(255,255,255,.75); letter-spacing:.2px; white-space:nowrap; overflow:hidden; }
     .tg-bp-title { font-size:11px; font-weight:700; color:#fff; line-height:1.25; overflow:hidden; }
     .tg-bp-notes { font-size:10px; color:rgba(255,255,255,.6); margin-top:1px; overflow:hidden; }
@@ -1554,6 +1552,321 @@
     .gh-pill { cursor:pointer; }
     .gh-pill.conflict, .gh-pill.error, .gh-pill.auth { border-color:color-mix(in srgb, var(--high) 45%, var(--border)); color:var(--text); }
     @media (max-width:820px) { .gh-pill span { display:none; } .gh-form-row { grid-template-columns:1fr; } }
+
+    /* ╔══════════════════════════════════════════════════════════════╗
+       ║  HARBOUR DUSK — final design layer (overrides all above)      ║
+       ║  tokens · type scale · tabs/segments/chips · drawer · panels  ║
+       ╚══════════════════════════════════════════════════════════════╝ */
+    :root {
+      --font-ui:'Hanken Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+      --font-display:'Bricolage Grotesque','Hanken Grotesk',ui-sans-serif,system-ui,sans-serif;
+      --fs-xs:12px; --fs-sm:13.5px; --fs-base:15px; --fs-md:17px; --fs-lg:21px; --fs-xl:28px;
+      --r-sm:8px; --r-md:11px; --r-lg:16px; --r-xl:22px;
+      --g-a:#e0566b; --g-b:var(--accent); --g-c:#f2a54b; --on-accent:#14141c;
+      --grad:linear-gradient(118deg, var(--g-a), var(--g-b) 52%, var(--g-c));
+      --grad-soft:linear-gradient(118deg, color-mix(in srgb,var(--g-a) 20%,transparent), color-mix(in srgb,var(--g-b) 20%,transparent) 52%, color-mix(in srgb,var(--g-c) 20%,transparent));
+      --hair:color-mix(in srgb, var(--text) 10%, transparent);
+      --hair-2:color-mix(in srgb, var(--text) 16%, transparent);
+      --accent-soft:color-mix(in srgb, var(--accent) 16%, transparent);
+      --accent-line:color-mix(in srgb, var(--accent) 52%, transparent);
+      --lift:0 1px 0 rgba(255,255,255,.05) inset, 0 8px 24px -12px rgba(0,0,0,.6);
+      --ease:cubic-bezier(.16,1,.3,1);
+    }
+    body { font-family:var(--font-ui); font-size:var(--fs-base); line-height:1.5; letter-spacing:0; font-feature-settings:'tnum' 0,'ss01' 0; -webkit-font-smoothing:antialiased; }
+    ::selection { background:color-mix(in srgb, var(--g-b) 45%, transparent); color:inherit; }
+    input, textarea { caret-color:var(--g-b); }
+    html { scrollbar-color:color-mix(in srgb,var(--text) 22%,transparent) transparent; }
+
+    /* horizon light: the only place the gradient is used as ambience */
+    body::before { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(1200px 560px at 90% -12%, color-mix(in srgb, var(--g-c) 17%, transparent), transparent 70%),
+        radial-gradient(1000px 620px at 2% 112%, color-mix(in srgb, var(--g-a) 18%, transparent), transparent 70%),
+        linear-gradient(to top, color-mix(in srgb, var(--g-c) 8%, transparent), transparent 34%); }
+    body.light::before { opacity:.55; }
+
+    /* ── type scale: one family, six steps ── */
+    h1, h2, .page-title, .home-greeting-name, .modal-title, .mv-topbar-title, .cal-month-title, .budget-month-label { font-family:var(--font-display); letter-spacing:-.02em; font-weight:600; }
+    .section-title, .home-section-title, .mv-chart-title, .bw-chart-title, .travel-section-title, .tv-genre-hdr, .mv-genre-name, .uni-planner-sem-hdr, .tv-unranked-title, .tv-notranked-title, .mv-rank-unranked-title, .bmt-section-title, .wf-income-label, .cal-nodl-title {
+      font-family:var(--font-ui); font-size:var(--fs-md); font-weight:650; letter-spacing:-.01em; text-transform:none; color:var(--text); }
+    .mhdr-label, .phdr-label, .pri-lbl, .nstat-l, .uni-gpa-label, .uni-atable th, .uni-pl-corner, .mhdr-corner, .uni-pl-col-lbl, .mv-kpi-label, .tv-kpi-lbl, .wf-group-label, .bmt th, .apf-label, .subtasks-label, .mv-hm-title, .done-toggle, .cal-wday, .week-dayname, .mv-form-lbl, .task-cell::before, .uni-pl-cell::before, .mv-sb-label, label {
+      font-size:var(--fs-xs); font-weight:600; letter-spacing:.01em; text-transform:none; color:var(--text2); }
+    .cal-wday, .week-dayname { text-transform:uppercase; letter-spacing:.06em; }
+    .home-stat-n, .mv-kpi-value, .uni-gpa-val, .travel-stat-n, .tv-kpi-val, .wf-income-val, .wf-subtotal-val { font-family:var(--font-display); font-size:var(--fs-xl); font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; line-height:1.1; }
+    .home-greeting-name { font-size:var(--fs-xl); }
+    .home-greeting-date, .section-desc, .storage-sub, .home-stat-sub, .mv-kpi-sub, .uni-gpa-sub, .travel-stat-l, .cell-empty, .home-empty { font-size:var(--fs-sm); color:var(--text2); }
+    .mcard-title, .cat-name, .uni-sem-title, .uni-subj-name, .home-nav-title, .mv-li-title, .tv-title, .mv-dir-name, .travel-country-name, .row-title { font-size:var(--fs-base); font-weight:600; letter-spacing:-.005em; }
+    .mcard-meta, .mcard-dl, .mcard-client, .mcard-type, .mcard-notes, .row-client, .row-dl, .mv-card-sub, .tv-card-meta, .mv-li-meta, .tv-meta, .uni-atable td, .bmt td, .st-txt { font-size:var(--fs-sm); }
+    .mv-card-title, .tv-card-title { font-size:var(--fs-sm); font-weight:600; }
+    [style*="font-size: 9px"], [style*="font-size: 10px"], [style*="font-size: 11px"] { font-size:var(--fs-xs) !important; }
+    [style*="font-size: 12px"] { font-size:var(--fs-xs) !important; }
+
+    /* ── icons ── */
+    .ic { flex:none; display:inline-block; vertical-align:-3px; }
+    .mv-empty-icon, .tv-empty-icon, .travel-empty-icon, .budget-empty-icon { color:var(--text3); display:flex; justify-content:center; font-size:0; margin-bottom:var(--sp-3,12px); }
+    .mv-empty-icon .ic, .tv-empty-icon .ic, .travel-empty-icon .ic, .budget-empty-icon .ic { width:44px; height:44px; padding:10px; box-sizing:content-box; border-radius:18px; background:var(--grad-soft); color:var(--text); stroke-width:1.5; }
+    .mv-at-badge, .tv-at-badge { color:#f2c14b; display:flex; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
+
+    /* ── top bar ── */
+    .topnav { height:60px; padding:0 var(--pad); gap:24px; background:color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter:blur(18px) saturate(1.3); -webkit-backdrop-filter:blur(18px) saturate(1.3); border-bottom:1px solid var(--hair); }
+    .topnav::after { content:''; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:var(--grad); opacity:.55; pointer-events:none; }
+    .nav-logo { display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-size:19px; font-weight:650; letter-spacing:-.03em; }
+    .nav-logo::before { content:''; width:22px; height:22px; border-radius:7px; background:var(--grad); box-shadow:inset 0 1px 0 rgba(255,255,255,.35); }
+    .nav-logo span { color:var(--g-c); }
+    .nav-tabs { background:none; border:none; padding:0; gap:2px; border-radius:0; }
+    .nav-tab { position:relative; padding:9px 12px; border-radius:var(--r-sm); background:none; box-shadow:none; font-size:14px; font-weight:550; color:var(--text2); }
+    .nav-tab:hover { color:var(--text); background:color-mix(in srgb, var(--text) 6%, transparent); }
+    .nav-tab.active { background:none; box-shadow:none; color:var(--text); font-weight:650; }
+    .nav-tab.active::after { content:''; position:absolute; left:10px; right:10px; bottom:-12px; height:2px; border-radius:2px 2px 0 0; background:var(--grad); }
+    .file-pill { background:color-mix(in srgb, var(--text) 5%, transparent); border:1px solid var(--hair); border-radius:var(--r-sm); }
+    .nav-settings-btn { border-radius:var(--r-md); border-color:var(--hair); }
+    .nav-settings-btn.active { background:var(--grad-soft); border-color:var(--accent-line); color:var(--text); }
+
+    /* ── page header (one per tab) ── */
+    .page-hdr { display:flex; align-items:flex-end; justify-content:space-between; gap:var(--pad); padding:28px var(--pad) 8px; max-width:1680px; margin:0 auto; }
+    .page-hdr h1 { font-size:var(--fs-xl); line-height:1.1; }
+    .page-hdr p { margin-top:6px; font-size:var(--fs-sm); color:var(--text2); }
+
+    /* ── three navigation roles: tabs, segments, chips ── */
+    /* tabs: text with a gradient underline (sub-navigation) */
+    .uni-view-toggle:not(.uni-sem-filter), .tv-view-tabs, .mv-at-header-tabs, .subnav-tabs { display:flex; gap:4px; background:none; border:none; border-bottom:1px solid var(--hair); border-radius:0; padding:0; margin-bottom:var(--sp-4,16px); }
+    .uni-view-toggle:not(.uni-sem-filter) .uni-vtab, .tv-vtab, .mv-at-htab, .subnav-tab { position:relative; background:none !important; border:none; border-radius:0; box-shadow:none !important; padding:10px 14px; font-size:var(--fs-sm); font-weight:550; color:var(--text2); white-space:nowrap; display:inline-flex; align-items:center; gap:7px; }
+    .uni-view-toggle:not(.uni-sem-filter) .uni-vtab:hover, .tv-vtab:hover, .mv-at-htab:hover, .subnav-tab:hover { color:var(--text); }
+    .uni-view-toggle:not(.uni-sem-filter) .uni-vtab.active, .tv-vtab.active, .mv-at-htab.active, .subnav-tab.active { color:var(--text); font-weight:650; }
+    .uni-view-toggle:not(.uni-sem-filter) .uni-vtab.active::after, .tv-vtab.active::after, .mv-at-htab.active::after, .subnav-tab.active::after { content:''; position:absolute; left:10px; right:10px; bottom:-1px; height:2px; border-radius:2px 2px 0 0; background:var(--grad); }
+    .subnav-count { font-size:var(--fs-xs); color:var(--text3); font-variant-numeric:tabular-nums; }
+    .subnav-tab.active .subnav-count { color:var(--text2); }
+    /* segments: switch how the same data is shown */
+    .view-toggle, .cal-view-toggle, .mv-view-toggle { display:inline-flex; gap:2px; background:color-mix(in srgb, var(--text) 5%, transparent); border:1px solid var(--hair); border-radius:var(--r-md); padding:3px; }
+    .vtab, .cal-vtab, .mv-vtab { padding:6px 13px; border-radius:var(--r-sm); font-size:var(--fs-sm); font-weight:550; color:var(--text2); background:none; border:none; box-shadow:none; display:inline-flex; align-items:center; gap:6px; }
+    .vtab:hover, .cal-vtab:hover, .mv-vtab:hover { color:var(--text); }
+    .vtab.active, .cal-vtab.active, .mv-vtab.active { background:var(--grad-soft); color:var(--text); font-weight:650; box-shadow:inset 0 0 0 1px var(--accent-line); }
+    body.light .vtab.active, body.light .cal-vtab.active, body.light .mv-vtab.active { background:var(--grad-soft); }
+    /* chips: filter what you see */
+    .toolbar .ctry-btn, .ctry-btn, .tv-stab, .uni-sem-filter .uni-vtab, .subnav-chip { padding:6px 12px; min-height:32px; border-radius:var(--r-sm); border:1px solid var(--hair); background:transparent; font-size:var(--fs-sm); font-weight:550; color:var(--text2); display:inline-flex; align-items:center; gap:6px; white-space:nowrap; box-shadow:none; }
+    .ctry-btn:hover, .tv-stab:hover, .uni-sem-filter .uni-vtab:hover, .subnav-chip:hover { color:var(--text); border-color:var(--hair-2); background:color-mix(in srgb, var(--text) 5%, transparent); }
+    .ctry-btn.active, .tv-stab.active, .uni-sem-filter .uni-vtab.active, .subnav-chip.active { background:var(--grad-soft); border-color:var(--accent-line); color:var(--text); font-weight:650; box-shadow:none; }
+    .tv-status-tabs, .uni-sem-filter { display:flex; gap:6px; background:none; border:none; padding:0; border-radius:0; }
+    .tv-status-tabs { flex-wrap:wrap; }
+    .uni-sem-filter { overflow-x:auto; }
+
+    /* ── buttons: one primary (gradient light), one ghost ── */
+    .add-btn, .mv-add-btn, .tv-add-btn, .travel-add-btn, .btn-save, .sbtn.primary, .mv-search-btn, .st-add-btn {
+      background:var(--grad); color:var(--on-accent); border:none; border-radius:var(--r-md); font-size:var(--fs-sm); font-weight:650; letter-spacing:0;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 6px 14px -8px rgba(0,0,0,.65);
+      transition:filter .15s, transform .12s var(--ease), box-shadow .2s; }
+    .add-btn:hover, .mv-add-btn:hover, .tv-add-btn:hover, .travel-add-btn:hover, .btn-save:hover, .sbtn.primary:hover, .mv-search-btn:hover, .st-add-btn:hover { filter:brightness(1.07) saturate(1.05); opacity:1; }
+    .add-btn:active, .mv-add-btn:active, .tv-add-btn:active, .travel-add-btn:active, .btn-save:active, .sbtn.primary:active { transform:translateY(1px) scale(.99); filter:brightness(.97); }
+    .btn-save:disabled, .mv-search-btn:disabled { opacity:.45; filter:saturate(.5); box-shadow:none; }
+    .cal-nav-btn, .cal-today-btn, .cal-block-btn, .fbtn:not(.primary), .mv-enrich-btn, .btn-cancel, .uni-add-sem-btn, .sbtn:not(.primary):not(.danger), .budget-setup-btn, .uni-act-btn, .cat-row-edit-btn, .nav-settings-btn, .budget-arrow, .ghost-btn {
+      background:color-mix(in srgb, var(--text) 3%, transparent); color:var(--text); border:1px solid var(--hair); border-radius:var(--r-md); font-size:var(--fs-sm); font-weight:550; }
+    .cal-nav-btn:hover, .cal-today-btn:hover, .cal-block-btn:hover, .fbtn:not(.primary):hover, .mv-enrich-btn:hover, .btn-cancel:hover, .uni-add-sem-btn:hover, .sbtn:not(.primary):not(.danger):hover, .budget-setup-btn:hover, .nav-settings-btn:hover, .budget-arrow:hover, .ghost-btn:hover { background:color-mix(in srgb, var(--text) 8%, transparent); border-color:var(--hair-2); color:var(--text); }
+    .cell-add, .cat-add-inline, .pcol-add, .week-add, .uni-add-assess, .uni-sem-add-subj, .add-proj-btn { border:1px dashed var(--hair-2); border-radius:var(--r-md); color:var(--text2); font-size:var(--fs-sm); background:transparent; }
+    .cell-add:hover, .cat-add-inline:hover, .pcol-add:hover, .week-add:hover, .uni-add-assess:hover, .uni-sem-add-subj:hover, .add-proj-btn:hover { border-color:var(--accent-line); color:var(--text); background:var(--grad-soft); }
+    .btn-del { border-radius:var(--r-md); }
+
+    /* ── surfaces: solid, one hairline, faintly top-lit. No glass. ── */
+    .home-stat-card, .home-nav-card, .mv-kpi-card, .mv-chart-card, .mv-map-card, .mv-country-goal, .uni-gpa-card, .uni-sem, .travel-stat, .tv-kpi, .settings-section, .bmt, .wf-card, .bw-chart-card, .cal-nodl-section, .mv-dir-card, .travel-map-wrap, .cal-agenda, .matrix-row, .uni-pl-row, .storage-status, .gh-conflict {
+      background:var(--panel-hi), var(--surface); border:1px solid var(--hair); border-radius:var(--r-lg); box-shadow:var(--lift); }
+    .pri-row, .mv-list-item, .home-task-row, .mv-rank-item, .tv-rank-item, .travel-visit-card, .cat-row, .mv-rank-unranked-item, .tv-unranked-item, .cal-nodl-row, .mv-hm-item {
+      background:var(--panel-hi), var(--surface); border:1px solid var(--hair); border-radius:var(--r-md); box-shadow:none; }
+    .pri-row:hover, .mv-list-item:hover, .home-task-row:hover, .travel-visit-card:hover { border-color:var(--accent-line); }
+    .mv-card, .tv-card { border-radius:var(--r-md); border:1px solid var(--hair); background:var(--surface); }
+    .mv-card:hover, .tv-card:hover { box-shadow:0 14px 30px -14px rgba(0,0,0,.7); border-color:var(--hair-2); }
+    .matrix-row { padding:10px; background:var(--panel-hi), color-mix(in srgb, var(--surface) 70%, transparent); }
+    .cat-label-cell, .uni-pl-subj-cell { background:none; border:none; box-shadow:none; }
+    .task-cell, .uni-pl-cell { background:color-mix(in srgb, var(--text) 3.5%, transparent); border:1px solid var(--hair); border-radius:var(--r-md); }
+    .mhdr-col, .pers-col-hdr, .uni-pl-col-hdr { background:none; border:none; border-bottom:1px solid var(--hair); border-radius:0; padding:8px 4px 10px; }
+    .mhdr-label, .phdr-label, .uni-pl-col-lbl { color:var(--text); font-size:var(--fs-sm); font-weight:650; text-transform:none; }
+    .matrix-wrap, .pers-wrap { max-width:1680px; margin:0 auto; }
+    .cal-grid, .tg-wrap, .week-col { border-color:var(--hair); border-radius:var(--r-lg); }
+    .cal-cell { background:color-mix(in srgb, var(--surface) 85%, transparent); }
+    .cal-wday { background:color-mix(in srgb, var(--surface) 92%, transparent); }
+    .cal-is-today { background:var(--grad-soft); }
+    .cal-today-n, .week-today-num { background:var(--grad) !important; color:var(--on-accent) !important; }
+    .cal-sel .cal-day-n:not(.cal-today-n) { box-shadow:inset 0 0 0 2px var(--accent-line); }
+
+    /* cards that carry a colour: tinted field + small dot. No coloured edge stripes. */
+    .tint, .mcard.tinted { border:1px solid color-mix(in srgb, var(--cc) 30%, var(--hair)) !important; border-left-width:1px !important; background:color-mix(in srgb, var(--cc) 14%, var(--surface2)) !important; position:relative; }
+    .tint:hover, .mcard.tinted:hover { border-color:color-mix(in srgb, var(--cc) 62%, transparent) !important; border-left-color:color-mix(in srgb, var(--cc) 62%, transparent) !important; }
+    .mcard.tinted .mcard-bar { left:12px; top:15px; bottom:auto; width:8px; height:8px; border-radius:50%; background:var(--cc) !important; }
+    .mcard { padding:12px 38px 12px 30px; border-radius:var(--r-md); }
+    .tint::before { content:''; position:absolute; left:9px; top:11px; width:6px; height:6px; border-radius:50%; background:var(--cc); }
+    .cal-evt.tint, .tb-chip.tint { padding-left:20px; }
+    .cal-evt.tint::before, .tb-chip.tint::before { top:50%; transform:translateY(-50%); left:8px; }
+    .week-evt.tint, .tb-evt.tint, .uni-pl-card.tint, .tg-block-pos.tint { padding-left:24px; }
+    .tg-block-pos.tint::before { top:7px; }
+
+    /* ── forms ── */
+    input[type=text], input[type=date], input[type=time], input[type=number], input[type=password], select, textarea, .mv-search-in, .mv-form-in, .settings-select, .client-select, .st-add-in, .edit-name-input, .apf-input, .mv-unrated-sort, .ctry-search-input {
+      background:color-mix(in srgb, var(--text) 4.5%, transparent); border:1px solid var(--hair); border-radius:var(--r-md); color:var(--text); font-size:var(--fs-base); padding:10px 13px; }
+    select option { background:var(--surface2); }
+    input:hover, select:hover, textarea:hover { border-color:var(--hair-2); }
+    input:focus, select:focus, textarea:focus { border-color:var(--accent-line) !important; box-shadow:0 0 0 2px color-mix(in srgb, var(--bg) 60%, transparent), 0 0 0 3.5px var(--accent-line); }
+    input.search-input { border-radius:var(--r-md); padding:9px 14px; background:color-mix(in srgb, var(--text) 4.5%, transparent); }
+
+    /* ── ONE edit surface: right drawer on PC, bottom sheet on phones ── */
+    .overlay { background:rgba(4,6,16,.55); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:400; }
+    .modal { padding:0; background:var(--panel-hi), var(--surface); border:1px solid var(--hair); box-shadow:0 30px 80px -20px rgba(0,0,0,.75); }
+    .modal-hdr { position:sticky; top:0; z-index:3; margin:0; padding:20px 24px 16px; background:var(--surface); border-bottom:1px solid var(--hair); }
+    .modal > *:not(.modal-hdr):not(.modal-footer) { margin-left:24px; margin-right:24px; }
+    .modal > .modal-hdr + * { margin-top:20px; }
+    .modal-footer { position:sticky; bottom:0; z-index:3; margin:24px 0 0; padding:14px 24px; background:var(--surface); border-top:1px solid var(--hair); gap:10px; }
+    @media (min-width:821px) {
+      .overlay { justify-content:flex-end; align-items:stretch; padding:0; }
+      .modal { width:min(540px,100vw); max-width:none !important; height:100dvh; max-height:100dvh; border-radius:var(--r-xl) 0 0 var(--r-xl); border-right:none; border-top:none; border-bottom:none; overflow-y:auto; animation:drawerIn .34s var(--ease); display:flex; flex-direction:column; }
+      .modal-footer { margin-top:auto; }
+      .modal > *:not(.modal-hdr):not(.modal-footer):last-of-type { margin-bottom:24px; }
+    }
+    @keyframes drawerIn { from { transform:translateX(36px); opacity:0; } to { transform:none; opacity:1; } }
+    .ctx-menu { background:var(--surface2); border-radius:var(--r-md); border:1px solid var(--hair-2); }
+
+    /* ── Home ── */
+    .home-wrap { max-width:1180px; padding:12px var(--pad) 64px; }
+    .home-greeting { margin-bottom:24px; }
+    .home-section-title { margin:32px 0 12px; }
+    .home-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin-bottom:0; background:var(--panel-hi), var(--surface); border:1px solid var(--hair); border-radius:var(--r-lg); box-shadow:var(--lift); overflow:hidden; }
+    .home-stats .home-stat-card, .home-stats .home-stat-card.alert, .home-stats .home-stat-card.warn, .home-stats .home-stat-card.ok { background:none; border:none; border-radius:0; box-shadow:none; padding:22px 24px; gap:2px; }
+    .home-stats .home-stat-card + .home-stat-card { border-left:1px solid var(--hair); }
+    .home-stat-l { font-size:var(--fs-sm); font-weight:600; color:var(--text); margin-top:6px; }
+    .home-nav-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0 28px; margin-bottom:0; }
+    .home-nav-card { background:none; border:none; border-bottom:1px solid var(--hair); border-radius:0; box-shadow:none; padding:14px 8px; gap:14px; transition:background .2s; }
+    .home-nav-card:hover { background:var(--grad-soft); transform:none; border-bottom-color:var(--hair); border-radius:var(--r-md); }
+    .home-nav-icon { width:38px; height:38px; border-radius:var(--r-md); background:var(--grad-soft) !important; color:var(--text); font-size:0; }
+    .home-nav-badge { border-radius:var(--r-sm); font-size:var(--fs-xs); background:none; }
+    .home-lower { gap:32px; }
+    .home-task-row { padding:12px 14px; }
+
+    /* ── Films sub-navigation (replaces the left sidebar) ── */
+    .mv-wrap { flex-direction:column; max-width:1680px; margin:0 auto; }
+    .subnav { padding:0 var(--pad); }
+    .subnav-tabs { overflow-x:auto; scrollbar-width:none; margin-bottom:12px; align-items:center; }
+    .subnav-tabs::-webkit-scrollbar { display:none; }
+    .subnav-spacer { flex:1; min-width:12px; }
+    .subnav-search { width:200px; flex:none; margin:4px 0; padding:7px 12px !important; border-radius:var(--r-md); font-size:var(--fs-sm) !important; }
+    .subnav-years { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; align-items:center; }
+    .subnav-years::-webkit-scrollbar { display:none; }
+    .subnav-years-lbl { font-size:var(--fs-xs); font-weight:600; color:var(--text3); flex:none; margin-right:4px; }
+    .subnav-chip .subnav-count { margin-left:2px; }
+    .mv-topbar { padding:16px var(--pad) 10px; border-bottom:none; }
+    .mv-topbar-title { font-size:var(--fs-lg); }
+    .mv-stats, .mv-content, .mv-kpi-strip, .mv-genre-view, .mv-unrated-view { padding-left:var(--pad); padding-right:var(--pad); }
+
+    /* ── data bits ── */
+    .wf-bar-fill, .mv-cg-bar-fill { background:var(--grad) !important; }
+    .gbadge, .cat-badge, .mcard-pri, .row-cat, .mv-genre-pill, .home-task-tag { border-radius:6px; font-size:var(--fs-xs); font-weight:600; letter-spacing:0; }
+    .bmt th, .uni-atable th { border-bottom:1px solid var(--hair); }
+    .bmt th.bmt-focus { color:var(--text); background:var(--grad-soft); }
+    .st-box.checked, .st-item-box.checked, .city-tag, .st-count-pill, .mv-rank-badge { background:var(--grad); color:var(--on-accent); border-color:transparent; }
+    .mv-rank-num.top3, .mv-li-rank.top3, .tv-rank-num.top3 { color:var(--g-c); }
+    input[type=checkbox], input[type=radio] { accent-color:var(--g-b); }
+
+    /* ── phone chrome ── */
+    .bn-ic { filter:none; opacity:1; display:flex; }
+    .bn-item { font-size:var(--fs-xs); }
+    .bn-item.active .bn-ic { color:var(--g-c); }
+    .bn-item.active { color:var(--text); }
+    .bn-item.active::before { background:var(--grad); }
+    .more-item { border-radius:var(--r-lg); background:var(--panel-hi), var(--surface); border-color:var(--hair); }
+    .more-item.active { background:var(--grad-soft); border-color:var(--accent-line); color:var(--text); }
+    .more-ic { display:flex; color:var(--text); font-size:0; }
+    @media (max-width:820px) {
+      :root { --pad:16px; }
+      .page-hdr { padding:20px var(--pad) 4px; }
+      .page-hdr h1 { font-size:24px; }
+      .modal-hdr { padding:18px 16px 14px; }
+      .modal > *:not(.modal-hdr):not(.modal-footer) { margin-left:16px; margin-right:16px; }
+      .modal-footer { padding:12px 16px calc(12px + var(--safe-b)); margin:20px 0 0; }
+      .modal { padding:0; border-radius:var(--r-xl) var(--r-xl) 0 0; }
+      .home-stats { grid-template-columns:repeat(2,1fr); }
+      .home-stats .home-stat-card:nth-child(3) { border-left:none; }
+      .home-stats .home-stat-card:nth-child(n+3) { border-top:1px solid var(--hair); }
+      .home-stats .home-stat-card { padding:16px; }
+      .home-nav-grid { grid-template-columns:1fr; }
+      .home-nav-card { flex-direction:row; align-items:center; padding:12px 4px; }
+      .home-nav-badge { position:static; }
+      .subnav { padding:0 var(--pad); }
+      .subnav-search { width:140px; }
+      .mv-topbar-title { font-size:var(--fs-md); }
+      .mv-sidebar { display:none; }
+    }
+    @media (prefers-reduced-motion:reduce) { .modal, .overlay, .more-sheet { animation:none !important; } }
+
+    /* ── shell: one content width and one left edge for every tab ── */
+    :root { --shell:1440px; }
+    .topnav { padding-left:max(var(--pad), calc((100vw - var(--shell)) / 2 + var(--pad))); padding-right:max(var(--pad), calc((100vw - var(--shell)) / 2 + var(--pad))); }
+    .page-hdr, .toolbar, .matrix-wrap, .pri-wrap, .pers-wrap, .cal-wrap, .uni-wrap, .travel-wrap, .budget-wrap, .settings-wrap, .home-wrap, .tv-wrap, .mv-wrap { max-width:var(--shell); margin-left:auto; margin-right:auto; width:100%; }
+    .settings-wrap { max-width:min(var(--shell), 880px); margin-left:max(0px, calc((100vw - var(--shell)) / 2)); }
+    .toolbar { background:none; border-bottom:none; padding-top:6px; padding-bottom:10px; }
+    .nav-logo { display:block; white-space:nowrap; }
+    .nav-logo::before { display:inline-block; vertical-align:-5px; margin-right:10px; }
+    body::before {
+      background:
+        radial-gradient(1200px 600px at 92% -14%, color-mix(in srgb, var(--g-c) 26%, transparent), transparent 70%),
+        radial-gradient(1000px 640px at 0% 112%, color-mix(in srgb, var(--g-a) 28%, transparent), transparent 70%),
+        linear-gradient(to top, color-mix(in srgb, var(--g-c) 13%, transparent), transparent 36%); }
+
+    /* dusk sky: violet overhead, rose then amber toward the horizon (derived from the accent) */
+    body::before {
+      background:
+        radial-gradient(1300px 620px at 88% -16%, color-mix(in srgb, var(--g-sky, #5b4bd6) 34%, transparent), transparent 70%),
+        radial-gradient(1000px 640px at 0% 112%, color-mix(in srgb, var(--g-a) 26%, transparent), transparent 70%),
+        linear-gradient(to top, color-mix(in srgb, var(--g-c) 14%, transparent), transparent 34%); }
+    .topnav::after { background:linear-gradient(90deg, var(--g-sky, var(--g-a)), var(--g-a) 40%, var(--g-c)); }
+
+    :root { --panel-hi:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,0) 55%); }
+    body.light { --panel-hi:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0) 60%); --lift:0 1px 0 rgba(255,255,255,.8) inset, 0 8px 24px -14px rgba(30,40,80,.25); }
+
+    /* batch fix after first inspection */
+    .home-stats .home-stat-card { display:flex; flex-direction:column; justify-content:flex-start; align-items:flex-start; padding:20px 22px !important; min-height:0; }
+    .home-stat-n { margin:0; }
+    .home-stat-n[style*="color"] { text-shadow:none; }
+    @media (max-width:820px) {
+      .task-cell:has(> .cell-empty) .cell-add { display:none; }
+      .task-cell:has(> .cell-empty) { padding:10px 12px; }
+      .cat-label-cell { padding-left:4px; }
+      .cat-add-inline { opacity:1; }
+      .toolbar-row { gap:8px; }
+      .add-btn { height:48px; border-radius:24px; padding:0 20px; }
+    }
+    .recur-toggle-label .ic { vertical-align:-3px; }
+
+    /* ── review fixes ── */
+    :root { --fs-xs:12.5px; --fs-sm:14px; --fs-lg:22px; }
+    .modal-close { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:var(--r-sm); color:var(--text2); }
+    .modal-close:hover { background:color-mix(in srgb, var(--text) 8%, transparent); color:var(--text); }
+    .chev-open { transform:rotate(90deg); }
+    .uni-sem-chevron .ic, .uni-subj-chevron .ic { transition:transform .2s var(--ease); }
+    .uni-assess-del .ic { vertical-align:-2px; }
+    /* Home destinations: plain line icons, no tiles */
+    .home-nav-icon { width:28px; height:28px; border-radius:0; background:none !important; color:var(--text2); }
+    .home-nav-card:hover .home-nav-icon { color:var(--g-c); }
+    /* ground: a whisper at the horizon, not mud */
+    body::before {
+      background:
+        radial-gradient(1300px 620px at 88% -16%, color-mix(in srgb, var(--g-sky, #5b4bd6) 32%, transparent), transparent 70%),
+        radial-gradient(1000px 640px at 0% 112%, color-mix(in srgb, var(--g-a) 13%, transparent), transparent 70%),
+        linear-gradient(to top, color-mix(in srgb, var(--g-c) 7%, transparent), transparent 30%); }
+    /* every readable bit at or above the 12.5px floor (calendar and time grid first) */
+    .cal-evt, .cal-more, .cal-nodl-lbl, .tb-chip, .tb-evt-time, .tb-evt-notes, .week-evt-meta, .tg-allday-gutter, .tg-hour-lbl, .tg-bp-time, .tg-bp-notes, .uni-subj-code, .uni-subj-cr, .uni-pl-card-meta, .uni-pl-subj-code, .st-progress, .mv-top4-rank, .mv-top4-dir, .mv-no-rating, .mv-hm-badge, .enrich-detail, .mv-result-meta, .row-updated, .row-stale-badge, .cat-hint, .cat-row-tag, .mcard-stale, .mcard-recur, .budget-badge, .tv-status-badge, .mv-sb-count, .cal-day-n, .tg-bp-title, .week-evt-title, .st-count-pill, .nstat-l { font-size:var(--fs-xs); }
+    .mv-rank-badge { font-size:12px; padding:2px 6px; }
+    .tg-hour-lbl { font-variant-numeric:tabular-nums; }
+    .nstat-n { font-family:var(--font-display); font-size:var(--fs-md); font-weight:600; }
+    @media (max-width:820px) {
+      .gh-pill span { display:inline; }
+      .gh-pill { padding:6px 10px; }
+      .file-pill:not(.gh-pill) span { display:none; }
+    }
+
+    /* sync gate */
+    .sync-block { position:fixed; inset:0; z-index:900; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(4,6,16,.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); animation:fadeIn .2s ease; }
+    .sync-block-card { width:min(440px,100%); background:var(--panel-hi), var(--surface); border:1px solid var(--hair-2); border-radius:var(--r-xl); padding:28px; box-shadow:0 30px 80px -20px rgba(0,0,0,.8); animation:drawerIn .3s var(--ease); }
+    .sync-block-ic { width:48px; height:48px; border-radius:var(--r-md); display:flex; align-items:center; justify-content:center; background:var(--grad-soft); color:var(--text); margin-bottom:16px; }
+    .sync-block-card h2 { font-size:var(--fs-lg); margin-bottom:8px; }
+    .sync-block-card p { font-size:var(--fs-base); color:var(--text2); line-height:1.55; }
+    .sync-block-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+    .sync-block-actions .btn-save, .sync-block-actions .btn-cancel { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:42px; padding:0 18px; }
+    @media (max-width:520px) { .sync-block { align-items:flex-end; padding:0; } .sync-block-card { border-radius:var(--r-xl) var(--r-xl) 0 0; padding:24px 20px calc(24px + var(--safe-b)); } .sync-block-actions > * { flex:1 1 100%; } }
   </style>
 </head>
 <body class="dark">
@@ -1624,8 +1937,88 @@
     { label:'Soft Dark',  value:'#191919' },
     { label:'Dark Gray',  value:'#1c1c1c' },
   ];
+
+  /* ── ICONS: one authored family (24px grid, 1.75 stroke) ───────────── */
+  const ICONS = {
+    home:<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>,
+    calendar:<><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></>,
+    briefcase:<><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 13h18"/></>,
+    cap:<><path d="m2.5 9.5 9.5-5 9.5 5-9.5 5z"/><path d="M6.5 12v4.5c0 1.4 2.5 2.7 5.5 2.7s5.5-1.3 5.5-2.7V12"/></>,
+    user:<><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
+    film:<><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></>,
+    tv:<><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="m8 2.5 4 3.5 4-3.5"/></>,
+    globe:<><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></>,
+    wallet:<><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><rect x="3" y="8" width="18" height="12" rx="2.5"/><circle cx="16.5" cy="14" r="1" fill="currentColor"/></>,
+    menu:<path d="M4 7h16M4 12h16M4 17h16"/>,
+    gear:<><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></>,
+    download:<path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 20h14"/>,
+    plus:<path d="M12 5v14M5 12h14"/>,
+    clock:<><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
+    alert:<><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.5v.01"/></>,
+    dice:<><rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="15" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/><circle cx="9" cy="15" r="1" fill="currentColor"/></>,
+    check:<><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></>,
+    refresh:<><path d="M20 11a8 8 0 1 0-2.2 5.6"/><path d="M20 4v7h-7"/></>,
+    pin:<><path d="M12 21s-7-6.2-7-11.2a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.5"/></>,
+    search:<><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,
+    star:<path d="m12 3.2 2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.6l6.1-.8z"/>,
+    chart:<path d="M5 20v-9M12 20V5M19 20v-12"/>,
+    tag:<><path d="M3.5 3.5h8l9 9-8 8-9-9z"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/></>,
+    layers:<><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></>,
+    wifi:<><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.8 16a5.5 5.5 0 0 1 6.4 0"/><circle cx="12" cy="19.2" r="1" fill="currentColor"/></>,
+    bolt:<path d="M13 2.5 4.5 13.5H11L10 21.5l8.5-11H12z"/>,
+    phone:<><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></>,
+    cart:<><path d="M3 4h2.5l2 11h10l2-8H7"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></>,
+    bag:<><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></>,
+    trend:<path d="m3 17 6-6 4 4 8-8M15 7h6v6"/>,
+    coins:<><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.7c0-1 1.2-1.7 2.5-1.7s2.5.7 2.5 1.7-1.2 1.6-2.5 1.9-2.5.9-2.5 1.9 1.2 1.7 2.5 1.7 2.5-.7 2.5-1.7"/></>,
+    x:<path d="M6 6l12 12M18 6 6 18"/>,
+    pen:<path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/>,
+    chev:<path d="m9 6 6 6-6 6"/>,
+    dot:<circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>,
+  };
+  const ICON_BY_EMOJI = { '🏠':'home', '📶':'wifi', '⚡':'bolt', '📱':'phone', '🛒':'cart', '🛍️':'bag', '📈':'trend', '💰':'coins' };
+  function Icon({ name, size=18, fill=false, className='' }) {
+    return <svg className={`ic ${className}`} width={size} height={size} viewBox="0 0 24 24" fill={fill ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[name] || ICONS.dot}</svg>;
+  }
+  function hexToHsl(hex) {
+    const r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
+    const mx = Math.max(r,g,b), mn = Math.min(r,g,b); let h = 0, s = 0; const l = (mx+mn)/2;
+    if (mx !== mn) { const d = mx-mn; s = l > .5 ? d/(2-mx-mn) : d/(mx+mn);
+      h = mx===r ? (g-b)/d + (g<b?6:0) : mx===g ? (b-r)/d + 2 : (r-g)/d + 4; h *= 60; }
+    return [h, s, l];
+  }
+  function hslToHex(h, s, l) {
+    h = ((h % 360) + 360) % 360; const c = (1 - Math.abs(2*l - 1)) * s, x = c * (1 - Math.abs((h/60) % 2 - 1)), m = l - c/2;
+    const [r,g,b] = h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x];
+    return '#' + [r,g,b].map(v => Math.round((v+m)*255).toString(16).padStart(2,'0')).join('');
+  }
+  function mixHex(a, b, t) {
+    const ch = (h,i) => parseInt(h.slice(i,i+2),16);
+    return '#' + [1,3,5].map(i => Math.round(ch(a,i)*(1-t) + ch(b,i)*t).toString(16).padStart(2,'0')).join('');
+  }
+  function relLum(hex) {
+    const f = v => { v /= 255; return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4); };
+    return .2126*f(parseInt(hex.slice(1,3),16)) + .7152*f(parseInt(hex.slice(3,5),16)) + .0722*f(parseInt(hex.slice(5,7),16));
+  }
+  function duskTokens(accent) {
+    const [h, s, l] = hexToHsl(accent);
+    const sat = Math.max(.55, Math.min(.95, s));
+    const ga = hslToHex(h - 42, sat, Math.min(.62, Math.max(.5, l)));
+    const gc = hslToHex(h + 24, sat, Math.min(.7, Math.max(.58, l + .06)));
+    const contrast = (a, b) => { const x = relLum(a), y = relLum(b); return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); };
+    const light = '#ffffff', dark = '#14141c';
+    const worstW = Math.min(contrast(ga, light), contrast(accent, light), contrast(gc, light));
+    const worstD = Math.min(contrast(ga, dark), contrast(accent, dark), contrast(gc, dark));
+    // sky: whichever side of the accent lands nearest violet (265deg), so it never turns green
+    const hd = (x, y) => Math.abs(((x - y + 540) % 360) - 180);
+    const c1 = (h - 112 + 360) % 360, c2 = (h + 112) % 360;
+    const sky = hslToHex(hd(c1, 265) <= hd(c2, 265) ? c1 : c2, .6, .5);
+    return { ga, gc, sky, on: worstW >= worstD ? light : dark };
+  }
+
   const FONT_OPTIONS = [
-    { id:'system',   label:'System UI',         stack:"-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif" },
+    { id:'dusk',     label:'Hanken Grotesk (default)', stack:"'Hanken Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif" },
+    { id:'native',   label:'System UI',         stack:"-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif" },
     { id:'inter',    label:'Inter',              stack:"'Inter',sans-serif" },
     { id:'jakarta',  label:'Plus Jakarta Sans',  stack:"'Plus Jakarta Sans',sans-serif" },
     { id:'dm',       label:'DM Sans',            stack:"'DM Sans',sans-serif" },
@@ -2502,7 +2895,7 @@
         <div className="modal">
           <div className="modal-hdr">
             <div className="modal-title">{task ? 'Edit Task' : (isPersonal ? 'New Personal Task' : 'New Task')}</div>
-            <button className="modal-close" onClick={onClose}>X</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div className="form-grid">
             <div className="fg full">
@@ -2560,7 +2953,7 @@
               <label>Recurrence</label>
               <label className="recur-toggle">
                 <input type="checkbox" checked={!!f.recurrence} onChange={e => set('recurrence', e.target.checked ? { type:'weekly' } : null)} />
-                <span className="recur-toggle-label">🔄 Recurring task — auto-resets when completed</span>
+                <span className="recur-toggle-label"><Icon name="refresh" size={15} /> Recurring task — auto-resets when completed</span>
               </label>
               {f.recurrence && (
                 <div className="recur-options">
@@ -3135,7 +3528,7 @@
       return (
         <div className="tb-chip tint" style={{'--cc':b.color}} onClick={()=>onEditBlock?.(b)}
           title={`${fmtTime(b.startTime)}–${fmtTime(b.endTime)}: ${b.title}`}>
-          <span style={{opacity:.7,fontSize:9}}>⏱</span>{b.title}
+          {b.title}
         </div>
       );
     }
@@ -3193,7 +3586,7 @@
             if (calView==='month') { setMonth(today.getMonth()); setYear(today.getFullYear()); }
             else thisWeek();
           }}>{calView==='month' ? 'Today' : 'This week'}</button>
-          <button className="cal-block-btn" onClick={() => onAddBlock?.(todayStr)}>⏱ Block Time</button>
+          <button className="cal-block-btn" onClick={() => onAddBlock?.(todayStr)}><Icon name="clock" size={15} /> Block time</button>
           <div className="cal-view-toggle">
             <button className={`cal-vtab ${calView==='month'?'active':''}`} onClick={() => setCalView('month')}>Month</button>
             <button className={`cal-vtab ${calView==='week'?'active':''}`}  onClick={() => setCalView('week')}>Week</button>
@@ -3220,7 +3613,7 @@
                     : <TaskChip  key={t.id} t={t} full={false} />
                   )}
                   {totalItems > 3 && <div className="cal-more">+{totalItems - 3} more</div>}
-                  {cell.current && <button className="tb-add-day" onClick={() => onAddBlock?.(cell.dateStr)} title="Block time">⏱</button>}
+                  {cell.current && <button className="tb-add-day" onClick={() => onAddBlock?.(cell.dateStr)} title="Block time"><Icon name="clock" size={13} /></button>}
                   {cell.current && <button className="cal-add-day" onClick={() => onAdd(cell.dateStr)} title="Add task">+</button>}
                 </div>
               );
@@ -3237,7 +3630,7 @@
             <div className="cal-agenda">
               <div className="cal-agenda-hdr">
                 <div className="cal-agenda-title">{WEEKDAYS[d.getDay()]} {d.getDate()} {MONTHS_LONG[d.getMonth()]}</div>
-                <button className="cal-today-btn" onClick={() => onAddBlock?.(selDay)}>⏱ Block</button>
+                <button className="cal-today-btn" onClick={() => onAddBlock?.(selDay)}><Icon name="clock" size={15} /> Block</button>
                 <button className="cal-today-btn" onClick={() => onAdd(selDay)}>+ Task</button>
               </div>
               {dayTasks.length + dayBlocks.length === 0 && <div className="cal-agenda-empty">Nothing scheduled</div>}
@@ -3460,7 +3853,7 @@
         <div className="modal" style={{maxWidth:440}}>
           <div className="modal-hdr">
             <div className="modal-title">{isEdit ? 'Edit Time Block' : 'Block Time'}</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div style={{padding:'18px 24px',display:'flex',flexDirection:'column',gap:14}}>
             {/* Title */}
@@ -3546,7 +3939,7 @@
         <div className="modal">
           <div className="modal-hdr">
             <div className="modal-title">{title}</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           {children}
           {footer}
@@ -3705,7 +4098,7 @@
         </td>
         <td className="r">{ws !== '—' ? ws + '%' : '—'}</td>
         <td><GradeBadge pct={assess.score!==null&&assess.score!==undefined ? assess.score : null} /></td>
-        <td><button className="uni-assess-del" onClick={onOpenModal} title="Edit">✎</button></td>
+        <td><button className="uni-assess-del" onClick={onOpenModal} title="Edit" aria-label="Edit"><Icon name="pen" size={14} /></button></td>
       </tr>
     );
   }
@@ -3743,14 +4136,14 @@
       <>
         <div className="uni-subj">
           <div className="uni-subj-hdr" onClick={() => setOpen(o => !o)}>
-            <div className="uni-subj-chevron">{open ? '▾' : '▸'}</div>
+            <div className="uni-subj-chevron"><Icon name="chev" size={14} className={open ? "chev-open" : ""} /></div>
             <div className="uni-subj-code">{subj.code}</div>
             <div className="uni-subj-name">{subj.name}</div>
             <div className="uni-subj-actions" onClick={e => e.stopPropagation()}>
               <button className="uni-act-btn" onClick={() => setModal({type:'edit-subj'})}>Edit</button>
               <button className="uni-act-btn uni-act-del" onClick={() => setModal({type:'del-subj'})}>Del</button>
             </div>
-            <div className="uni-subj-cr">{subj.credits}cr · {subj.status==='completed' ? '✓ Done' : '⏳ Active'}</div>
+            <div className="uni-subj-cr">{subj.credits}cr · {subj.status==='completed' ? 'Done' : 'Active'}</div>
             <div className="uni-subj-pct" style={{ color: g ? g.color : 'var(--text2)' }}>
               {calc.gradedWeight > 0 ? calc.weightedScore.toFixed(2) + '%' : '—'}{isPartial ? '*' : ''}
             </div>
@@ -3871,7 +4264,7 @@
       <>
         <div className="uni-sem">
           <div className="uni-sem-hdr" onClick={() => setOpen(o => !o)}>
-            <div className="uni-sem-chevron">{open ? '▾' : '▸'}</div>
+            <div className="uni-sem-chevron"><Icon name="chev" size={14} className={open ? "chev-open" : ""} /></div>
             <div className="uni-sem-title">{sem.label}</div>
             <div className="uni-sem-stats">
               {gpaInfo && <>
@@ -3880,7 +4273,7 @@
                 <span style={{ fontSize:12, color:'var(--text2)' }}>{gpaInfo.credits}cr graded</span>
               </>}
               {!gpaInfo && sem.subjects?.some(s => s.status==='inprogress') && (
-                <span style={{ fontSize:12, color:'#5b96e8' }}>⏳ In Progress</span>
+                <span style={{ fontSize:12, color:'#5b96e8' }}>In progress</span>
               )}
             </div>
             <div className="uni-sem-actions" onClick={e => e.stopPropagation()}>
@@ -4121,7 +4514,7 @@
                                       <span style={{ color:'#fff', fontWeight:700 }}>{a.score}%</span>
                                     </>}
                                     {(a.score===null||a.score===undefined) && <span style={{ color:'rgba(255,255,255,0.55)' }}>No score yet</span>}
-                                    {dl && <><span>·</span><span>📅 {dl}</span></>}
+                                    {dl && <><span>·</span><span>{dl}</span></>}
                                   </div>
                                   {(a.subtasks||[]).length > 0 && (
                                     <SubtaskMini
@@ -4363,7 +4756,7 @@
         <div className="modal" style={{ maxWidth:520 }}>
           <div className="modal-hdr">
             <div className="modal-title">{isEdit?'Edit Film':'Add Film'}</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div>
             {/* TMDB SEARCH — optional, inline */}
@@ -4532,7 +4925,7 @@
         <div className="modal" style={{maxWidth:540}}>
           <div className="modal-hdr">
             <div className="modal-title">Duplicate {noun === 'film' ? 'Films' : 'Shows'}</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div className="modal-body" style={{maxHeight:'70vh',overflowY:'auto'}}>
             {groups.length === 0 ? (
@@ -4642,7 +5035,7 @@
         <div className="modal" style={{maxWidth:480}}>
           <div className="modal-hdr">
             <div className="modal-title">Bulk Add Films</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div className="modal-body">
             <div className="fg full">
@@ -4841,7 +5234,7 @@
         <div className="modal-box" style={{maxWidth:560,maxHeight:'80vh',display:'flex',flexDirection:'column'}}>
           <div className="modal-header">
             <div className="modal-title">Bulk Enrich Films</div>
-            <button className="modal-close" onClick={onClose}>×</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',fontSize:13,color:'var(--text2)'}}>
             {needsEnrich.length === 0
@@ -5320,43 +5713,37 @@
       return all;
     }, [JSON.stringify(movies.map(m=>m.watchDate||m.trackYear))]);
 
-    const sidebarTitle = isAllMovies ? 'All Films' : isAllTime ? 'All Time ⭐' : isStats ? 'Stats' : isGenres ? 'Genres' : isReleaseYear ? 'By Release' : isStudio ? 'Studios' : isUnrated ? 'Unrated' : isUndated ? 'Undated' : String(year);
+    const libraryMode = !(isAllTime || isStats || isGenres || isReleaseYear || isStudio || isUnrated);
+    const sidebarTitle = isAllMovies ? 'All Films' : isAllTime ? 'All Time' : isStats ? 'Stats' : isGenres ? 'Genres' : isReleaseYear ? 'By Release' : isStudio ? 'Studios' : isUnrated ? 'Unrated' : isUndated ? 'Undated' : String(year);
 
     return (
       <div className="mv-wrap">
         {/* ── SIDEBAR ── */}
-        <div className="mv-sidebar">
-          <input className="mv-sb-search" placeholder="Search…" value={search} onChange={e=>setSearch(e.target.value)}/>
-
-          <div className="mv-sb-label">Library</div>
-          <button className={`mv-sb-btn ${isAllMovies?'active':''}`} onClick={()=>{setYear('all');setSearch('');}}>
-            <span>All Films</span><span className="mv-sb-count">{movies.length}</span>
-          </button>
-
-          <div className="mv-sb-label" style={{marginTop:4}}>Watch Year</div>
-          {[...activeYears].reverse().map(y=>(
-            <button key={y} className={`mv-sb-btn ${year===y&&!isAllMovies?'active':''}`} onClick={()=>{setYear(y);setSubView('films');}}>
-              <span>{y}</span><span className="mv-sb-count">{yearCounts[y]||0}</span>
-            </button>
-          ))}
-          {undatedMovies.length > 0 && (
-            <button className={`mv-sb-btn ${isUndated?'active':''}`} onClick={()=>{setYear('undated');setSubView('films');}}>
-              <span>Undated</span><span className="mv-sb-count">{undatedMovies.length}</span>
-            </button>
-          )}
-
-          <div className="mv-sb-divider"/>
-
-          <div className="mv-sb-label">Views</div>
-          <button className={`mv-sb-btn ${isAllTime?'active':''}`} onClick={()=>setYear('alltime')}>All Time ⭐</button>
-          <button className={`mv-sb-btn ${isStats?'active':''}`} onClick={()=>setYear('stats')}>📊 Stats</button>
-          <button className={`mv-sb-btn ${isGenres?'active':''}`} onClick={()=>setYear('genres')}>🎭 Genres</button>
-          <button className={`mv-sb-btn ${isReleaseYear?'active':''}`} onClick={()=>setYear('releaseyear')}>🗓 By Release</button>
-          <button className={`mv-sb-btn ${isStudio?'active':''}`} onClick={()=>setYear('studio')}>🎬 Studios</button>
-          {unratedMovies.length > 0 && (
-            <button className={`mv-sb-btn ${isUnrated?'active':''}`} onClick={()=>setYear('unrated')}>
-              <span>⚠ Unrated</span><span className="mv-sb-count">{unratedMovies.length}</span>
-            </button>
+        <div className="subnav">
+          <div className="subnav-tabs" role="tablist">
+            <button role="tab" className={`subnav-tab ${libraryMode?'active':''}`} onClick={()=>{setYear('all');setSearch('');}}><Icon name="film" size={16} />Library<span className="subnav-count">{movies.length}</span></button>
+            <button role="tab" className={`subnav-tab ${isAllTime?'active':''}`} onClick={()=>setYear('alltime')}><Icon name="star" size={16} />All Time</button>
+            <button role="tab" className={`subnav-tab ${isStats?'active':''}`} onClick={()=>setYear('stats')}><Icon name="chart" size={16} />Stats</button>
+            <button role="tab" className={`subnav-tab ${isGenres?'active':''}`} onClick={()=>setYear('genres')}><Icon name="tag" size={16} />Genres</button>
+            <button role="tab" className={`subnav-tab ${isReleaseYear?'active':''}`} onClick={()=>setYear('releaseyear')}><Icon name="calendar" size={16} />By release</button>
+            <button role="tab" className={`subnav-tab ${isStudio?'active':''}`} onClick={()=>setYear('studio')}><Icon name="layers" size={16} />Studios</button>
+            {unratedMovies.length > 0 && (
+              <button role="tab" className={`subnav-tab ${isUnrated?'active':''}`} onClick={()=>setYear('unrated')}><Icon name="alert" size={16} />Unrated<span className="subnav-count">{unratedMovies.length}</span></button>
+            )}
+            <span className="subnav-spacer" />
+            <input className="mv-sb-search subnav-search" placeholder="Search films" value={search} onChange={e=>setSearch(e.target.value)} />
+          </div>
+          {libraryMode && (
+            <div className="subnav-years">
+              <span className="subnav-years-lbl">Watched in</span>
+              <button className={`subnav-chip ${isAllMovies?'active':''}`} onClick={()=>{setYear('all');setSearch('');}}>All</button>
+              {[...activeYears].reverse().map(y=>(
+                <button key={y} className={`subnav-chip ${year===y&&!isAllMovies?'active':''}`} onClick={()=>{setYear(y);setSubView('films');}}>{y}<span className="subnav-count">{yearCounts[y]||0}</span></button>
+              ))}
+              {undatedMovies.length > 0 && (
+                <button className={`subnav-chip ${isUndated?'active':''}`} onClick={()=>{setYear('undated');setSubView('films');}}>Undated<span className="subnav-count">{undatedMovies.length}</span></button>
+              )}
+            </div>
           )}
         </div>
 
@@ -5383,21 +5770,21 @@
               onClick={()=>setGroupByRelease(g=>!g)}
               title="Group by release year"
               style={{fontSize:13}}
-            >🗓 By era</button>
+            ><Icon name="calendar" size={15} /> By era</button>
           )}
           <div className="mv-actions">
             {isUnrated && unratedMovies.length > 0 && (
               <button onClick={()=>pickRandom(unratedMovies)}
                 className="mv-add-btn">
-                🎲 Pick one
+                <Icon name="dice" size={16} /> Pick one
               </button>
             )}
             {movies.length > 0 && (
               <button className={`mv-enrich-btn${enrichCount>0?' has-gap':''}`} onClick={()=>setEnrichModal(true)} title="Auto-fill missing metadata from TMDB">
-                {enrichCount > 0 ? `⚡ Enrich ${enrichCount}` : '✓ All enriched'}
+                {enrichCount > 0 ? <><Icon name="bolt" size={14} /> Enrich {enrichCount}</> : <><Icon name="check" size={14} /> All enriched</>}
               </button>
             )}
-            <button className="ghost-btn" onClick={()=>setDupesModal(true)} title="Find duplicate films">⚠ Dupes</button>
+            <button className="ghost-btn" onClick={()=>setDupesModal(true)} title="Find duplicate films"><Icon name="alert" size={15} /> Dupes</button>
             <button className="ghost-btn" onClick={()=>setBulkAddModal(true)}>+ Bulk Add</button>
             <button className="mv-add-btn" onClick={()=>setModal('add')}>+ Add Film</button>
           </div>
@@ -5466,7 +5853,7 @@
           {isAllMovies && (
             movies.length === 0 ? (
               <div className="mv-empty">
-                <div className="mv-empty-icon">🎬</div>
+                <div className="mv-empty-icon"><Icon name="film" size={40} /></div>
                 <div className="mv-empty-ttl">No films yet</div>
                 <div className="mv-empty-sub">Add your first film to get started.</div>
               </div>
@@ -5475,7 +5862,7 @@
                 const allFiltered = movies.filter(searchFilter).sort((a,b)=>(b.rating||0)-(a.rating||0));
                 return allFiltered.length === 0 ? (
                   <div className="mv-empty">
-                    <div className="mv-empty-icon">🔍</div>
+                    <div className="mv-empty-icon"><Icon name="search" size={40} /></div>
                     <div className="mv-empty-ttl">No results</div>
                     <div className="mv-empty-sub">Try a different search term.</div>
                   </div>
@@ -5501,8 +5888,8 @@
                         <div className="mv-poster">
                           {movie.posterPath
                             ? <img src={TMDB_IMG+movie.posterPath} alt={movie.title}/>
-                            : <div className="mv-poster-fb"><span style={{fontSize:22}}>🎬</span></div>}
-                          {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite">⭐</div>}
+                            : <div className="mv-poster-fb"><Icon name="film" size={26} /></div>}
+                          {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite"><Icon name="star" size={15} fill /></div>}
                         </div>
                         <div className="mv-card-body">
                           <div className="mv-card-title" title={movie.title}>{movie.title}</div>
@@ -5523,7 +5910,7 @@
           {isStats && (
             movies.length===0 ? (
               <div className="mv-empty">
-                <div className="mv-empty-icon">📊</div>
+                <div className="mv-empty-icon"><Icon name="chart" size={40} /></div>
                 <div className="mv-empty-ttl">No data yet</div>
                 <div className="mv-empty-sub">Add films across years to see your lifetime stats.</div>
               </div>
@@ -5538,7 +5925,7 @@
           {isGenres && (
             movies.length === 0 ? (
               <div className="mv-empty">
-                <div className="mv-empty-icon">🎭</div>
+                <div className="mv-empty-icon"><Icon name="tag" size={40} /></div>
                 <div className="mv-empty-ttl">No films yet</div>
                 <div className="mv-empty-sub">Add films to browse by genre.</div>
               </div>
@@ -5557,8 +5944,8 @@
                           <div className="mv-poster">
                             {movie.posterPath
                               ? <img src={TMDB_IMG + movie.posterPath} alt={movie.title} />
-                              : <div className="mv-poster-fb"><span style={{ fontSize:22 }}>🎬</span></div>}
-                            {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite">⭐</div>}
+                              : <div className="mv-poster-fb"><Icon name="film" size={26} /></div>}
+                            {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite"><Icon name="star" size={15} fill /></div>}
                           </div>
                           <div className="mv-card-body">
                             <div className="mv-card-title" title={movie.title}>{movie.title}</div>
@@ -5580,7 +5967,7 @@
           {isReleaseYear && (
             movies.length === 0 ? (
               <div className="mv-empty">
-                <div className="mv-empty-icon">🗓</div>
+                <div className="mv-empty-icon"><Icon name="calendar" size={40} /></div>
                 <div className="mv-empty-ttl">No films yet</div>
                 <div className="mv-empty-sub">Add films to browse by release year.</div>
               </div>
@@ -5607,8 +5994,8 @@
                               <div className="mv-poster">
                                 {movie.posterPath
                                   ? <img src={TMDB_IMG+movie.posterPath} alt={movie.title}/>
-                                  : <div className="mv-poster-fb"><span style={{fontSize:22}}>🎬</span></div>}
-                                {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite">⭐</div>}
+                                  : <div className="mv-poster-fb"><Icon name="film" size={26} /></div>}
+                                {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite"><Icon name="star" size={15} fill /></div>}
                               </div>
                               <div className="mv-card-body">
                                 <div className="mv-card-title" title={movie.title}>{movie.title}</div>
@@ -5632,7 +6019,7 @@
           {isStudio && (
             movies.length === 0 ? (
               <div className="mv-empty">
-                <div className="mv-empty-icon">🎬</div>
+                <div className="mv-empty-icon"><Icon name="film" size={40} /></div>
                 <div className="mv-empty-ttl">No films yet</div>
                 <div className="mv-empty-sub">Add films and run Enrich to populate studio data.</div>
               </div>
@@ -5659,8 +6046,8 @@
                               <div className="mv-poster">
                                 {movie.posterPath
                                   ? <img src={TMDB_IMG+movie.posterPath} alt={movie.title}/>
-                                  : <div className="mv-poster-fb"><span style={{fontSize:22}}>🎬</span></div>}
-                                {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite">⭐</div>}
+                                  : <div className="mv-poster-fb"><Icon name="film" size={26} /></div>}
+                                {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite"><Icon name="star" size={15} fill /></div>}
                               </div>
                               <div className="mv-card-body">
                                 <div className="mv-card-title" title={movie.title}>{movie.title}</div>
@@ -5684,7 +6071,7 @@
           {isUnrated && (
             unratedMovies.length === 0 ? (
               <div className="mv-empty">
-                <div className="mv-empty-icon">⭐</div>
+                <div className="mv-empty-icon"><Icon name="star" size={40} /></div>
                 <div className="mv-empty-ttl">All films rated</div>
                 <div className="mv-empty-sub">Every film in your library has a rating.</div>
               </div>
@@ -5702,7 +6089,7 @@
                     onClick={()=>pickRandom(unratedMovies)}
                     title="Pick a random film to watch"
                     className="mv-add-btn">
-                    🎲 Pick one
+                    <Icon name="dice" size={16} /> Pick one
                   </button>
                 </div>
                 <div className="mv-grid">
@@ -5713,7 +6100,7 @@
                         <div className="mv-poster">
                           {movie.posterPath
                             ? <img src={TMDB_IMG + movie.posterPath} alt={movie.title} />
-                            : <div className="mv-poster-fb"><span style={{ fontSize:22 }}>🎬</span></div>}
+                            : <div className="mv-poster-fb"><Icon name="film" size={26} /></div>}
                           {wy && <div className="mv-rank-badge" style={{ background:'var(--surface2)', color:'var(--text2)', border:'1px solid var(--border)' }}>{wy}</div>}
                         </div>
                         <div className="mv-card-body">
@@ -5733,14 +6120,14 @@
           {!isSpecial && subView==='films' && (()=>{
             if (yearMovies.length === 0) return (
               <div className="mv-empty">
-                <div className="mv-empty-icon">🎬</div>
+                <div className="mv-empty-icon"><Icon name="film" size={40} /></div>
                 <div className="mv-empty-ttl">{isUndated ? 'No undated films' : `No films tracked for ${year}`}</div>
                 <div className="mv-empty-sub">{isUndated ? 'Films without a watch year will appear here.' : `Add films you watched in ${year}.`}</div>
               </div>
             );
             if (sortedYearMovies.length === 0) return (
               <div className="mv-empty">
-                <div className="mv-empty-icon">🔍</div>
+                <div className="mv-empty-icon"><Icon name="search" size={40} /></div>
                 <div className="mv-empty-ttl">No results</div>
                 <div className="mv-empty-sub">No films in {year} match "{search}".</div>
               </div>
@@ -5753,9 +6140,9 @@
                   <div className="mv-poster">
                     {movie.posterPath
                       ? <img src={TMDB_IMG+movie.posterPath} alt={movie.title} />
-                      : <div className="mv-poster-fb"><span style={{fontSize:22}}>🎬</span></div>}
+                      : <div className="mv-poster-fb"><Icon name="film" size={26} /></div>}
                     {movie.yearRank && <div className="mv-rank-badge">#{movie.yearRank}</div>}
-                    {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite">⭐</div>}
+                    {movie.isAllTime && <div className="mv-at-badge" title="All-time favourite"><Icon name="star" size={15} fill /></div>}
                     {movie.honourableMention && !movie.yearRank && <div className="mv-hm-badge">HM</div>}
                   </div>
                   <div className="mv-card-body">
@@ -5925,7 +6312,7 @@
               {atTab==='films' && (
                 allTimeMovies.length===0 ? (
                   <div className="mv-empty">
-                    <div className="mv-empty-icon">⭐</div>
+                    <div className="mv-empty-icon"><Icon name="star" size={40} /></div>
                     <div className="mv-empty-ttl">Your all-time list is empty</div>
                     <div className="mv-empty-sub">Add a film and tick "Add to All Time list" to start building your favourites.</div>
                   </div>
@@ -5937,7 +6324,7 @@
                         <div key={movie.id} className="mv-top4-item" onClick={()=>setModal({movie})}>
                           {movie.posterPath
                             ? <img className="mv-top4-poster" src={TMDB_IMG+movie.posterPath} alt={movie.title}/>
-                            : <div className="mv-top4-poster-fb">🎬</div>}
+                            : <div className="mv-top4-poster-fb"><Icon name="film" size={30} /></div>}
                           <div className="mv-top4-overlay"/>
                           <div className="mv-top4-info">
                             <div className="mv-top4-rank">#{i+1}</div>
@@ -5998,7 +6385,7 @@
               {atTab==='directors' && (
                 directors.length===0 ? (
                   <div className="mv-empty">
-                    <div className="mv-empty-icon">🎥</div>
+                    <div className="mv-empty-icon"><Icon name="film" size={40} /></div>
                     <div className="mv-empty-ttl">No directors yet</div>
                     <div className="mv-empty-sub">Add films with director names to your all-time list and they'll appear here.</div>
                   </div>
@@ -6024,7 +6411,7 @@
               {atTab==='stats' && (
                 movies.length===0 ? (
                   <div className="mv-empty">
-                    <div className="mv-empty-icon">📊</div>
+                    <div className="mv-empty-icon"><Icon name="chart" size={40} /></div>
                     <div className="mv-empty-ttl">No data yet</div>
                     <div className="mv-empty-sub">Add films across years to see your lifetime stats.</div>
                   </div>
@@ -6133,7 +6520,7 @@
         <div className="modal" style={{ maxWidth:520 }}>
           <div className="modal-hdr">
             <div className="modal-title">{isEdit?'Edit Show':'Add Show'}</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div>
             {tmdbKey && (
@@ -6284,7 +6671,7 @@
         <div className="modal" style={{maxWidth:480}}>
           <div className="modal-hdr">
             <div className="modal-title">Bulk Add TV Shows</div>
-            <button className="modal-close" onClick={onClose}>✕</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div className="modal-body">
             <div className="fg full">
@@ -6441,7 +6828,7 @@
         <div className="tv-header">
           <div className="tv-view-tabs">
             <button className={`tv-vtab ${view==='library'?'active':''}`} onClick={()=>setView('library')}>Library</button>
-            <button className={`tv-vtab ${view==='rankings'?'active':''}`} onClick={()=>setView('rankings')}>All Time ⭐</button>
+            <button className={`tv-vtab ${view==='rankings'?'active':''}`} onClick={()=>setView('rankings')}>All Time</button>
           </div>
           {view === 'library' && (
             <div className="tv-status-tabs">
@@ -6451,7 +6838,7 @@
               ))}
             </div>
           )}
-          <button className="ghost-btn tv-push" onClick={()=>setDupesModal(true)} title="Find duplicate shows">⚠ Dupes</button>
+          <button className="ghost-btn tv-push" onClick={()=>setDupesModal(true)} title="Find duplicate shows"><Icon name="alert" size={15} /> Dupes</button>
           <button className="ghost-btn" onClick={()=>setBulkAddModal(true)}>+ Bulk Add</button>
           <button className="tv-add-btn" onClick={()=>setModal('add')}>+ Add Show</button>
         </div>
@@ -6471,7 +6858,7 @@
         <div className="tv-content">
           {shows.length === 0 ? (
             <div className="tv-empty">
-              <div className="tv-empty-icon">📺</div>
+              <div className="tv-empty-icon"><Icon name="tv" size={40} /></div>
               <div className="tv-empty-ttl">No shows tracked yet</div>
               <div className="tv-empty-sub">Add shows you're watching, have completed, or plan to watch.</div>
             </div>
@@ -6480,7 +6867,7 @@
             /* ── LIBRARY: cards grouped by genre ───────────────────── */
             filteredShows.length === 0 ? (
               <div className="tv-empty">
-                <div className="tv-empty-icon">📺</div>
+                <div className="tv-empty-icon"><Icon name="tv" size={40} /></div>
                 <div className="tv-empty-ttl">No {TV_STATUS_OPTS.find(s=>s.id===statusFilter)?.label.toLowerCase()} shows</div>
                 <div className="tv-empty-sub">Switch filter or add a new show.</div>
               </div>
@@ -6497,7 +6884,7 @@
                         {show.posterPath
                           ? <img src={TMDB_IMG+show.posterPath} alt={show.title}/>
                           : <div className="tv-card-poster-fb">📺</div>}
-                        {show.isAllTime && <div className="tv-at-badge">⭐</div>}
+                        {show.isAllTime && <div className="tv-at-badge"><Icon name="star" size={15} fill /></div>}
                       </div>
                       <div className="tv-card-body">
                         <div className="tv-card-title" title={show.title}>{show.title}</div>
@@ -6517,7 +6904,7 @@
             /* ── ALL TIME RANKINGS ──────────────────────────────────── */
             allTimeShows.length === 0 ? (
               <div className="tv-empty">
-                <div className="tv-empty-icon">⭐</div>
+                <div className="tv-empty-icon"><Icon name="star" size={40} /></div>
                 <div className="tv-empty-ttl">Your all-time list is empty</div>
                 <div className="tv-empty-sub">Edit a show and tick "Add to All Time Rankings" — or click ⭐ below on any show.</div>
               </div>
@@ -6787,7 +7174,7 @@
         <div className="settings-section">
           <div className="section-title">Backup</div>
           <div className="section-desc">Download everything (tasks, uni, films, TV, travel, budget, settings) as one JSON file you can keep anywhere. It's the same format as the data file, so it can be reconnected under Data Storage if you ever need to. The file includes your TMDB key, so store it somewhere private.</div>
-          <div className="storage-btns"><button className="sbtn primary" onClick={onDownloadBackup}>⬇ Download backup</button></div>
+          <div className="storage-btns"><button className="sbtn primary" onClick={onDownloadBackup}><Icon name="download" size={16} /> Download backup</button></div>
         </div>
 
         {/* APPEARANCE */}
@@ -7099,7 +7486,7 @@
         <div className="modal">
           <div className="modal-hdr">
             <div className="modal-title">{isEdit ? 'Edit Visit' : 'Add Visit'}</div>
-            <button className="modal-close" onClick={onClose}>×</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div className="form-grid">
 
@@ -7221,7 +7608,7 @@
         <div className="modal" style={{ maxWidth:520 }}>
           <div className="modal-hdr">
             <div className="modal-title">Salary &amp; Budget Setup</div>
-            <button className="modal-close" onClick={onClose}>×</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div className="form-grid">
             {/* Salary inputs */}
@@ -7257,7 +7644,7 @@
             {BUDGET_CATS.map(cat => (
               <div key={cat.id} className="fg">
                 <label>
-                  {cat.icon} {cat.label}
+                  <Icon name={ICON_BY_EMOJI[cat.icon]||'dot'} size={15} /> {cat.label}
                   {cat.splitHalf && cat.id==='electricity' && <span style={{ fontWeight:400, color:'var(--text3)', fontSize:11 }}> — your ½</span>}
                   {cat.splitHalf && !cat.quarterly && <span style={{ fontWeight:400, color:'var(--text3)', fontSize:11 }}> — your ½</span>}
                 </label>
@@ -7444,7 +7831,7 @@
     if (needsSetup) return (
       <div className="budget-wrap">
         <div className="budget-empty">
-          <div className="budget-empty-icon">💸</div>
+          <div className="budget-empty-icon"><Icon name="wallet" size={40} /></div>
           <div className="budget-empty-ttl">Set up your budget</div>
           <div className="budget-empty-sub">Enter your gross salary — we'll calculate tax, take-home pay and super automatically.</div>
           <button className="btn-save" style={{padding:'10px 28px',fontSize:14}} onClick={()=>setSettingsOpen(true)}>Get Started</button>
@@ -7485,7 +7872,7 @@
                   return (
                     <div key={cat.id} className="wf-row">
                       <div style={{display:'flex',alignItems:'center',gap:5,overflow:'hidden'}}>
-                        <span>{cat.icon}</span>
+                        <Icon name={ICON_BY_EMOJI[cat.icon]||'dot'} size={16} />
                         <span style={{fontSize:13,fontWeight:600,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{cat.label}</span>
                         {cat.splitHalf && <span className="budget-badge">½</span>}
                       </div>
@@ -7582,7 +7969,7 @@
                 {BUDGET_CATS.map(cat => (
                   <tr key={cat.id}>
                     <td style={{padding:'5px 16px'}}>
-                      {cat.icon} {cat.label}
+                      <Icon name={ICON_BY_EMOJI[cat.icon]||'dot'} size={15} /> {cat.label}
                       {cat.splitHalf && <span className="budget-badge">½</span>}
                     </td>
                     {tableMos.map(m => {
@@ -7700,7 +8087,7 @@
         {/* VISITS LIST */}
         {visits.length === 0 ? (
           <div className="travel-empty">
-            <div className="travel-empty-icon">✈️</div>
+            <div className="travel-empty-icon"><Icon name="globe" size={40} /></div>
             <div className="travel-empty-ttl">No visits yet</div>
             <div className="travel-empty-sub">Add your first trip to light up the map.</div>
           </div>
@@ -7809,39 +8196,39 @@
 
     const NAV_CARDS = [
       {
-        id:'calendar', icon:'📅', label:'Calendar',
+        id:'calendar', icon:'calendar', label:'Calendar',
         iconBg:'rgba(100,112,245,.15)',
         sub: dueToday.length > 0 ? `${dueToday.length} due today` : 'View your schedule',
         badge: null,
       },
       {
-        id:'work', icon:'💼', label:'Work',
-        iconBg:'rgba(91,106,240,.15)',
+        id:'work', icon:'briefcase', label:'Work',
+        iconBg:'transparent',
         sub: `${workTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length} active task${workTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length!==1?'s':''}`,
         badge: highPri.length > 0 ? `${highPri.length} high` : null,
         badgeColor: '#e05252',
       },
       {
-        id:'uni', icon:'🎓', label:'Uni',
+        id:'uni', icon:'cap', label:'Uni',
         iconBg:'rgba(144,112,216,.15)',
         sub: cumulWAMObj ? `WAM ${cumulWAMObj.wam.toFixed(1)}%` : (activeSem ? activeSem.name : 'Academic tracker'),
         badge: uniUpcoming.slice(0,3).length > 0 ? `${uniUpcoming.slice(0,3).length} due soon` : null,
         badgeColor: '#c98a10',
       },
       {
-        id:'personal', icon:'✅', label:'Personal',
+        id:'personal', icon:'check', label:'Personal',
         iconBg:'rgba(74,172,118,.15)',
         sub: `${persTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length} active item${persTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length!==1?'s':''}`,
         badge: null,
       },
       {
-        id:'movies', icon:'🎬', label:'Films',
+        id:'movies', icon:'film', label:'Films',
         iconBg:'rgba(230,80,80,.12)',
         sub: `${watchedMovies} watched`,
         badge: null,
       },
       {
-        id:'tv', icon:'📺', label:'TV',
+        id:'tv', icon:'tv', label:'TV',
         iconBg:'rgba(201,138,16,.12)',
         sub: watchingTV > 0 ? `${watchingTV} currently watching` : 'Show tracker',
         badge: null,
@@ -7897,7 +8284,7 @@
         <div className="home-nav-grid">
           {NAV_CARDS.map(card => (
             <div key={card.id} className="home-nav-card" onClick={() => onNav(card.id)}>
-              <div className="home-nav-icon" style={{ background: card.iconBg }}>{card.icon}</div>
+              <div className="home-nav-icon" style={{ background: card.iconBg }}><Icon name={card.icon} size={20} /></div>
               <div className="home-nav-info">
                 <div className="home-nav-title">{card.label}</div>
                 <div className="home-nav-sub">{card.sub}</div>
@@ -8056,6 +8443,18 @@
     const ghBusy    = useRef(false);
     const dataRef   = useRef(data);
     dataRef.current = data;
+    const [syncLatched, setSyncLatched] = useState(false);   // stays true until a sync succeeds
+    const [online, setOnline] = useState(typeof navigator === 'undefined' ? true : navigator.onLine !== false);
+    useEffect(() => {
+      const on = () => setOnline(true), off = () => setOnline(false);
+      window.addEventListener('online', on); window.addEventListener('offline', off);
+      return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
+    }, []);
+    useEffect(() => {
+      if (!gh) { setSyncLatched(false); return; }
+      if (ghStatus === 'error' || ghStatus === 'auth' || ghStatus === 'conflict') setSyncLatched(true);
+      else if (ghStatus === 'synced') setSyncLatched(false);
+    }, [gh, ghStatus]);
 
     // UI state
     const [tab,         setTab]         = useState('home');
@@ -8086,17 +8485,19 @@
       const root = document.documentElement;
       const accent = settings.accentColor || '#6470f5';
       root.style.setProperty('--accent', accent);
+      const dt = duskTokens(accent);
+      root.style.setProperty('--g-a', dt.ga); root.style.setProperty('--g-c', dt.gc); root.style.setProperty('--g-sky', dt.sky); root.style.setProperty('--on-accent', dt.on);
       if (theme === 'dark') {
         const bg = settings.darkBg || '#000000';
         root.style.setProperty('--bg',       bg);
-        root.style.setProperty('--surface',  lightenHex(bg, 17));
-        root.style.setProperty('--surface2', lightenHex(bg, 26));
-        root.style.setProperty('--border',   lightenHex(bg, 42));
+        root.style.setProperty('--surface',  mixHex(lightenHex(bg, 15), '#222a4a', .34));
+        root.style.setProperty('--surface2', mixHex(lightenHex(bg, 25), '#2a3358', .34));
+        root.style.setProperty('--border',   mixHex(lightenHex(bg, 38), '#3a4570', .32));
         root.style.setProperty('--shadow',   `0 4px 24px rgba(0,0,0,${bg==='#000000'?.7:.5})`);
       } else {
         ['--bg','--surface','--surface2','--border','--shadow'].forEach(v => root.style.removeProperty(v));
       }
-      const font = FONT_OPTIONS.find(f => f.id === (settings.fontId||'system'));
+      const font = FONT_OPTIONS.find(f => f.id === ((settings.fontId||'system')==='system' ? 'dusk' : settings.fontId));
       document.body.style.fontFamily = font ? font.stack : '';
     }, [settings.theme, settings.accentColor, settings.darkBg, settings.fontId]);
 
@@ -8365,8 +8766,22 @@
       stale:   staleCount,
     };
 
+    const PAGE_TITLES = { calendar:'Calendar', work:'Work', uni:'Uni', personal:'Personal', movies:'Films', tv:'TV', travel:'Travel', budget:'Budget', settings:'Settings' };
+    const PAGE_SUBS = {
+      calendar:'Deadlines, assessments and blocked time',
+      work:`${stats.wActive} active · ${stats.high} high priority`,
+      personal:`${stats.pActive} active`,
+      uni:'Grades, WAM and the assessment planner',
+      movies:`${(movieData?.movies||[]).length} films logged`,
+      tv:`${(tvData?.shows||[]).length} shows tracked`,
+      travel:`${(travelData?.visits||[]).length} visits logged`,
+      budget:'Monthly plan, spending and savings',
+      settings:'Sync, backup and appearance',
+    };
+    const syncBlocked = !!gh && syncLatched && online && tab !== 'settings';
     return (
-      <div>
+      <>
+      <div inert={syncBlocked ? '' : undefined} aria-hidden={syncBlocked ? 'true' : undefined}>
         {/* RECONNECT BANNER */}
         {fileStatus === 'reconnect' && (
           <div className="file-banner reconnect">
@@ -8392,10 +8807,10 @@
             ))}
           </div>
           <div className="nav-stats">
-            <div className="nstat"><span className="nstat-n" style={{color:'#5b6af0'}}>{stats.wActive}</span><span className="nstat-l">Work</span></div>
-            <div className="nstat"><span className="nstat-n" style={{color:'#9070d8'}}>{stats.pActive}</span><span className="nstat-l">Personal</span></div>
-            <div className="nstat"><span className="nstat-n" style={{color:'#e05252'}}>{stats.high}</span><span className="nstat-l">High Pri</span></div>
-            <div className="nstat"><span className="nstat-n" style={{color:stats.stale>0?'#c98a10':'var(--text2)'}}>{stats.stale}</span><span className="nstat-l">Stale</span></div>
+            <div className="nstat"><span className="nstat-n">{stats.wActive}</span><span className="nstat-l">Work</span></div>
+            <div className="nstat"><span className="nstat-n">{stats.pActive}</span><span className="nstat-l">Personal</span></div>
+            <div className="nstat"><span className="nstat-n" style={{color:stats.high>0?'var(--high)':'var(--text2)'}}>{stats.high}</span><span className="nstat-l">High Pri</span></div>
+            <div className="nstat"><span className="nstat-n" style={{color:stats.stale>0?'var(--med)':'var(--text2)'}}>{stats.stale}</span><span className="nstat-l">Stale</span></div>
           </div>
           {gh && (
             <div className={`file-pill gh-pill ${ghStatus}`} role="button" onClick={() => setTab('settings')}
@@ -8412,27 +8827,23 @@
               {(fileStatus==='none'||fileStatus==='reconnect') && <><div className="fpill-dot gray" /><span>Browser only</span></>}
             </div>
           )}
-          <button className={`nav-settings-btn ${tab==='settings'?'active':''}`} onClick={() => setTab('settings')} title="Settings">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-          </button>
+          <button className={`nav-settings-btn ${tab==='settings'?'active':''}`} onClick={() => setTab('settings')} title="Settings" aria-label="Settings"><Icon name="gear" size={18} /></button>
         </div>
 
         {/* BOTTOM NAV (phone / small tablet) */}
         <nav className="bottom-nav" aria-label="Main">
-          {[['home','Home','🏠'],['calendar','Calendar','📅'],['work','Work','💼'],['uni','Uni','🎓']].map(([t,l,ic]) => (
-            <button key={t} className={`bn-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="bn-ic">{ic}</span><span className="bn-lbl">{l}</span></button>
+          {[['home','Home','home'],['calendar','Calendar','calendar'],['work','Work','briefcase'],['uni','Uni','cap']].map(([t,l,ic]) => (
+            <button key={t} className={`bn-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="bn-ic"><Icon name={ic} size={22} /></span><span className="bn-lbl">{l}</span></button>
           ))}
-          <button className={`bn-item ${['personal','movies','tv','travel','budget','settings'].includes(tab)||moreOpen?'active':''}`} onClick={() => setMoreOpen(o=>!o)}><span className="bn-ic">☰</span><span className="bn-lbl">More</span></button>
+          <button className={`bn-item ${['personal','movies','tv','travel','budget','settings'].includes(tab)||moreOpen?'active':''}`} onClick={() => setMoreOpen(o=>!o)}><span className="bn-ic"><Icon name="menu" size={22} /></span><span className="bn-lbl">More</span></button>
         </nav>
         {moreOpen && (
           <div className="more-overlay" onClick={() => setMoreOpen(false)}>
             <div className="more-sheet" onClick={e => e.stopPropagation()}>
               <div className="more-grip" />
               <div className="more-grid">
-                {[['personal','Personal','🙋'],['movies','Films','🎬'],['tv','TV','📺'],['travel','Travel','✈️'],['budget','Budget','💰'],['settings','Settings','⚙️']].map(([t,l,ic]) => (
-                  <button key={t} className={`more-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="more-ic">{ic}</span><span>{l}</span></button>
+                {[['personal','Personal','user'],['movies','Films','film'],['tv','TV','tv'],['travel','Travel','globe'],['budget','Budget','wallet'],['settings','Settings','gear']].map(([t,l,ic]) => (
+                  <button key={t} className={`more-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="more-ic"><Icon name={ic} size={26} /></span><span>{l}</span></button>
                 ))}
               </div>
               <div className="more-stats">
@@ -8443,6 +8854,10 @@
               </div>
             </div>
           </div>
+        )}
+
+        {PAGE_TITLES[tab] && (
+          <header className="page-hdr"><div><h1>{PAGE_TITLES[tab]}</h1><p>{PAGE_SUBS[tab]}</p></div></header>
         )}
 
         {/* TOOLBAR */}
@@ -8582,6 +8997,36 @@
             onSave={saveTask} onDelete={delTask} onClose={() => setModal(null)} />
         )}
       </div>
+
+      {/* SYNC GATE: editing is paused while GitHub sync is failing, so devices cannot drift apart */}
+      {syncBlocked && (
+        <div className="sync-block" role="alertdialog" aria-modal="true" aria-labelledby="sync-block-title">
+          <div className="sync-block-card">
+            <div className="sync-block-ic"><Icon name={ghStatus === 'syncing' ? 'refresh' : 'alert'} size={26} /></div>
+            <h2 id="sync-block-title">
+              {ghStatus === 'syncing' ? 'Syncing with GitHub…' : ghStatus === 'conflict' ? 'Choose which version to keep' : ghStatus === 'auth' ? 'GitHub access needs attention' : 'Not synced to GitHub'}
+            </h2>
+            <p>
+              {ghStatus === 'syncing' ? 'Hang on, this only takes a moment.'
+                : <>{ghMsg || 'Your changes could not be saved to GitHub.'} Editing is paused until this is resolved, so your devices cannot get out of step.</>}
+            </p>
+            <div className="sync-block-actions">
+              {ghStatus === 'conflict' ? (
+                <>
+                  <button className="btn-save" onClick={() => ghSyncRef.current('remote')}>Use GitHub's version</button>
+                  <button className="btn-cancel" onClick={() => ghSyncRef.current('local')}>Keep this device's</button>
+                </>
+              ) : (
+                <button className="btn-save" disabled={ghStatus === 'syncing'} onClick={() => ghSyncRef.current()}>
+                  <Icon name="refresh" size={16} /> {ghStatus === 'syncing' ? 'Syncing…' : 'Sync now'}
+                </button>
+              )}
+              <button className="btn-cancel" onClick={() => setTab('settings')}><Icon name="gear" size={16} /> Open settings</button>
+            </div>
+          </div>
+        </div>
+      )}
+      </>
     );
   }
 
