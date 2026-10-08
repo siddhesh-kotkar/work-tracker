@@ -6621,7 +6621,7 @@
   }
 
   /* ── SETTINGS VIEW ───────────────────────────────────────────── */
-  function SettingsView({ settings, onUpdate, fileStatus, fileName, hasFSA, onConnectExisting, onCreateNew, onDisconnect, gh, ghStatus, ghMsg, ghLast, onGhConnect, onGhSync, onGhResolve, onGhDisconnect }) {
+  function SettingsView({ settings, onUpdate, fileStatus, fileName, hasFSA, onConnectExisting, onCreateNew, onDisconnect, gh, ghStatus, ghMsg, ghLast, onGhConnect, onGhSync, onGhResolve, onGhDisconnect, onDownloadBackup }) {
     const [ghForm, setGhForm] = useState({ repo:'', token:'', path:'data.json', branch:'main' });
     const [ghErr,  setGhErr]  = useState('');
     const [ghBusyUi, setGhBusyUi] = useState(false);
@@ -6781,6 +6781,13 @@
               </div>
             </>
           )}
+        </div>
+
+        {/* BACKUP */}
+        <div className="settings-section">
+          <div className="section-title">Backup</div>
+          <div className="section-desc">Download everything (tasks, uni, films, TV, travel, budget, settings) as one JSON file you can keep anywhere. It's the same format as the data file, so it can be reconnected under Data Storage if you ever need to. The file includes your TMDB key, so store it somewhere private.</div>
+          <div className="storage-btns"><button className="sbtn primary" onClick={onDownloadBackup}>⬇ Download backup</button></div>
         </div>
 
         {/* APPEARANCE */}
@@ -8215,6 +8222,17 @@
       return () => { document.removeEventListener('visibilitychange', pull); window.removeEventListener('online', pull); clearInterval(iv); };
     }, [gh, ghStatus]);
 
+    function downloadBackup() {
+      const d = new Date(), pad = n => String(n).padStart(2, '0');
+      const stamp = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+      const blob = new Blob([JSON.stringify(dataRef.current, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `WorkTracker-backup-${stamp}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
     // File functions
     async function reconnectFile() {
       const handle = pendingHandleRef.current;
@@ -8519,7 +8537,7 @@
         {tab==='settings' && (
           <SettingsView settings={settings} onUpdate={setSettings}
             fileStatus={fileStatus} fileName={fileName} hasFSA={HAS_FSA}
-            gh={gh} ghStatus={ghStatus} ghMsg={ghMsg} ghLast={ghLast} onGhConnect={ghConnect} onGhSync={() => ghSyncRef.current()} onGhResolve={c => ghSyncRef.current(c)} onGhDisconnect={ghDisconnect}
+            gh={gh} ghStatus={ghStatus} ghMsg={ghMsg} ghLast={ghLast} onGhConnect={ghConnect} onGhSync={() => ghSyncRef.current()} onGhResolve={c => ghSyncRef.current(c)} onGhDisconnect={ghDisconnect} onDownloadBackup={downloadBackup}
             onConnectExisting={connectExistingFile} onCreateNew={createNewFile} onDisconnect={disconnectFile} />
         )}
 
