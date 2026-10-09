@@ -1926,6 +1926,19 @@
 
     .mv-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(520px, 1fr)); gap:8px 14px; }
     @media (max-width:820px) { .mv-list { grid-template-columns:1fr; } }
+
+    /* books */
+    .bk-progress { height:5px; border-radius:3px; background:color-mix(in srgb, var(--text) 10%, transparent); overflow:hidden; margin-top:6px; }
+    .bk-progress > span { display:block; height:100%; border-radius:3px; background:var(--grad); }
+    .bk-reading { margin-bottom:28px; }
+    .bk-reading-row { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:12px; margin-top:10px; }
+    .bk-reading-card { display:flex; gap:14px; padding:14px; background:var(--panel-hi), var(--surface); border:1px solid var(--hair); border-radius:var(--r-lg); cursor:pointer; box-shadow:var(--lift); transition:border-color .15s; }
+    .bk-reading-card:hover { border-color:var(--accent-line); }
+    .bk-reading-cover { width:58px; height:87px; border-radius:var(--r-sm); overflow:hidden; flex:none; background:var(--surface2); display:flex; align-items:center; justify-content:center; color:var(--text3); }
+    .bk-reading-cover img { width:100%; height:100%; object-fit:cover; }
+    .bk-reading-info { min-width:0; flex:1; display:flex; flex-direction:column; justify-content:center; }
+    .bk-reading-info .mv-li-title, .bk-reading-info .mv-li-meta { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bk-reading-info .mv-li-sub { margin-top:6px; font-size:var(--fs-xs); color:var(--text2); }
   </style>
 </head>
 <body class="dark">
@@ -2033,6 +2046,7 @@
     x:<path d="M6 6l12 12M18 6 6 18"/>,
     pen:<path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/>,
     chev:<path d="m9 6 6 6-6 6"/>,
+    book:<><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3M9 7h6"/></>,
     dot:<circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>,
   };
   const ICON_BY_EMOJI = { '🏠':'home', '📶':'wifi', '⚡':'bolt', '📱':'phone', '🛒':'cart', '🛍️':'bag', '📈':'trend', '💰':'coins' };
@@ -2910,7 +2924,7 @@
     uniData = { ...uniData, semesters: (uniData.semesters||[]).map(s =>
       s.id === 'gradcert' ? { ...s, excludeFromGPA: true } : s
     )};
-    return { tasks, settings, uniData, movieData: raw.movieData || makeDefaultMovieData(), tvData: raw.tvData || makeDefaultTVData(), travelData: raw.travelData || makeDefaultTravelData(), budgetData: raw.budgetData || makeDefaultBudgetData(), timeBlocks: raw.timeBlocks || [] };
+    return { tasks, settings, uniData, movieData: raw.movieData || makeDefaultMovieData(), tvData: raw.tvData || makeDefaultTVData(), bookData: raw.bookData || makeDefaultBookData(), travelData: raw.travelData || makeDefaultTravelData(), budgetData: raw.budgetData || makeDefaultBudgetData(), timeBlocks: raw.timeBlocks || [] };
   }
 
   /* ── SAMPLE DATA ─────────────────────────────────────────────── */
@@ -7422,6 +7436,509 @@
     );
   }
 
+  /* ── BOOKS ───────────────────────────────────────────────────── */
+  const BOOK_STATUS_OPTS = [
+    { id:'reading',  label:'Reading',      color:'#4aac76' },
+    { id:'want',     label:'Want to read', color:'#9070d8' },
+    { id:'finished', label:'Finished',     color:'#5b96e8' },
+    { id:'dropped',  label:'Dropped',      color:'#e05252' },
+  ];
+  function makeDefaultBookData() { return { books:[] }; }
+  const OL_COVER = id => `https://covers.openlibrary.org/b/id/${id}-M.jpg`;
+  async function olSearch(query, limit = 8) {
+    const r = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=${limit}&fields=key,title,author_name,first_publish_year,cover_i,number_of_pages_median,subject,language`);
+    if (!r.ok) throw new Error('Search failed');
+    return (await r.json()).docs || [];
+  }
+  function olToBook(d) {
+    const subjects = (d.subject || []).filter(x => x.length <= 28 && !/^(accessible|protected|in library|large type|new york times|reading level|lending library|internet archive)/i.test(x)).slice(0, 5);
+    return {
+      olKey: d.key || '', title: d.title || '', author: (d.author_name || []).slice(0, 2).join(', '),
+      year: d.first_publish_year || '', coverId: d.cover_i || null, pages: d.number_of_pages_median || '',
+      genres: subjects, language: (d.language || [])[0] || '',
+    };
+  }
+  const todayStr = () => localDateStr(new Date());
+  const bookFinishYear = b => (b.finishDate || '').slice(0, 4);
+
+  function BookModal({ book, onSave, onDelete, onClose }) {
+    const isEdit = !!book;
+    const blank = { title:'', author:'', status:'want', pages:'', currentPage:'', startDate:'', finishDate:'', year:'', coverId:null, olKey:'', rating:null, genres:[], language:'', notes:'', isAllTime:false, allTimeRank:null };
+    const [form, setForm] = React.useState(isEdit ? { ...blank, ...book, genres:Array.isArray(book.genres) ? book.genres : [] } : blank);
+    const [genresStr, setGenresStr] = React.useState((form.genres || []).join(', '));
+    const [q, setQ] = React.useState('');
+    const [results, setResults] = React.useState([]);
+    const [searching, setSearching] = React.useState(false);
+    const [err, setErr] = React.useState('');
+    const [showSearch, setShowSearch] = React.useState(!isEdit);
+
+    async function doSearch() {
+      if (!q.trim()) return;
+      setSearching(true); setErr('');
+      try { setResults((await olSearch(q.trim())).map(olToBook)); }
+      catch (e) { setErr('Search failed. Check your connection and try again.'); }
+      setSearching(false);
+    }
+    function pick(b) {
+      setForm(f => ({ ...f, ...b, status:f.status, rating:f.rating, notes:f.notes }));
+      setGenresStr((b.genres || []).join(', ')); setResults([]); setShowSearch(false);
+    }
+    function setStatus(st) {
+      setForm(f => {
+        const n = { ...f, status:st };
+        if (st === 'reading' && !f.startDate) n.startDate = todayStr();
+        if (st === 'finished') { if (!f.finishDate) n.finishDate = todayStr(); if (f.pages) n.currentPage = f.pages; }
+        return n;
+      });
+    }
+    function save() {
+      if (!form.title.trim()) return;
+      onSave({ id:book?.id || uid(), ...form, genres:genresStr.split(',').map(x => x.trim()).filter(Boolean) });
+    }
+    const pct = form.pages && form.currentPage ? Math.min(100, Math.round(form.currentPage / form.pages * 100)) : 0;
+    return (
+      <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal">
+          <div className="modal-hdr">
+            <div className="modal-title">{isEdit ? 'Edit book' : 'Add book'}</div>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
+          </div>
+          <div>
+            {!showSearch ? (
+              <span className="mv-manual-link" onClick={() => setShowSearch(true)}><Icon name="search" size={14} /> Search Open Library to auto-fill</span>
+            ) : (
+              <>
+                <div className="mv-modal-search">
+                  <input className="mv-search-in" placeholder="Search by title or author" value={q} autoFocus onChange={e => setQ(e.target.value)} onKeyDown={e => e.key === 'Enter' && doSearch()} />
+                  <button className="mv-search-btn" onClick={doSearch} disabled={searching}>{searching ? '…' : 'Search'}</button>
+                </div>
+                {err && <div className="gh-err">{err}</div>}
+                {results.length > 0 && (
+                  <div className="mv-results-list">
+                    {results.map((b, i) => (
+                      <div key={b.olKey + i} className="mv-result-row" onClick={() => pick(b)}>
+                        <div className="mv-result-poster">{b.coverId ? <img src={OL_COVER(b.coverId)} alt="" /> : <div style={{width:'100%',height:'100%'}} />}</div>
+                        <div>
+                          <div className="mv-result-title">{b.title}</div>
+                          <div className="mv-result-meta">{[b.author, b.year, b.pages ? `${b.pages} pages` : ''].filter(Boolean).join(' · ')}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {isEdit && <span className="mv-manual-link" onClick={() => { setShowSearch(false); setResults([]); }}>Hide search</span>}
+              </>
+            )}
+            <div className="mv-form-grid" style={{marginTop:14}}>
+              <div className="mv-form-field full" style={{flexDirection:'row', gap:14, alignItems:'flex-start'}}>
+                {form.coverId && <div style={{width:70, height:105, borderRadius:8, overflow:'hidden', flexShrink:0}}><img src={OL_COVER(form.coverId)} alt="" style={{width:'100%', height:'100%', objectFit:'cover'}} /></div>}
+                <div style={{flex:1, display:'flex', flexDirection:'column', gap:10}}>
+                  <div className="mv-form-field"><div className="mv-form-lbl">Title *</div><input className="mv-form-in" value={form.title} onChange={e => setForm(f => ({ ...f, title:e.target.value }))} placeholder="Book title" /></div>
+                  <div className="mv-form-field"><div className="mv-form-lbl">Author</div><input className="mv-form-in" value={form.author} onChange={e => setForm(f => ({ ...f, author:e.target.value }))} placeholder="Author name" /></div>
+                </div>
+              </div>
+              <div className="mv-form-field">
+                <div className="mv-form-lbl">Shelf</div>
+                <select className="mv-form-in" value={form.status} onChange={e => setStatus(e.target.value)}>{BOOK_STATUS_OPTS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}</select>
+              </div>
+              <div className="mv-form-field">
+                <div className="mv-form-lbl">Pages</div>
+                <input className="mv-form-in" type="number" min="1" value={form.pages} onChange={e => setForm(f => ({ ...f, pages:parseInt(e.target.value) || '' }))} placeholder="e.g. 320" />
+              </div>
+              {form.status === 'reading' && (
+                <div className="mv-form-field full">
+                  <div className="mv-form-lbl">Progress: page {form.currentPage || 0}{form.pages ? ` of ${form.pages} (${pct}%)` : ''}</div>
+                  <input className="mv-form-in" type="number" min="0" value={form.currentPage} onChange={e => setForm(f => ({ ...f, currentPage:parseInt(e.target.value) || '' }))} placeholder="Current page" />
+                  {form.pages > 0 && <div className="bk-progress"><span style={{width:pct + '%'}} /></div>}
+                </div>
+              )}
+              <div className="mv-form-field"><div className="mv-form-lbl">Started</div><input className="mv-form-in" type="date" value={form.startDate || ''} onChange={e => setForm(f => ({ ...f, startDate:e.target.value }))} /></div>
+              <div className="mv-form-field"><div className="mv-form-lbl">Finished</div><input className="mv-form-in" type="date" value={form.finishDate || ''} onChange={e => setForm(f => ({ ...f, finishDate:e.target.value }))} /></div>
+              <div className="mv-form-field">
+                <div className="mv-form-lbl">My rating</div>
+                <div style={{paddingTop:6}}><StarRating value={form.rating} onChange={v => setForm(f => ({ ...f, rating:v }))} size={24} />{form.rating && <div style={{fontSize:13, color:'var(--text2)', marginTop:4}}>{form.rating} / 5</div>}</div>
+              </div>
+              <div className="mv-form-field"><div className="mv-form-lbl">First published</div><input className="mv-form-in" type="number" value={form.year} onChange={e => setForm(f => ({ ...f, year:e.target.value }))} placeholder="e.g. 1984" /></div>
+              <div className="mv-form-field full"><div className="mv-form-lbl">Genres and subjects (comma separated)</div><input className="mv-form-in" value={genresStr} onChange={e => setGenresStr(e.target.value)} placeholder="Fiction, Science fiction" /></div>
+              <div className="mv-form-field full"><div className="mv-form-lbl">Notes</div><textarea className="mv-form-in mv-form-ta" value={form.notes || ''} onChange={e => setForm(f => ({ ...f, notes:e.target.value }))} placeholder="Thoughts, quotes, who recommended it" /></div>
+              <div className="mv-form-field full">
+                <label style={{display:'flex', alignItems:'center', gap:10, cursor:'pointer', padding:'10px 12px', background:'var(--surface2)', borderRadius:8, border:'1px solid var(--border)'}}>
+                  <input type="checkbox" checked={form.isAllTime || false} onChange={e => setForm(f => ({ ...f, isAllTime:e.target.checked }))} style={{width:16, height:16}} />
+                  <div><div style={{fontSize:14, fontWeight:600}}>Add to All Time favourites</div><div style={{fontSize:13, color:'var(--text2)'}}>Include in your personal all-time list</div></div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className="modal-footer">
+            <div className="modal-actions">
+              {isEdit && onDelete && <button className="btn-del" style={{marginRight:'auto'}} onClick={() => { onDelete(book.id); onClose(); }}>Delete</button>}
+              <button className="btn-cancel" onClick={onClose}>Cancel</button>
+              <button className="btn-save" onClick={save} disabled={!form.title.trim()}>Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function BulkAddBooksModal({ onSave, onClose, existingBooks }) {
+    const [text, setText] = React.useState('');
+    const [status, setStatus] = React.useState('want');
+    const [skipDupes, setSkipDupes] = React.useState(true);
+    const lines = text.split('\n').map(x => x.trim()).filter(Boolean).map(l => { const m = l.split(/\s+(?:-|–|—|by)\s+/i); return { title:m[0].trim(), author:(m[1] || '').trim() }; });
+    const have = React.useMemo(() => new Set((existingBooks || []).map(b => b.title.trim().toLowerCase())), [existingBooks]);
+    const dupes = lines.filter(l => have.has(l.title.toLowerCase()));
+    const toAdd = skipDupes ? lines.filter(l => !have.has(l.title.toLowerCase())) : lines;
+    function go() {
+      if (!toAdd.length) return;
+      onSave(toAdd.map(l => ({ id:uid(), title:l.title, author:l.author, status, pages:'', currentPage:'', startDate:'', finishDate:'', year:'', coverId:null, olKey:'', rating:null, genres:[], language:'', notes:'', isAllTime:false, allTimeRank:null })));
+      onClose();
+    }
+    return (
+      <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal">
+          <div className="modal-hdr"><div className="modal-title">Bulk add books</div><button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button></div>
+          <div className="mv-form-field"><div className="mv-form-lbl">One book per line. Add an author after a dash (optional)</div>
+            <textarea className="mv-form-in mv-form-ta" style={{minHeight:180}} value={text} onChange={e => setText(e.target.value)} placeholder={'Dune - Frank Herbert\nThe Remains of the Day\nPachinko by Min Jin Lee'} /></div>
+          <div className="mv-form-field" style={{marginTop:14}}><div className="mv-form-lbl">Shelf</div>
+            <select className="mv-form-in" value={status} onChange={e => setStatus(e.target.value)}>{BOOK_STATUS_OPTS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}</select></div>
+          <label style={{display:'flex', alignItems:'center', gap:8, marginTop:14, cursor:'pointer', fontSize:14}}><input type="checkbox" checked={skipDupes} onChange={e => setSkipDupes(e.target.checked)} /> Skip books already in my library{dupes.length ? ` (${dupes.length} found)` : ''}</label>
+          <div className="section-desc" style={{marginTop:10}}>Run Enrich afterwards to fetch covers, page counts and genres.</div>
+          <div className="modal-footer"><div className="modal-actions"><button className="btn-cancel" onClick={onClose}>Cancel</button><button className="btn-save" onClick={go} disabled={!toAdd.length}>Add {toAdd.length || ''} book{toAdd.length === 1 ? '' : 's'}</button></div></div>
+        </div>
+      </div>
+    );
+  }
+
+  function BookEnrichModal({ books, onApply, onClose }) {
+    const needs = React.useMemo(() => books.filter(b => !b.coverId || !b.pages || !(b.genres && b.genres.length) || !b.year || !b.author), [books]);
+    const [phase, setPhase] = React.useState('idle');
+    const [rows, setRows] = React.useState(() => needs.map(b => ({ id:b.id, title:b.title, status:'pending', detail:'' })));
+    const [summary, setSummary] = React.useState(null);
+    const cancel = React.useRef(false);
+    const setRow = (id, p) => setRows(rs => rs.map(r => r.id === id ? { ...r, ...p } : r));
+    async function run() {
+      setPhase('running'); cancel.current = false; const patches = {}; let done = 0, failed = 0;
+      for (const b of needs) {
+        if (cancel.current) break;
+        setRow(b.id, { status:'running', detail:'Looking up…' });
+        try {
+          const docs = await olSearch(`${b.title}${b.author ? ' ' + b.author : ''}`, 3);
+          const hit = docs[0];
+          if (!hit) { setRow(b.id, { status:'failed', detail:'Not found' }); failed++; }
+          else {
+            const d = olToBook(hit); const patch = {};
+            if (!b.coverId && d.coverId) patch.coverId = d.coverId;
+            if (!b.pages && d.pages) patch.pages = d.pages;
+            if (!(b.genres && b.genres.length) && d.genres.length) patch.genres = d.genres;
+            if (!b.year && d.year) patch.year = d.year;
+            if (!b.author && d.author) patch.author = d.author;
+            if (!b.language && d.language) patch.language = d.language;
+            if (!b.olKey && d.olKey) patch.olKey = d.olKey;
+            patches[b.id] = patch; done++;
+            setRow(b.id, { status:'done', detail:'Filled: ' + (Object.keys(patch).filter(k => k !== 'olKey').join(', ') || 'nothing new') });
+          }
+        } catch (e) { setRow(b.id, { status:'failed', detail:'Error: ' + e.message }); failed++; }
+        await new Promise(r => setTimeout(r, 250));
+      }
+      setSummary({ done, failed }); setPhase('done');
+      if (Object.keys(patches).length) onApply(patches);
+    }
+    return (
+      <div className="overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+        <div className="modal">
+          <div className="modal-hdr"><div className="modal-title">Enrich books from Open Library</div><button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button></div>
+          <div className="section-desc">Fills missing cover, pages, genres, author and first-published year for {needs.length} book{needs.length !== 1 ? 's' : ''}. Existing values are never overwritten.</div>
+          <div className="enrich-list">{rows.map(r => (
+            <div key={r.id} className="enrich-row"><span className={`enrich-status ${r.status}`}>{r.status === 'done' ? '✓' : r.status === 'failed' ? '!' : r.status === 'running' ? '…' : ''}</span><span className="enrich-title">{r.title}</span><span className="enrich-detail">{r.detail}</span></div>
+          ))}</div>
+          {summary && <div className="section-desc" style={{marginTop:12}}>{summary.done} updated · {summary.failed} not found</div>}
+          <div className="modal-footer"><div className="modal-actions">
+            <button className="btn-cancel" onClick={() => { cancel.current = true; onClose(); }}>{phase === 'done' ? 'Close' : 'Cancel'}</button>
+            {phase !== 'done' && <button className="btn-save" onClick={run} disabled={phase === 'running' || !needs.length}>{phase === 'running' ? 'Working…' : 'Start'}</button>}
+          </div></div>
+        </div>
+      </div>
+    );
+  }
+
+  function BooksView({ bookData, onUpdate }) {
+    const [view, setView] = React.useState('library');   // library | rankings | stats | years | authors | unrated
+    const [statusFilter, setStatusFilter] = React.useState('all');
+    const [search, setSearch] = React.useState('');
+    const [gridMode, setGridMode] = React.useState('grid');
+    const [modal, setModal] = React.useState(null);
+    const [bulkOpen, setBulkOpen] = React.useState(false);
+    const [dupesOpen, setDupesOpen] = React.useState(false);
+    const [enrichOpen, setEnrichOpen] = React.useState(false);
+    const [collapsed, setCollapsed] = React.useState({});
+    const [dragId, setDragId] = React.useState(null);
+    const [dragOver, setDragOver] = React.useState(null);
+
+    const books = bookData.books || [];
+    const q = search.trim().toLowerCase();
+    const matches = b => !q || (b.title || '').toLowerCase().includes(q) || (b.author || '').toLowerCase().includes(q) || (b.genres || []).some(g => g.toLowerCase().includes(q));
+    const counts = { all:books.length };
+    BOOK_STATUS_OPTS.forEach(o => { counts[o.id] = books.filter(b => b.status === o.id).length; });
+    const enrichCount = books.filter(b => !b.coverId || !b.pages || !(b.genres && b.genres.length) || !b.year || !b.author).length;
+    const allTime = books.filter(b => b.isAllTime).sort((a, b) => (a.allTimeRank || 999) - (b.allTimeRank || 999));
+    const unrated = books.filter(b => b.status === 'finished' && b.rating == null && matches(b));
+    const toggle = k => setCollapsed(c => ({ ...c, [k]: !c[k] }));
+
+    function saveBook(b) {
+      const ex = books.find(x => x.id === b.id);
+      const final = { ...b };
+      if (b.isAllTime && !ex?.isAllTime) final.allTimeRank = allTime.length + 1;
+      if (!b.isAllTime) final.allTimeRank = null;
+      onUpdate(d => ({ ...d, books: ex ? d.books.map(x => x.id === b.id ? final : x) : [...d.books, final] }));
+      setModal(null);
+    }
+    function deleteBook(id) { onUpdate(d => ({ ...d, books: d.books.filter(b => b.id !== id) })); setModal(null); }
+    function setAllTime(e, id, on) {
+      e.stopPropagation();
+      onUpdate(d => {
+        let next = d.books.map(b => b.id === id ? { ...b, isAllTime:on, allTimeRank:on ? 999 : null } : b);
+        const ranked = next.filter(b => b.isAllTime).sort((a, b) => (a.allTimeRank || 999) - (b.allTimeRank || 999)).map((b, i) => ({ ...b, allTimeRank:i + 1 }));
+        return { ...d, books: next.map(b => ranked.find(r => r.id === b.id) || b) };
+      });
+    }
+    function onDrop(e, targetId) {
+      e.preventDefault();
+      if (!dragId || dragId === targetId) { setDragId(null); setDragOver(null); return; }
+      const list = [...allTime]; const di = list.findIndex(b => b.id === dragId), ti = list.findIndex(b => b.id === targetId);
+      if (di < 0 || ti < 0) { setDragId(null); setDragOver(null); return; }
+      const [it] = list.splice(di, 1); list.splice(ti, 0, it);
+      const re = list.map((b, i) => ({ ...b, allTimeRank:i + 1 }));
+      onUpdate(d => ({ ...d, books: d.books.map(b => re.find(r => r.id === b.id) || b) }));
+      setDragId(null); setDragOver(null);
+    }
+    function pickOne() {
+      const pool = books.filter(b => b.status === 'want');
+      if (!pool.length) return;
+      setModal({ book: pool[Math.floor(Math.random() * pool.length)] });
+    }
+
+    const pctOf = b => b.pages && b.currentPage ? Math.min(100, Math.round(b.currentPage / b.pages * 100)) : 0;
+    const StatusPill = ({ status }) => { const o = BOOK_STATUS_OPTS.find(x => x.id === status); return o ? <span className="tv-status-badge" style={{ color:o.color, background:o.color + '26' }}>{o.label}</span> : null; };
+    const card = b => (
+      <div key={b.id} className="mv-card" onClick={() => setModal({ book:b })}>
+        <div className="mv-poster">
+          {b.coverId ? <img src={OL_COVER(b.coverId)} alt={b.title} loading="lazy" /> : <div className="mv-poster-fb"><Icon name="book" size={26} /></div>}
+          {b.isAllTime && <div className="mv-at-badge" title="All-time favourite"><Icon name="star" size={15} fill /></div>}
+        </div>
+        <div className="mv-card-body">
+          <div className="mv-card-title" title={b.title}>{b.title}</div>
+          <div className="mv-card-sub">{[b.author, b.year].filter(Boolean).join(' · ')}</div>
+          {b.status === 'reading' && b.pages > 0
+            ? <div className="bk-progress" title={`${pctOf(b)}%`}><span style={{ width:pctOf(b) + '%' }} /></div>
+            : b.rating ? <div className="mv-card-rating"><StarRating value={b.rating} readOnly size={12} /><span style={{ fontSize:13, color:'var(--text2)' }}>{b.rating}</span></div>
+            : <StatusPill status={b.status} />}
+        </div>
+      </div>
+    );
+    const listRow = b => (
+      <div key={b.id} className="mv-list-item" onClick={() => setModal({ book:b })}>
+        <div className="mv-li-poster">{b.coverId ? <img src={OL_COVER(b.coverId)} alt="" /> : <div className="tv-poster-fb"><Icon name="book" size={18} /></div>}</div>
+        <div className="mv-li-info">
+          <div className="mv-li-title">{b.title}{b.year ? <span className="mv-li-year"> {b.year}</span> : null}</div>
+          <div className="mv-li-meta">{[b.author, b.pages ? `${b.pages} pages` : null, (b.genres || [])[0]].filter(Boolean).join(' · ')}</div>
+        </div>
+        <div className="mv-li-right">
+          {b.rating ? <StarRating value={b.rating} readOnly size={14} /> : <StatusPill status={b.status} />}
+          {b.status === 'reading' && b.pages > 0 && <div className="mv-li-sub">{pctOf(b)}% · page {b.currentPage || 0}</div>}
+          {b.status === 'finished' && b.finishDate && <div className="mv-li-sub">Finished {b.finishDate}</div>}
+        </div>
+      </div>
+    );
+    const groups = (list, keyFn, order) => {
+      const m = new Map(); list.forEach(b => { const k = keyFn(b); if (!m.has(k)) m.set(k, []); m.get(k).push(b); });
+      const arr = [...m.entries()].map(([key, items]) => ({ key, items }));
+      return order ? arr.sort(order) : arr;
+    };
+    const renderGroups = (gs, prefix) => gs.map(g => {
+      const k = prefix + g.key, closed = !!collapsed[k];
+      return (
+        <div key={k} className="mv-genre-section">
+          <div className="mv-genre-hdr" onClick={() => toggle(k)}>
+            <Icon name="chev" size={14} className={closed ? '' : 'chev-open'} />
+            <span className="mv-genre-name">{g.key}</span><span className="mv-genre-count">{g.items.length}</span>
+          </div>
+          {!closed && (gridMode === 'list' ? <div className="mv-list">{g.items.map(listRow)}</div> : <div className="mv-grid">{g.items.map(card)}</div>)}
+        </div>
+      );
+    });
+
+    const filtered = (statusFilter === 'all' ? books : books.filter(b => b.status === statusFilter)).filter(matches);
+    const empty = (icon, ttl, sub) => <div className="mv-empty"><div className="mv-empty-icon"><Icon name={icon} size={40} /></div><div className="mv-empty-ttl">{ttl}</div><div className="mv-empty-sub">{sub}</div></div>;
+
+    // stats
+    const stats = React.useMemo(() => {
+      const fin = books.filter(b => b.status === 'finished');
+      const rated = books.filter(b => b.rating != null);
+      const thisYear = String(new Date().getFullYear());
+      const finThis = fin.filter(b => bookFinishYear(b) === thisYear);
+      const tally = fn => { const m = {}; books.forEach(b => { const v = fn(b); (Array.isArray(v) ? v : [v]).filter(Boolean).forEach(k => { m[k] = (m[k] || 0) + 1; }); }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+      const bars = (arr, n) => arr.slice(0, n).map(([label, value]) => ({ label, value }));
+      const yearMap = {}; fin.forEach(b => { const y = bookFinishYear(b); if (y) yearMap[y] = (yearMap[y] || 0) + 1; });
+      const pageBuckets = [['<200', p => p < 200], ['200–350', p => p >= 200 && p < 350], ['350–500', p => p >= 350 && p < 500], ['500+', p => p >= 500]];
+      const longest = [...fin].filter(b => b.pages).sort((a, b) => b.pages - a.pages)[0];
+      return {
+        finished:fin.length, pagesRead:fin.reduce((s, b) => s + (parseInt(b.pages) || 0), 0),
+        avg: rated.length ? (rated.reduce((s, b) => s + b.rating, 0) / rated.length).toFixed(1) : null, ratedN:rated.length,
+        thisYear:finThis.length, pagesThisYear:finThis.reduce((s, b) => s + (parseInt(b.pages) || 0), 0),
+        genres:bars(tally(b => b.genres), 8), authors:tally(b => (b.author || '').split(',').map(x => x.trim())).filter(([, c]) => c > 1).slice(0, 8).map(([label, value]) => ({ label, value })),
+        langs:bars(tally(b => langLabel(b.language)), 6),
+        years:Object.entries(yearMap).sort((a, b) => a[0] - b[0]).map(([label, value]) => ({ label, value })),
+        ratingDist:[0.5,1,1.5,2,2.5,3,3.5,4,4.5,5].map(v => ({ label:String(v), value:rated.filter(b => b.rating === v).length })),
+        pageDist:pageBuckets.map(([label, fn]) => ({ label, value:books.filter(b => parseInt(b.pages) > 0 && fn(parseInt(b.pages))).length })),
+        longest, topGenre:tally(b => b.genres)[0],
+      };
+    }, [JSON.stringify(books.map(b => b.id + b.status + b.rating + b.pages + b.finishDate + (b.genres || []).join() + b.author))]);
+
+    const reading = books.filter(b => b.status === 'reading' && matches(b));
+    const tabs = [['library', 'Library', 'book', books.length], ['rankings', 'All Time', 'star'], ['stats', 'Stats', 'chart'], ['years', 'By year read', 'calendar'], ['authors', 'Authors', 'user'], ['unrated', 'Unrated', 'alert', books.filter(b => b.status === 'finished' && b.rating == null).length]];
+    const title = tabs.find(t => t[0] === view)[1];
+
+    return (
+      <div className="tv-wrap">
+        <div className="subnav">
+          <div className="subnav-tabs" role="tablist">
+            {tabs.map(([id, label, ic, n]) => (
+              <button key={id} role="tab" className={`subnav-tab ${view === id ? 'active' : ''}`} onClick={() => setView(id)}><Icon name={ic} size={16} />{label}{n != null && <span className="subnav-count">{n}</span>}</button>
+            ))}
+            <span className="subnav-spacer" />
+            <input className="mv-sb-search subnav-search" placeholder="Search books" value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
+          {view === 'library' && (
+            <div className="subnav-years">
+              <span className="subnav-years-lbl">Shelf</span>
+              <button className={`subnav-chip ${statusFilter === 'all' ? 'active' : ''}`} onClick={() => setStatusFilter('all')}>All<span className="subnav-count">{counts.all}</span></button>
+              {BOOK_STATUS_OPTS.map(o => counts[o.id] > 0 && <button key={o.id} className={`subnav-chip ${statusFilter === o.id ? 'active' : ''}`} onClick={() => setStatusFilter(o.id)}>{o.label}<span className="subnav-count">{counts[o.id]}</span></button>)}
+            </div>
+          )}
+        </div>
+        <div className="tv-header">
+          <div className="tv-title-lbl">{title}</div>
+          {(view === 'library' || view === 'years' || view === 'authors') && (
+            <div className="mv-view-toggle">
+              <button className={`mv-vtab ${gridMode === 'grid' ? 'active' : ''}`} onClick={() => setGridMode('grid')}>Grid</button>
+              <button className={`mv-vtab ${gridMode === 'list' ? 'active' : ''}`} onClick={() => setGridMode('list')}>List</button>
+            </div>
+          )}
+          <span className="tv-push" />
+          <button className="ghost-btn" onClick={pickOne} disabled={!counts.want} title="Pick a random book from your want-to-read shelf"><Icon name="dice" size={16} /> Pick one</button>
+          <button className="ghost-btn" onClick={() => setDupesOpen(true)}><Icon name="alert" size={15} /> Dupes</button>
+          <button className="ghost-btn" onClick={() => setBulkOpen(true)}>+ Bulk add</button>
+          {books.length > 0 && <button className={`mv-enrich-btn${enrichCount > 0 ? ' has-gap' : ''}`} onClick={() => setEnrichOpen(true)}>{enrichCount > 0 ? <><Icon name="bolt" size={14} /> Enrich {enrichCount}</> : <><Icon name="check" size={14} /> All enriched</>}</button>}
+          <button className="tv-add-btn" onClick={() => setModal('add')}>+ Add book</button>
+        </div>
+
+        <div className="tv-content">
+          {books.length === 0 ? empty('book', 'No books yet', 'Add what you are reading, have read, or want to read. Search Open Library to fill in covers and page counts.')
+          : view === 'library' ? (
+            filtered.length === 0 ? empty('search', 'No books match', 'Try another shelf or search term.')
+            : statusFilter === 'all' && gridMode === 'grid' ? (
+              <>
+                {reading.length > 0 && (
+                  <div className="bk-reading">
+                    <div className="mv-chart-title">Currently reading</div>
+                    <div className="bk-reading-row">
+                      {reading.map(b => (
+                        <div key={b.id} className="bk-reading-card" onClick={() => setModal({ book:b })}>
+                          <div className="bk-reading-cover">{b.coverId ? <img src={OL_COVER(b.coverId)} alt="" /> : <Icon name="book" size={22} />}</div>
+                          <div className="bk-reading-info">
+                            <div className="mv-li-title">{b.title}</div>
+                            <div className="mv-li-meta">{b.author}</div>
+                            <div className="bk-progress"><span style={{ width:pctOf(b) + '%' }} /></div>
+                            <div className="mv-li-sub">{b.pages ? `Page ${b.currentPage || 0} of ${b.pages} · ${pctOf(b)}%` : 'Set the page count to track progress'}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {renderGroups(BOOK_STATUS_OPTS.filter(o => o.id !== 'reading').map(o => ({ key:o.label, items:filtered.filter(b => b.status === o.id).sort(o.id === 'finished' ? ((a, b) => (b.finishDate || '').localeCompare(a.finishDate || '')) : ((a, b) => a.title.localeCompare(b.title))) })).filter(g => g.items.length), 'lib-')}
+              </>
+            ) : gridMode === 'list' ? <div className="mv-list">{filtered.map(listRow)}</div>
+            : <div className="mv-grid">{filtered.map(card)}</div>
+          ) : view === 'rankings' ? (
+            allTime.length === 0 ? empty('star', 'Your all-time list is empty', 'Tick "Add to All Time favourites" when editing a book, or use the star on any book below.')
+            : (
+              <>
+                <div className="section-desc" style={{marginBottom:12}}>Drag to reorder (press and hold on touch)</div>
+                <div className="tv-rank-list">
+                  {allTime.map((b, i) => (
+                    <div key={b.id} className={`tv-rank-item ${dragId === b.id ? 'dragging' : ''} ${dragOver === b.id && dragId !== b.id ? 'drag-over' : ''}`}
+                      draggable onDragStart={e => { setDragId(b.id); e.dataTransfer.effectAllowed = 'move'; }} onDragOver={e => { e.preventDefault(); setDragOver(b.id); }}
+                      onDrop={e => onDrop(e, b.id)} onDragEnd={() => { setDragId(null); setDragOver(null); }} onClick={() => setModal({ book:b })}>
+                      <div className={`tv-rank-num ${i < 3 ? 'top3' : ''}`}>{i + 1}</div>
+                      <div className="tv-poster-sm">{b.coverId ? <img src={OL_COVER(b.coverId)} alt="" style={{width:'100%', height:'100%', objectFit:'cover'}} /> : <div className="tv-poster-fb"><Icon name="book" size={18} /></div>}</div>
+                      <div className="tv-info"><div className="tv-title">{b.title}</div><div className="tv-meta">{[b.author, b.pages ? `${b.pages} pages` : null].filter(Boolean).join(' · ')}</div></div>
+                      {b.rating && <StarRating value={b.rating} readOnly size={14} />}
+                      <button className="mv-hm-btn" title="Remove from all-time" onClick={e => setAllTime(e, b.id, false)}><Icon name="star" size={14} fill /></button>
+                    </div>
+                  ))}
+                </div>
+                {books.filter(b => !b.isAllTime && b.status === 'finished').length > 0 && (
+                  <div className="tv-notranked-section">
+                    <div className="mv-chart-title">Finished books not yet ranked: click the star to add</div>
+                    <div className="mv-grid">{books.filter(b => !b.isAllTime && b.status === 'finished').map(b => (
+                      <div key={b.id} className="mv-card" onClick={() => setModal({ book:b })}>
+                        <div className="mv-poster">{b.coverId ? <img src={OL_COVER(b.coverId)} alt="" loading="lazy" /> : <div className="mv-poster-fb"><Icon name="book" size={26} /></div>}
+                          <div className="tv-notranked-add" onClick={e => setAllTime(e, b.id, true)} title="Add to all-time"><Icon name="star" size={14} /></div></div>
+                        <div className="mv-card-body"><div className="mv-card-title">{b.title}</div></div>
+                      </div>))}</div>
+                  </div>
+                )}
+              </>
+            )
+          ) : view === 'stats' ? (
+            <>
+              <div className="mv-stats-kpi-row">
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Books finished</div><div className="mv-kpi-value">{stats.finished}</div><div className="mv-kpi-sub">{stats.thisYear} this year</div></div>
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Pages read</div><div className="mv-kpi-value">{stats.pagesRead.toLocaleString()}</div><div className="mv-kpi-sub">{stats.pagesThisYear.toLocaleString()} this year</div></div>
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Avg rating</div><div className="mv-kpi-value">{stats.avg || '–'}</div><div className="mv-kpi-sub">{stats.ratedN} rated</div></div>
+                <div className="mv-kpi-card"><div className="mv-kpi-label">Currently reading</div><div className="mv-kpi-value">{counts.reading}</div><div className="mv-kpi-sub">{counts.want} on your want list</div></div>
+                {stats.topGenre && <div className="mv-kpi-card"><div className="mv-kpi-label">Top genre</div><div className="mv-kpi-value mv-kpi-text">{stats.topGenre[0]}</div><div className="mv-kpi-sub">{stats.topGenre[1]} books</div></div>}
+                {stats.longest && <div className="mv-kpi-card"><div className="mv-kpi-label">Longest read</div><div className="mv-kpi-value">{stats.longest.pages}</div><div className="mv-kpi-sub">{stats.longest.title}</div></div>}
+              </div>
+              {stats.years.length > 1 && <div className="mv-chart-card" style={{marginBottom:14}}><div className="mv-chart-title">Books finished per year</div><LineChart data={stats.years} /></div>}
+              <div className="mv-charts-2col">
+                <div className="mv-chart-card"><div className="mv-chart-title">Top genres</div><HorizBar data={stats.genres} maxW={120} /></div>
+                <div className="mv-chart-card"><div className="mv-chart-title">Authors you return to</div>{stats.authors.length ? <HorizBar data={stats.authors} color="#c98a10" maxW={140} /> : <div className="section-desc">Read two books by the same author and they show up here.</div>}</div>
+              </div>
+              <div className="mv-charts-2col">
+                <div className="mv-chart-card"><div className="mv-chart-title">Rating distribution</div><RatingBars data={stats.ratingDist} /></div>
+                <div className="mv-chart-card"><div className="mv-chart-title">Book length</div><VertBar data={stats.pageDist} color="#4aac76" /></div>
+              </div>
+              {stats.langs.length > 0 && <div className="mv-chart-card"><div className="mv-chart-title">Languages</div><HorizBar data={stats.langs} color="#9070d8" maxW={120} /></div>}
+            </>
+          ) : view === 'years' ? (
+            (() => {
+              const fin = books.filter(b => b.status === 'finished' && matches(b));
+              if (!fin.length) return empty('calendar', 'Nothing finished yet', 'Finished books are grouped by the year you finished them.');
+              return renderGroups(groups(fin.sort((a, b) => (b.finishDate || '').localeCompare(a.finishDate || '')), b => bookFinishYear(b) || 'No finish date', (a, b) => (a.key === 'No finish date') - (b.key === 'No finish date') || b.key.localeCompare(a.key)), 'yr-');
+            })()
+          ) : view === 'authors' ? (
+            (() => {
+              const list = books.filter(matches);
+              if (!list.length) return empty('user', 'No books match', 'Try a different search.');
+              return renderGroups(groups([...list].sort((a, b) => a.title.localeCompare(b.title)), b => (b.author || '').split(',')[0].trim() || 'Unknown author', (a, b) => (a.key === 'Unknown author') - (b.key === 'Unknown author') || b.items.length - a.items.length || a.key.localeCompare(b.key)), 'au-');
+            })()
+          ) : (
+            unrated.length === 0 ? empty('star', 'Every finished book is rated', 'Nothing is waiting for a rating.')
+            : gridMode === 'list' ? <div className="mv-list">{unrated.map(listRow)}</div> : <div className="mv-grid">{unrated.map(card)}</div>
+          )}
+        </div>
+
+        {modal && <BookModal book={modal === 'add' ? null : modal.book} onSave={saveBook} onDelete={deleteBook} onClose={() => setModal(null)} />}
+        {bulkOpen && <BulkAddBooksModal existingBooks={books} onSave={nb => onUpdate(d => ({ ...d, books:[...(d.books || []), ...nb] }))} onClose={() => setBulkOpen(false)} />}
+        {enrichOpen && <BookEnrichModal books={books} onApply={p => onUpdate(d => ({ ...d, books:d.books.map(b => p[b.id] ? { ...b, ...p[b.id] } : b) }))} onClose={() => setEnrichOpen(false)} />}
+        {dupesOpen && <FindDuplicatesModal noun="book" items={books} renderMeta={b => [b.author, b.status, b.pages ? `${b.pages} pages` : null, b.rating ? `★${b.rating}` : null].filter(Boolean).join(' · ') || 'No details'} onDelete={id => onUpdate(d => ({ ...d, books:d.books.filter(b => b.id !== id) }))} onClose={() => setDupesOpen(false)} />}
+      </div>
+    );
+  }
+
   /* ── SETTINGS VIEW ───────────────────────────────────────────── */
   function SettingsView({ settings, onUpdate, fileStatus, fileName, hasFSA, onConnectExisting, onCreateNew, onDisconnect, gh, ghStatus, ghMsg, ghLast, onGhConnect, onGhSync, onGhResolve, onGhDisconnect, onDownloadBackup }) {
     const [ghForm, setGhForm] = useState({ repo:'', token:'', path:'data.json', branch:'main' });
@@ -8557,7 +9074,7 @@
   }
 
   /* ── HOME VIEW ───────────────────────────────────────────────── */
-  function HomeView({ tasks, workTasks, persTasks, uniData, movieData, tvData, settings, onNav }) {
+  function HomeView({ tasks, workTasks, persTasks, uniData, movieData, tvData, bookData, settings, onNav }) {
     const today = localDateStr(new Date());
 
     // Stat computations
@@ -8648,6 +9165,12 @@
         id:'tv', icon:'tv', label:'TV',
         iconBg:'rgba(201,138,16,.12)',
         sub: watchingTV > 0 ? `${watchingTV} currently watching` : 'Show tracker',
+        badge: null,
+      },
+      {
+        id:'books', icon:'book', label:'Books',
+        iconBg:'transparent',
+        sub: (() => { const bs = bookData?.books || []; const r = bs.filter(b => b.status === 'reading').length; return r > 0 ? `${r} currently reading` : `${bs.filter(b => b.status === 'want').length} on your list`; })(),
         badge: null,
       },
     ];
@@ -8838,7 +9361,7 @@
           if (m) return m;
         }
       } catch {}
-      return { tasks:makeSamples(), settings:DEFAULT_S, uniData:makeDefaultUniData(), movieData:makeDefaultMovieData(), tvData:makeDefaultTVData(), travelData:makeDefaultTravelData(), budgetData:makeDefaultBudgetData(), timeBlocks:[] };
+      return { tasks:makeSamples(), settings:DEFAULT_S, uniData:makeDefaultUniData(), movieData:makeDefaultMovieData(), tvData:makeDefaultTVData(), bookData:makeDefaultBookData(), travelData:makeDefaultTravelData(), budgetData:makeDefaultBudgetData(), timeBlocks:[] };
     });
 
     // File persistence state
@@ -8885,12 +9408,13 @@
     const [modal,       setModal]      = useState(null);
     const [blockModal,  setBlockModal] = useState(null); // null | { defaultDate } | { block }
 
-    const { tasks, settings, uniData, movieData, tvData, travelData, budgetData, timeBlocks } = data;
+    const { tasks, settings, uniData, movieData, tvData, bookData, travelData, budgetData, timeBlocks } = data;
     const setTasks      = fn => setData(d => ({ ...d, tasks:fn(d.tasks) }));
     const setSettings   = fn => setData(d => ({ ...d, settings:fn(d.settings) }));
     const setUniData    = fn => setData(d => ({ ...d, uniData: typeof fn === 'function' ? fn(d.uniData) : fn }));
     const setMovieData  = fn => setData(d => ({ ...d, movieData: typeof fn === 'function' ? fn(d.movieData) : fn }));
     const setTVData     = fn => setData(d => ({ ...d, tvData: typeof fn === 'function' ? fn(d.tvData) : fn }));
+    const setBookData   = fn => setData(d => ({ ...d, bookData: typeof fn === 'function' ? fn(d.bookData || makeDefaultBookData()) : fn }));
     const setTravelData = fn => setData(d => ({ ...d, travelData: typeof fn === 'function' ? fn(d.travelData) : fn }));
     const setBudgetData = fn => setData(d => ({ ...d, budgetData: typeof fn === 'function' ? fn(d.budgetData) : fn }));
     const setTimeBlocks = fn => setData(d => ({ ...d, timeBlocks: typeof fn === 'function' ? fn(d.timeBlocks||[]) : fn }));
@@ -9183,7 +9707,7 @@
       stale:   staleCount,
     };
 
-    const PAGE_TITLES = { calendar:'Calendar', work:'Work', uni:'Uni', personal:'Personal', movies:'Films', tv:'TV', travel:'Travel', budget:'Budget', settings:'Settings' };
+    const PAGE_TITLES = { calendar:'Calendar', work:'Work', uni:'Uni', personal:'Personal', movies:'Films', tv:'TV', books:'Books', travel:'Travel', budget:'Budget', settings:'Settings' };
     const PAGE_SUBS = {
       calendar:'Deadlines, assessments and blocked time',
       work:`${stats.wActive} active · ${stats.high} high priority`,
@@ -9191,6 +9715,7 @@
       uni:'Grades, WAM and the assessment planner',
       movies:`${(movieData?.movies||[]).length} films logged`,
       tv:`${(tvData?.shows||[]).length} shows tracked`,
+      books:`${(bookData?.books||[]).filter(b=>b.status==='finished').length} read · ${(bookData?.books||[]).filter(b=>b.status==='reading').length} reading`,
       travel:`${(travelData?.visits||[]).length} visits logged`,
       budget:'Monthly plan, spending and savings',
       settings:'Sync, backup and appearance',
@@ -9219,7 +9744,7 @@
               <button key={t} className={`nav-tab ${tab===t?'active':''}`} onClick={() => setTab(t)}>{l}</button>
             ))}
             <div style={{width:'1px',background:'var(--border)',margin:'4px 2px',flexShrink:0}}/>
-            {[['movies','Films'],['tv','TV'],['travel','Travel'],['budget','Budget']].map(([t,l]) => (
+            {[['movies','Films'],['tv','TV'],['books','Books'],['travel','Travel'],['budget','Budget']].map(([t,l]) => (
               <button key={t} className={`nav-tab ${tab===t?'active':''}`} onClick={() => setTab(t)}>{l}</button>
             ))}
           </div>
@@ -9252,14 +9777,14 @@
           {[['home','Home','home'],['calendar','Calendar','calendar'],['work','Work','briefcase'],['uni','Uni','cap']].map(([t,l,ic]) => (
             <button key={t} className={`bn-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="bn-ic"><Icon name={ic} size={22} /></span><span className="bn-lbl">{l}</span></button>
           ))}
-          <button className={`bn-item ${['personal','movies','tv','travel','budget','settings'].includes(tab)||moreOpen?'active':''}`} onClick={() => setMoreOpen(o=>!o)}><span className="bn-ic"><Icon name="menu" size={22} /></span><span className="bn-lbl">More</span></button>
+          <button className={`bn-item ${['personal','movies','tv','books','travel','budget','settings'].includes(tab)||moreOpen?'active':''}`} onClick={() => setMoreOpen(o=>!o)}><span className="bn-ic"><Icon name="menu" size={22} /></span><span className="bn-lbl">More</span></button>
         </nav>
         {moreOpen && (
           <div className="more-overlay" onClick={() => setMoreOpen(false)}>
             <div className="more-sheet" onClick={e => e.stopPropagation()}>
               <div className="more-grip" />
               <div className="more-grid">
-                {[['personal','Personal','user'],['movies','Films','film'],['tv','TV','tv'],['travel','Travel','globe'],['budget','Budget','wallet'],['settings','Settings','gear']].map(([t,l,ic]) => (
+                {[['personal','Personal','user'],['movies','Films','film'],['tv','TV','tv'],['books','Books','book'],['travel','Travel','globe'],['budget','Budget','wallet'],['settings','Settings','gear']].map(([t,l,ic]) => (
                   <button key={t} className={`more-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="more-ic"><Icon name={ic} size={26} /></span><span>{l}</span></button>
                 ))}
               </div>
@@ -9312,6 +9837,7 @@
             uniData={uniData}
             movieData={movieData}
             tvData={tvData}
+            bookData={bookData}
             settings={settings}
             onNav={t => setTab(t)}
           />
@@ -9359,6 +9885,9 @@
         )}
         {tab==='tv' && (
           <TVView tvData={tvData || makeDefaultTVData()} onUpdate={setTVData} tmdbKey={settings.tmdbKey||''} />
+        )}
+        {tab==='books' && (
+          <BooksView bookData={bookData || makeDefaultBookData()} onUpdate={setBookData} />
         )}
         {tab==='travel' && (
           <TravelView travelData={travelData || makeDefaultTravelData()} onUpdate={setTravelData} />
