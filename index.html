@@ -1939,6 +1939,86 @@
     .bk-reading-info { min-width:0; flex:1; display:flex; flex-direction:column; justify-content:center; }
     .bk-reading-info .mv-li-title, .bk-reading-info .mv-li-meta { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .bk-reading-info .mv-li-sub { margin-top:6px; font-size:var(--fs-xs); color:var(--text2); }
+
+    /* rugby */
+    .rg-tz { display:inline-flex; align-items:center; gap:8px; font-size:var(--fs-sm); color:var(--text2); }
+    .rg-tz select { min-width:190px; }
+    .rg-day { margin-bottom:22px; }
+    .rg-day-hdr { font-size:var(--fs-md); font-weight:650; letter-spacing:-.01em; margin:0 0 10px; }
+    .rg-match { display:grid; grid-template-columns:150px minmax(0,1fr) 92px minmax(0,1fr); grid-template-areas:"when home score away" ". where where where"; align-items:center; gap:4px 14px; padding:12px 16px; margin-bottom:8px; background:var(--panel-hi), var(--surface); border:1px solid var(--hair); border-radius:var(--r-md); cursor:pointer; transition:border-color .15s; }
+    .rg-match:hover { border-color:var(--accent-line); }
+    .rg-when { grid-area:when; display:flex; flex-direction:column; gap:2px; min-width:0; }
+    .rg-ko { font-size:var(--fs-md); font-weight:650; font-variant-numeric:tabular-nums; }
+    .rg-final { font-size:var(--fs-sm); font-weight:650; color:var(--text2); }
+    .rg-live { font-size:var(--fs-sm); font-weight:700; color:var(--high); }
+    .rg-lg { font-size:var(--fs-xs); color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rg-team { display:flex; align-items:center; gap:10px; min-width:0; font-weight:550; }
+    .rg-team:first-of-type { grid-area:home; }
+    .rg-team-r { justify-content:flex-end; flex-direction:row-reverse; text-align:right; grid-area:home; }
+    .rg-match .rg-team:not(.rg-team-r) { grid-area:away; }
+    .rg-win { font-weight:700; }
+    .rg-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .rg-logo { width:28px; height:28px; object-fit:contain; flex:none; }
+    .rg-logo-fb { display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:var(--surface2); font-size:var(--fs-xs); font-weight:700; color:var(--text2); }
+    .rg-logo-sm { width:22px; height:22px; }
+    .rg-score { grid-area:score; text-align:center; font-family:var(--font-display); font-size:var(--fs-lg); font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+    .rg-vs { color:var(--text3); font-size:var(--fs-base); }
+    .rg-where { grid-area:where; font-size:var(--fs-xs); color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rg-chip { font-size:var(--fs-xs); padding:2px 6px; border-radius:6px; background:var(--grad-soft); border:1px solid var(--accent-line); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer; }
+    .rg-cal-hdr { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .rg-cal-title { font-family:var(--font-display); font-size:var(--fs-lg); font-weight:600; min-width:170px; }
+    .rg-cal-tz { margin-left:auto; font-size:var(--fs-sm); color:var(--text2); }
+    .rg-agenda { margin-top:22px; }
+    .rg-stand { margin-bottom:26px; }
+    .rg-table-wrap { overflow-x:auto; border:1px solid var(--hair); border-radius:var(--r-lg); background:var(--panel-hi), var(--surface); }
+    .rg-table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+    .rg-table th { text-align:right; font-size:var(--fs-xs); font-weight:600; color:var(--text2); padding:10px 10px; border-bottom:1px solid var(--hair); white-space:nowrap; }
+    .rg-table td { text-align:right; padding:9px 10px; border-bottom:1px solid var(--hair); font-size:var(--fs-sm); }
+    .rg-table tr:last-child td { border-bottom:none; }
+    .rg-table .pos { text-align:center; width:40px; color:var(--text2); }
+    .rg-table .team { text-align:left; white-space:nowrap; }
+    .rg-table td.team { display:flex; align-items:center; gap:10px; font-weight:600; }
+    .rg-table .pts { font-weight:700; color:var(--text); }
+    .rg-table .form { text-align:left; white-space:nowrap; }
+    .rg-f { display:inline-flex; width:19px; height:19px; margin-right:3px; border-radius:5px; align-items:center; justify-content:center; font-size:12px; font-weight:700; background:color-mix(in srgb, var(--text) 8%, transparent); color:var(--text2); }
+    .rg-f-W { background:color-mix(in srgb, var(--low) 28%, transparent); color:var(--text); }
+    .rg-f-L { background:color-mix(in srgb, var(--high) 28%, transparent); color:var(--text); }
+    .rg-hero { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:14px; padding:18px 0; }
+    .rg-hero .rg-logo { width:44px; height:44px; }
+    .rg-hero .rg-name { white-space:normal; font-size:var(--fs-md); }
+    .rg-hero-score { font-family:var(--font-display); font-size:var(--fs-xl); font-weight:600; letter-spacing:-.02em; }
+    .rg-facts { display:flex; flex-direction:column; gap:8px; font-size:var(--fs-sm); padding:14px 0; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair); }
+    .rg-facts span { display:inline-block; width:92px; color:var(--text2); }
+    .rg-block { margin-top:20px; }
+    .rg-lineups { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px; }
+    .rg-lu-team { font-weight:650; margin-bottom:6px; }
+    .rg-lu-row { display:flex; gap:8px; font-size:var(--fs-sm); padding:3px 0; border-bottom:1px solid var(--hair); }
+    .rg-lu-no { width:24px; color:var(--text2); text-align:right; font-variant-numeric:tabular-nums; }
+    .rg-lu-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .rg-lu-pos { color:var(--text2); width:34px; text-align:right; }
+    .rg-stats td { padding:8px 6px; text-align:left; border-bottom:1px solid var(--hair); }
+    .rg-stats td.r { text-align:right; font-weight:650; width:30%; }
+    .rg-stats td.c { text-align:center; color:var(--text2); }
+    .rg-h2h { display:flex; justify-content:space-between; gap:10px; font-size:var(--fs-sm); padding:6px 0; border-bottom:1px solid var(--hair); }
+    .rg-h2h-res { font-weight:650; }
+    .rg-check { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:var(--fs-base); cursor:pointer; }
+    .rg-foot { margin-top:22px; font-size:var(--fs-xs); color:var(--text3); }
+    @media (max-width:820px) {
+      .rg-match { grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr); grid-template-areas:"when when when" "home score away" "where where where"; padding:12px; }
+      .rg-when { flex-direction:row; align-items:baseline; gap:10px; }
+      .rg-name { font-size:var(--fs-sm); }
+      .rg-team { gap:8px; }
+      .rg-logo { width:24px; height:24px; }
+      .rg-tz select { min-width:0; max-width:48vw; }
+      .rg-lineups { grid-template-columns:1fr; }
+      .rg-cal-title { min-width:0; font-size:var(--fs-md); }
+      .rg-chip b { display:none; }
+    }
+
+    .rg-team-r { justify-content:flex-start; }
+    .rg-where { text-align:center; }
+
+    @media (max-width:820px) { .rg-match .rg-name { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.25; } }
   </style>
 </head>
 <body class="dark">
@@ -2046,6 +2126,7 @@
     x:<path d="M6 6l12 12M18 6 6 18"/>,
     pen:<path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/>,
     chev:<path d="m9 6 6 6-6 6"/>,
+    ball:<><ellipse cx="12" cy="12" rx="9.5" ry="5.8" transform="rotate(-35 12 12)"/><path d="M8.5 15.5l7-7M10.5 9.5l1 1M12.5 11.5l1 1M8.5 13.5l1 1"/></>,
     book:<><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3M9 7h6"/></>,
     dot:<circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>,
   };
@@ -2924,7 +3005,7 @@
     uniData = { ...uniData, semesters: (uniData.semesters||[]).map(s =>
       s.id === 'gradcert' ? { ...s, excludeFromGPA: true } : s
     )};
-    return { tasks, settings, uniData, movieData: raw.movieData || makeDefaultMovieData(), tvData: raw.tvData || makeDefaultTVData(), bookData: raw.bookData || makeDefaultBookData(), travelData: raw.travelData || makeDefaultTravelData(), budgetData: raw.budgetData || makeDefaultBudgetData(), timeBlocks: raw.timeBlocks || [] };
+    return { tasks, settings, uniData, movieData: raw.movieData || makeDefaultMovieData(), tvData: raw.tvData || makeDefaultTVData(), bookData: raw.bookData || makeDefaultBookData(), rugbyData: raw.rugbyData || makeDefaultRugbyData(), travelData: raw.travelData || makeDefaultTravelData(), budgetData: raw.budgetData || makeDefaultBudgetData(), timeBlocks: raw.timeBlocks || [] };
   }
 
   /* ── SAMPLE DATA ─────────────────────────────────────────────── */
@@ -7939,6 +8020,401 @@
     );
   }
 
+  /* ── RUGBY ───────────────────────────────────────────────────── */
+  const RUGBY_COMPS = [
+    { id:'242041', name:'Super Rugby Pacific',        group:'Club' },
+    { id:'267979', name:'Gallagher Premiership',      group:'Club' },
+    { id:'270557', name:'United Rugby Championship',  group:'Club' },
+    { id:'270559', name:'Top 14',                     group:'Club' },
+    { id:'271937', name:'Champions Cup',              group:'Club' },
+    { id:'272073', name:'Challenge Cup',              group:'Club' },
+    { id:'289262', name:'Major League Rugby',         group:'Club' },
+    { id:'270563', name:'Bunnings NPC (Mitre 10 Cup)', group:'Club' },
+    { id:'270555', name:'Currie Cup',                 group:'Club' },
+    { id:'289279', name:'URBA Top 14 (Argentina)',    group:'Club' },
+    { id:'2009',   name:'URBA Primera A (Argentina)', group:'Club' },
+    { id:'236461', name:'Anglo-Welsh Cup',            group:'Club' },
+    { id:'289234', name:'International Test Matches', group:'International' },
+    { id:'244293', name:'The Rugby Championship',     group:'International' },
+    { id:'180659', name:'Six Nations',                group:'International' },
+    { id:'17567',  name:'Nations Championship',       group:'International' },
+    { id:'164205', name:'Rugby World Cup',            group:'International' },
+    { id:'289237', name:"Women's Rugby World Cup",    group:'International' },
+    { id:'268565', name:'British & Irish Lions Tour', group:'International' },
+    { id:'282',    name:"Olympic Men's Sevens",       group:'Sevens' },
+    { id:'283',    name:"Olympic Women's Sevens",     group:'Sevens' },
+  ];
+  const RUGBY_DEFAULT_FOLLOWED = ['242041','244293','289234','180659','270557','267979','270559','271937','164205','17567'];
+  const RUGBY_TZ_LIST = ['Australia/Sydney','Australia/Melbourne','Australia/Brisbane','Australia/Perth','Pacific/Auckland','Pacific/Fiji','Europe/London','Europe/Dublin','Europe/Paris','Europe/Rome','Africa/Johannesburg','America/Argentina/Buenos_Aires','America/New_York','America/Chicago','America/Los_Angeles','Asia/Tokyo','Asia/Hong_Kong','Asia/Singapore','Asia/Dubai','Asia/Kolkata','UTC'];
+  function makeDefaultRugbyData() { return { followed:[...RUGBY_DEFAULT_FOLLOWED], tz:'auto', notes:{} }; }
+
+  const RG_BASE = 'https://site.api.espn.com/apis';
+  const RG_CACHE_KEY = 'sidd_rugby_cache_v1';
+  const RG_TTL = 10 * 60 * 1000;
+  const rgDeviceTz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch { return 'UTC'; } };
+  const rgTz = rd => (rd && rd.tz && rd.tz !== 'auto') ? rd.tz : rgDeviceTz();
+  const rgFmt = (iso, tz, opts) => { try { return new Intl.DateTimeFormat('en-AU', { timeZone:tz, ...opts }).format(new Date(iso)); } catch { return ''; } };
+  const rgDayKey = (iso, tz) => { try { return new Intl.DateTimeFormat('en-CA', { timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(iso)); } catch { return String(iso).slice(0, 10); } };
+  const rgTime = (iso, tz) => rgFmt(iso, tz, { hour:'numeric', minute:'2-digit', hour12:true }).replace(' ', '').toLowerCase();
+  const rgDayLabel = (key, tz) => rgFmt(key + 'T12:00:00Z', 'UTC', { weekday:'long', day:'numeric', month:'long' });
+  const rgTzShort = (iso, tz) => (rgFmt(iso, tz, { timeZoneName:'short' }).split(' ').pop() || tz);
+
+  function rgNorm(e, lg) {
+    const c = (e.competitions || [])[0] || {};
+    const cs = c.competitors || [];
+    const side = (ha, idx) => {
+      const x = cs.find(k => k.homeAway === ha) || cs[idx] || {}; const t = x.team || {};
+      return { id:t.id, name:t.displayName || t.name || 'TBC', abbr:t.abbreviation || '', logo:t.logo || ((t.logos || [])[0] || {}).href || '', score:(x.score != null && x.score !== '') ? Number(x.score) : null, winner:!!x.winner };
+    };
+    const st = ((e.status || c.status || {}).type) || {};
+    return { id:String(e.id), lg:lg.id, lgName:lg.name, date:e.date, state:st.state || 'pre', detail:st.shortDetail || st.description || '',
+      home:side('home', 0), away:side('away', 1), venue:(c.venue || {}).fullName || '', city:((c.venue || {}).address || {}).city || '',
+      att:c.attendance || 0, round:((c.notes || [])[0] || {}).headline || '', tv:(c.broadcasts || []).flatMap(b => b.names || []).slice(0, 3) };
+  }
+  function rgStandings(d) {
+    return (d.children || []).map(ch => ({
+      name: ch.name,
+      rows: ((ch.standings || {}).entries || []).map(en => {
+        const s = {}; (en.stats || []).forEach(x => { s[x.name] = x.displayValue != null ? x.displayValue : x.value; });
+        return { team:(en.team || {}).displayName, logo:(((en.team || {}).logos || [])[0] || {}).href, ...s };
+      }).sort((a, b) => (Number(a.rank || a.playoffSeed) || 99) - (Number(b.rank || b.playoffSeed) || 99)),
+    })).filter(g => g.rows.length);
+  }
+  async function rgJson(url) { const r = await fetch(url); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
+  async function rgLoadLeague(lg) {
+    const y = new Date().getFullYear();
+    const years = [y, y + 1];
+    const evs = {};
+    const batches = await Promise.all(years.map(yr => rgJson(`${RG_BASE}/site/v2/sports/rugby/${lg.id}/scoreboard?dates=${yr}`).catch(() => ({ events:[] }))));
+    batches.forEach(b => (b.events || []).forEach(e => { evs[e.id] = rgNorm(e, lg); }));
+    let standings = [];
+    try { standings = rgStandings(await rgJson(`${RG_BASE}/v2/sports/rugby/${lg.id}/standings`)); } catch {}
+    return { t:Date.now(), events:Object.values(evs), standings };
+  }
+  function rgReadCache() { try { return JSON.parse(localStorage.getItem(RG_CACHE_KEY) || '{}'); } catch { return {}; } }
+
+  function useRugbyFeed(followed) {
+    const [state, setState] = React.useState(() => ({ data:rgReadCache(), loading:false, errors:{} }));
+    const key = followed.join(',');
+    const load = React.useCallback(async (force) => {
+      const cache = rgReadCache();
+      const todo = RUGBY_COMPS.filter(c => followed.includes(c.id) && (force || !cache[c.id] || Date.now() - cache[c.id].t > RG_TTL));
+      if (!todo.length) { setState(s => ({ ...s, data:cache })); return; }
+      setState(s => ({ ...s, loading:true }));
+      const errors = {};
+      const results = await Promise.all(todo.map(c => rgLoadLeague(c).then(r => [c.id, r]).catch(e => { errors[c.id] = e.message; return null; })));
+      const next = { ...cache };
+      results.filter(Boolean).forEach(([id, r]) => { next[id] = r; });
+      try { localStorage.setItem(RG_CACHE_KEY, JSON.stringify(next)); } catch {}
+      setState({ data:next, loading:false, errors });
+    }, [key]);
+    React.useEffect(() => { load(false); }, [load]);
+    return { ...state, reload:() => load(true) };
+  }
+
+  function RugbyTeam({ t, right }) {
+    return (
+      <div className={`rg-team ${right ? 'rg-team-r' : ''} ${t.winner ? 'rg-win' : ''}`}>
+        {t.logo ? <img className="rg-logo" src={t.logo} alt="" loading="lazy" /> : <span className="rg-logo rg-logo-fb">{(t.abbr || t.name || '?').slice(0, 3)}</span>}
+        <span className="rg-name">{t.name}</span>
+      </div>
+    );
+  }
+
+  function RugbyMatchRow({ m, tz, onOpen, note }) {
+    const live = m.state === 'in', done = m.state === 'post';
+    return (
+      <div className="rg-match" onClick={() => onOpen(m)} role="button">
+        <div className="rg-when">
+          {done ? <span className="rg-final">FT</span> : live ? <span className="rg-live">Live</span> : <span className="rg-ko">{rgTime(m.date, tz)}</span>}
+          <span className="rg-lg">{m.lgName}</span>
+        </div>
+        <RugbyTeam t={m.home} right />
+        <div className={`rg-score ${done || live ? '' : 'rg-vs'}`}>{done || live ? `${m.home.score ?? '–'} – ${m.away.score ?? '–'}` : 'v'}</div>
+        <RugbyTeam t={m.away} />
+        <div className="rg-where">{[m.round, m.venue].filter(Boolean).join(' · ')}{note && note.rating ? ` · ★ ${note.rating}` : ''}</div>
+      </div>
+    );
+  }
+
+  function RugbyMatchDrawer({ m, tz, note, onNote, onClose }) {
+    const [sum, setSum] = React.useState(null);
+    const [err, setErr] = React.useState('');
+    React.useEffect(() => {
+      let dead = false; setSum(null); setErr('');
+      rgJson(`${RG_BASE}/site/v2/sports/rugby/${m.lg}/summary?event=${m.id}`).then(d => { if (!dead) setSum(d); }).catch(() => { if (!dead) setErr('Could not load match details.'); });
+      return () => { dead = true; };
+    }, [m.id]);
+    const n = note || {};
+    const teamStats = ((sum && sum.boxscore && sum.boxscore.teams) || []).filter(t => (t.statistics || []).length);
+    const rosters = (sum && sum.rosters) || [];
+    const h2h = (sum && sum.headToHeadGames) || [];
+    const done = m.state === 'post', live = m.state === 'in';
+    return (
+      <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal">
+          <div className="modal-hdr">
+            <div className="modal-title">{m.lgName}</div>
+            <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
+          </div>
+          <div className="rg-hero">
+            <RugbyTeam t={m.home} right />
+            <div className="rg-hero-score">{done || live ? `${m.home.score ?? '–'} – ${m.away.score ?? '–'}` : 'v'}</div>
+            <RugbyTeam t={m.away} />
+          </div>
+          <div className="rg-facts">
+            <div><span>Kick-off</span>{rgFmt(m.date, tz, { weekday:'long', day:'numeric', month:'long', year:'numeric' })}, {rgTime(m.date, tz)} {rgTzShort(m.date, tz)}</div>
+            <div><span>UTC</span>{rgFmt(m.date, 'UTC', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', hour12:false })}</div>
+            <div><span>Status</span>{done ? 'Full time' : live ? (m.detail || 'Live') : 'Upcoming'}</div>
+            {m.round && <div><span>Round</span>{m.round}</div>}
+            {(m.venue || m.city) && <div><span>Venue</span>{[m.venue, m.city].filter(Boolean).join(', ')}</div>}
+            {m.att > 0 && <div><span>Attendance</span>{m.att.toLocaleString()}</div>}
+            {m.tv.length > 0 && <div><span>Broadcast</span>{m.tv.join(', ')}</div>}
+          </div>
+
+          {done && (
+            <div className="rg-block">
+              <div className="mv-chart-title">Team stats</div>
+              {teamStats.length === 2 ? (
+                <table className="rg-table rg-stats"><tbody>
+                  {teamStats[0].statistics.map((s, i) => (
+                    <tr key={s.name}><td className="r">{s.displayValue}</td><td className="c">{s.label || s.name}</td><td>{(teamStats[1].statistics[i] || {}).displayValue}</td></tr>
+                  ))}
+                </tbody></table>
+              ) : <div className="section-desc">{sum ? 'Detailed team stats are not published for this competition. Final score, line-ups and head-to-head are shown instead.' : (err || 'Loading…')}</div>}
+            </div>
+          )}
+
+          {rosters.length > 0 && rosters.some(r => (r.roster || []).length) && (
+            <div className="rg-block">
+              <div className="mv-chart-title">Line-ups</div>
+              <div className="rg-lineups">
+                {rosters.map(r => (
+                  <div key={(r.team || {}).id}>
+                    <div className="rg-lu-team">{(r.team || {}).displayName}</div>
+                    {(r.roster || []).map((p, i) => (
+                      <div key={i} className="rg-lu-row"><span className="rg-lu-no">{p.jersey || ''}</span><span className="rg-lu-name">{(p.athlete || {}).displayName}</span><span className="rg-lu-pos">{(p.position || {}).abbreviation || ''}</span></div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {h2h.length > 0 && (
+            <div className="rg-block">
+              <div className="mv-chart-title">Recent meetings</div>
+              {(h2h[0] && h2h[0].events || []).slice(0, 5).map(ev => (
+                <div key={ev.id} className="rg-h2h"><span>{rgFmt(ev.gameDate, tz, { day:'numeric', month:'short', year:'numeric' })}</span><span>{ev.score || ''}</span><span className="rg-h2h-res">{ev.gameResult || ''}</span></div>
+              ))}
+            </div>
+          )}
+
+          <div className="rg-block">
+            <div className="mv-chart-title">My notes</div>
+            <div className="mv-form-field"><div className="mv-form-lbl">My rating</div><div style={{paddingTop:6}}><StarRating value={n.rating || null} onChange={v => onNote({ ...n, rating:v })} size={24} /></div></div>
+            <label style={{display:'flex', alignItems:'center', gap:8, margin:'12px 0', cursor:'pointer', fontSize:14}}><input type="checkbox" checked={!!n.watched} onChange={e => onNote({ ...n, watched:e.target.checked })} /> I watched this match</label>
+            <div className="mv-form-field"><div className="mv-form-lbl">Notes</div><textarea className="mv-form-in mv-form-ta" value={n.text || ''} onChange={e => onNote({ ...n, text:e.target.value })} placeholder="Standout players, key moments, your own stats" /></div>
+          </div>
+          <div className="modal-footer"><div className="modal-actions"><button className="btn-cancel" onClick={onClose}>Close</button></div></div>
+        </div>
+      </div>
+    );
+  }
+
+  function RugbyLeaguesModal({ followed, onChange, onClose }) {
+    const groups = ['Club', 'International', 'Sevens'];
+    const toggle = id => onChange(followed.includes(id) ? followed.filter(x => x !== id) : [...followed, id]);
+    return (
+      <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal">
+          <div className="modal-hdr"><div className="modal-title">Competitions</div><button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button></div>
+          <div className="section-desc">Tick the competitions to follow. Only these are loaded, which keeps things quick.</div>
+          {groups.map(g => (
+            <div key={g} className="rg-block">
+              <div className="mv-chart-title">{g}</div>
+              {RUGBY_COMPS.filter(c => c.group === g).map(c => (
+                <label key={c.id} className="rg-check"><input type="checkbox" checked={followed.includes(c.id)} onChange={() => toggle(c.id)} /> {c.name}</label>
+              ))}
+            </div>
+          ))}
+          <div className="modal-footer"><div className="modal-actions"><button className="btn-cancel" onClick={() => onChange(RUGBY_DEFAULT_FOLLOWED)}>Reset to defaults</button><button className="btn-save" onClick={onClose}>Done</button></div></div>
+        </div>
+      </div>
+    );
+  }
+
+  function RugbyView({ rugbyData, onUpdate }) {
+    const rd = { ...makeDefaultRugbyData(), ...(rugbyData || {}) };
+    const followed = rd.followed;
+    const tz = rgTz(rd);
+    const feed = useRugbyFeed(followed);
+    const [view, setView] = React.useState('fixtures');
+    const [lgFilter, setLgFilter] = React.useState('all');
+    const [teamQ, setTeamQ] = React.useState('');
+    const [open, setOpen] = React.useState(null);
+    const [picker, setPicker] = React.useState(false);
+    const [stLeague, setStLeague] = React.useState(null);
+    const [resLimit, setResLimit] = React.useState(60);
+    const today = new Date();
+    const [calY, setCalY] = React.useState(today.getFullYear());
+    const [calM, setCalM] = React.useState(today.getMonth());
+    const [selDay, setSelDay] = React.useState(() => rgDayKey(new Date().toISOString(), tz));
+
+    const comps = RUGBY_COMPS.filter(c => followed.includes(c.id));
+    const all = React.useMemo(() => {
+      const out = []; comps.forEach(c => ((feed.data[c.id] || {}).events || []).forEach(e => out.push(e)));
+      return out.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }, [feed.data, followed.join(',')]);
+    const q = teamQ.trim().toLowerCase();
+    const keep = m => (lgFilter === 'all' || m.lg === lgFilter) && (!q || m.home.name.toLowerCase().includes(q) || m.away.name.toLowerCase().includes(q) || (m.venue || '').toLowerCase().includes(q));
+    const nowMs = Date.now();
+    // live matches, plus scheduled ones that have not kicked off yet; stale unplayed entries are hidden
+    const upcoming = all.filter(m => (m.state === 'in' || (m.state === 'pre' && new Date(m.date).getTime() > nowMs - 4 * 3600 * 1000)) && keep(m));
+    const results = all.filter(m => m.state === 'post' && keep(m)).sort((a, b) => new Date(b.date) - new Date(a.date));
+    const setTz = v => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, tz:v }));
+    const setFollowed = f => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, followed:f }));
+    const setNote = (id, n) => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, notes:{ ...((d || {}).notes || {}), [id]:n } }));
+    const noteOf = id => (rd.notes || {})[id];
+
+    const byDay = list => { const m = new Map(); list.forEach(x => { const k = rgDayKey(x.date, tz); if (!m.has(k)) m.set(k, []); m.get(k).push(x); }); return [...m.entries()]; };
+    const dayList = (list, limit) => {
+      const days = byDay(list.slice(0, limit));
+      return days.map(([k, ms]) => (
+        <div key={k} className="rg-day">
+          <div className="rg-day-hdr">{rgDayLabel(k, tz)}</div>
+          {ms.map(m => <RugbyMatchRow key={m.id} m={m} tz={tz} note={noteOf(m.id)} onOpen={setOpen} />)}
+        </div>
+      ));
+    };
+
+    const standLeagues = comps.filter(c => ((feed.data[c.id] || {}).standings || []).length);
+    const stId = standLeagues.find(c => c.id === stLeague) ? stLeague : (standLeagues[0] || {}).id;
+    const stGroups = stId ? (feed.data[stId] || {}).standings || [] : [];
+    const updatedAt = Math.max(0, ...comps.map(c => (feed.data[c.id] || {}).t || 0));
+
+    // calendar month (days keyed in the chosen timezone)
+    const first = new Date(Date.UTC(calY, calM, 1)), dim = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
+    const lead = first.getUTCDay();
+    const cells = [];
+    for (let i = 0; i < lead; i++) cells.push(null);
+    for (let d = 1; d <= dim; d++) cells.push(`${calY}-${String(calM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
+    while (cells.length % 7) cells.push(null);
+    const byKey = {}; all.filter(keep).forEach(m => { const k = rgDayKey(m.date, tz); (byKey[k] = byKey[k] || []).push(m); });
+    const todayKey = rgDayKey(new Date().toISOString(), tz);
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const calNav = d => { let m = calM + d, y = calY; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } setCalM(m); setCalY(y); };
+
+    const tabs = [['fixtures', 'Fixtures', 'calendar'], ['results', 'Results', 'check'], ['calendar', 'Calendar', 'clock'], ['standings', 'Standings', 'chart']];
+    const lgChips = (
+      <div className="subnav-years">
+        <span className="subnav-years-lbl">Competition</span>
+        <button className={`subnav-chip ${lgFilter === 'all' ? 'active' : ''}`} onClick={() => setLgFilter('all')}>All</button>
+        {comps.map(c => <button key={c.id} className={`subnav-chip ${lgFilter === c.id ? 'active' : ''}`} onClick={() => setLgFilter(c.id)}>{c.name}</button>)}
+      </div>
+    );
+
+    return (
+      <div className="tv-wrap">
+        <div className="subnav">
+          <div className="subnav-tabs" role="tablist">
+            {tabs.map(([id, label, ic]) => <button key={id} role="tab" className={`subnav-tab ${view === id ? 'active' : ''}`} onClick={() => setView(id)}><Icon name={ic} size={16} />{label}</button>)}
+            <span className="subnav-spacer" />
+            <input className="mv-sb-search subnav-search" placeholder="Search teams or venues" value={teamQ} onChange={e => setTeamQ(e.target.value)} />
+          </div>
+          {view !== 'standings' && comps.length > 0 && lgChips}
+        </div>
+        <div className="tv-header">
+          <div className="tv-title-lbl">{tabs.find(t => t[0] === view)[1]}</div>
+          <span className="tv-push" />
+          <label className="rg-tz"><span>Times in</span>
+            <select className="mv-unrated-sort" value={rd.tz} onChange={e => setTz(e.target.value)}>
+              <option value="auto">Device ({rgDeviceTz().replace('_', ' ')})</option>
+              {RUGBY_TZ_LIST.map(z => <option key={z} value={z}>{z.replace(/_/g, ' ')}</option>)}
+            </select>
+          </label>
+          <button className="ghost-btn" onClick={feed.reload} disabled={feed.loading}><Icon name="refresh" size={15} /> {feed.loading ? 'Loading…' : 'Refresh'}</button>
+          <button className="ghost-btn" onClick={() => setPicker(true)}><Icon name="layers" size={15} /> Competitions ({comps.length})</button>
+        </div>
+
+        <div className="tv-content">
+          {comps.length === 0 ? (
+            <div className="mv-empty"><div className="mv-empty-icon"><Icon name="ball" size={40} /></div><div className="mv-empty-ttl">No competitions followed</div><div className="mv-empty-sub">Choose the leagues and tournaments you want to track.</div><button className="tv-add-btn" style={{marginTop:14}} onClick={() => setPicker(true)}>Choose competitions</button></div>
+          ) : view === 'fixtures' ? (
+            feed.loading && !all.length ? <div className="section-desc">Loading fixtures…</div>
+            : upcoming.length === 0 ? <div className="mv-empty"><div className="mv-empty-icon"><Icon name="calendar" size={40} /></div><div className="mv-empty-ttl">No upcoming fixtures</div><div className="mv-empty-sub">Nothing scheduled for these competitions right now.</div></div>
+            : dayList(upcoming, 120)
+          ) : view === 'results' ? (
+            results.length === 0 ? <div className="mv-empty"><div className="mv-empty-icon"><Icon name="check" size={40} /></div><div className="mv-empty-ttl">No results yet</div><div className="mv-empty-sub">Completed matches appear here.</div></div>
+            : <>{dayList(results, resLimit)}{results.length > resLimit && <button className="ghost-btn" onClick={() => setResLimit(l => l + 60)}>Show more ({results.length - resLimit} older)</button>}</>
+          ) : view === 'calendar' ? (
+            <>
+              <div className="rg-cal-hdr">
+                <button className="cal-nav-btn" onClick={() => calNav(-1)} aria-label="Previous month">&lt;</button>
+                <div className="rg-cal-title">{MONTHS[calM]} {calY}</div>
+                <button className="cal-nav-btn" onClick={() => calNav(1)} aria-label="Next month">&gt;</button>
+                <button className="cal-today-btn" onClick={() => { setCalY(today.getFullYear()); setCalM(today.getMonth()); setSelDay(todayKey); }}>Today</button>
+                <span className="rg-cal-tz">{tz.replace(/_/g, ' ')}</span>
+              </div>
+              <div className="cal-grid">
+                {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => <div key={d} className="cal-wday">{d}</div>)}
+                {cells.map((k, i) => {
+                  if (!k) return <div key={i} className="cal-cell cal-dim" />;
+                  const ms = byKey[k] || [];
+                  return (
+                    <div key={k} className={`cal-cell ${k === todayKey ? 'cal-is-today' : ''} ${k === selDay ? 'cal-sel' : ''}`} onClick={() => setSelDay(k)}>
+                      <div className={`cal-day-n ${k === todayKey ? 'cal-today-n' : ''}`}>{Number(k.slice(8))}</div>
+                      {ms.slice(0, 3).map(m => <div key={m.id} className="rg-chip" onClick={e => { e.stopPropagation(); setOpen(m); }}><b>{rgTime(m.date, tz)}</b> {(m.home.abbr || m.home.name)} v {(m.away.abbr || m.away.name)}</div>)}
+                      {ms.length > 3 && <div className="cal-more">+{ms.length - 3} more</div>}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="rg-agenda">
+                <div className="rg-day-hdr">{rgDayLabel(selDay, tz)}</div>
+                {(byKey[selDay] || []).length === 0 ? <div className="section-desc">No matches on this day.</div> : byKey[selDay].map(m => <RugbyMatchRow key={m.id} m={m} tz={tz} note={noteOf(m.id)} onOpen={setOpen} />)}
+              </div>
+            </>
+          ) : (
+            standLeagues.length === 0 ? <div className="section-desc">{feed.loading ? 'Loading standings…' : 'No standings are published for the competitions you follow.'}</div> : (
+              <>
+                <div className="subnav-years" style={{padding:0, marginBottom:16}}>
+                  {standLeagues.map(c => <button key={c.id} className={`subnav-chip ${stId === c.id ? 'active' : ''}`} onClick={() => setStLeague(c.id)}>{c.name}</button>)}
+                </div>
+                {stGroups.map(g => (
+                  <div key={g.name} className="rg-stand">
+                    {stGroups.length > 1 && <div className="mv-genre-name" style={{margin:'4px 0 8px'}}>{g.name}</div>}
+                    <div className="rg-table-wrap">
+                      <table className="rg-table">
+                        <thead><tr><th className="pos">#</th><th className="team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>PF</th><th>PA</th><th>PD</th><th>TF</th><th>TA</th><th>BP</th><th className="pts">Pts</th><th className="form">Form</th></tr></thead>
+                        <tbody>{g.rows.map((r, i) => (
+                          <tr key={r.team + i}>
+                            <td className="pos">{r.rank || r.playoffSeed || i + 1}</td>
+                            <td className="team">{r.logo && <img className="rg-logo rg-logo-sm" src={r.logo} alt="" loading="lazy" />}<span>{r.team}</span></td>
+                            <td>{r.gamesPlayed}</td><td>{r.gamesWon}</td><td>{r.gamesDrawn}</td><td>{r.gamesLost}</td>
+                            <td>{r.pointsFor}</td><td>{r.pointsAgainst}</td><td>{r.pointsDifference}</td>
+                            <td>{r.triesFor ?? '–'}</td><td>{r.triesAgainst ?? '–'}</td><td>{r.bonusPoints ?? '–'}</td>
+                            <td className="pts">{r.points}</td>
+                            <td className="form">{String(r.overall || '').slice(-5).split('').map((c, j) => <span key={j} className={`rg-f rg-f-${c}`}>{c}</span>)}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )
+          )}
+          {Object.keys(feed.errors).length > 0 && <div className="gh-err" style={{marginTop:14}}>Could not load: {Object.keys(feed.errors).map(id => (RUGBY_COMPS.find(c => c.id === id) || {}).name).join(', ')}. Showing the last saved data where available.</div>}
+          {updatedAt > 0 && <div className="rg-foot">Data from ESPN · updated {rgFmt(new Date(updatedAt).toISOString(), tz, { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' })}</div>}
+        </div>
+
+        {open && <RugbyMatchDrawer m={open} tz={tz} note={noteOf(open.id)} onNote={n => setNote(open.id, n)} onClose={() => setOpen(null)} />}
+        {picker && <RugbyLeaguesModal followed={followed} onChange={setFollowed} onClose={() => setPicker(false)} />}
+      </div>
+    );
+  }
+
   /* ── SETTINGS VIEW ───────────────────────────────────────────── */
   function SettingsView({ settings, onUpdate, fileStatus, fileName, hasFSA, onConnectExisting, onCreateNew, onDisconnect, gh, ghStatus, ghMsg, ghLast, onGhConnect, onGhSync, onGhResolve, onGhDisconnect, onDownloadBackup }) {
     const [ghForm, setGhForm] = useState({ repo:'', token:'', path:'data.json', branch:'main' });
@@ -9361,7 +9837,7 @@
           if (m) return m;
         }
       } catch {}
-      return { tasks:makeSamples(), settings:DEFAULT_S, uniData:makeDefaultUniData(), movieData:makeDefaultMovieData(), tvData:makeDefaultTVData(), bookData:makeDefaultBookData(), travelData:makeDefaultTravelData(), budgetData:makeDefaultBudgetData(), timeBlocks:[] };
+      return { tasks:makeSamples(), settings:DEFAULT_S, uniData:makeDefaultUniData(), movieData:makeDefaultMovieData(), tvData:makeDefaultTVData(), bookData:makeDefaultBookData(), rugbyData:makeDefaultRugbyData(), travelData:makeDefaultTravelData(), budgetData:makeDefaultBudgetData(), timeBlocks:[] };
     });
 
     // File persistence state
@@ -9408,13 +9884,14 @@
     const [modal,       setModal]      = useState(null);
     const [blockModal,  setBlockModal] = useState(null); // null | { defaultDate } | { block }
 
-    const { tasks, settings, uniData, movieData, tvData, bookData, travelData, budgetData, timeBlocks } = data;
+    const { tasks, settings, uniData, movieData, tvData, bookData, rugbyData, travelData, budgetData, timeBlocks } = data;
     const setTasks      = fn => setData(d => ({ ...d, tasks:fn(d.tasks) }));
     const setSettings   = fn => setData(d => ({ ...d, settings:fn(d.settings) }));
     const setUniData    = fn => setData(d => ({ ...d, uniData: typeof fn === 'function' ? fn(d.uniData) : fn }));
     const setMovieData  = fn => setData(d => ({ ...d, movieData: typeof fn === 'function' ? fn(d.movieData) : fn }));
     const setTVData     = fn => setData(d => ({ ...d, tvData: typeof fn === 'function' ? fn(d.tvData) : fn }));
     const setBookData   = fn => setData(d => ({ ...d, bookData: typeof fn === 'function' ? fn(d.bookData || makeDefaultBookData()) : fn }));
+    const setRugbyData  = fn => setData(d => ({ ...d, rugbyData: typeof fn === 'function' ? fn(d.rugbyData || makeDefaultRugbyData()) : fn }));
     const setTravelData = fn => setData(d => ({ ...d, travelData: typeof fn === 'function' ? fn(d.travelData) : fn }));
     const setBudgetData = fn => setData(d => ({ ...d, budgetData: typeof fn === 'function' ? fn(d.budgetData) : fn }));
     const setTimeBlocks = fn => setData(d => ({ ...d, timeBlocks: typeof fn === 'function' ? fn(d.timeBlocks||[]) : fn }));
@@ -9707,7 +10184,7 @@
       stale:   staleCount,
     };
 
-    const PAGE_TITLES = { calendar:'Calendar', work:'Work', uni:'Uni', personal:'Personal', movies:'Films', tv:'TV', books:'Books', travel:'Travel', budget:'Budget', settings:'Settings' };
+    const PAGE_TITLES = { calendar:'Calendar', work:'Work', uni:'Uni', personal:'Personal', movies:'Films', tv:'TV', books:'Books', rugby:'Rugby', travel:'Travel', budget:'Budget', settings:'Settings' };
     const PAGE_SUBS = {
       calendar:'Deadlines, assessments and blocked time',
       work:`${stats.wActive} active · ${stats.high} high priority`,
@@ -9716,6 +10193,7 @@
       movies:`${(movieData?.movies||[]).length} films logged`,
       tv:`${(tvData?.shows||[]).length} shows tracked`,
       books:`${(bookData?.books||[]).filter(b=>b.status==='finished').length} read · ${(bookData?.books||[]).filter(b=>b.status==='reading').length} reading`,
+      rugby:`${((rugbyData||{}).followed||[]).length} competitions followed`,
       travel:`${(travelData?.visits||[]).length} visits logged`,
       budget:'Monthly plan, spending and savings',
       settings:'Sync, backup and appearance',
@@ -9744,7 +10222,7 @@
               <button key={t} className={`nav-tab ${tab===t?'active':''}`} onClick={() => setTab(t)}>{l}</button>
             ))}
             <div style={{width:'1px',background:'var(--border)',margin:'4px 2px',flexShrink:0}}/>
-            {[['movies','Films'],['tv','TV'],['books','Books'],['travel','Travel'],['budget','Budget']].map(([t,l]) => (
+            {[['movies','Films'],['tv','TV'],['books','Books'],['rugby','Rugby'],['travel','Travel'],['budget','Budget']].map(([t,l]) => (
               <button key={t} className={`nav-tab ${tab===t?'active':''}`} onClick={() => setTab(t)}>{l}</button>
             ))}
           </div>
@@ -9777,14 +10255,14 @@
           {[['home','Home','home'],['calendar','Calendar','calendar'],['work','Work','briefcase'],['uni','Uni','cap']].map(([t,l,ic]) => (
             <button key={t} className={`bn-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="bn-ic"><Icon name={ic} size={22} /></span><span className="bn-lbl">{l}</span></button>
           ))}
-          <button className={`bn-item ${['personal','movies','tv','books','travel','budget','settings'].includes(tab)||moreOpen?'active':''}`} onClick={() => setMoreOpen(o=>!o)}><span className="bn-ic"><Icon name="menu" size={22} /></span><span className="bn-lbl">More</span></button>
+          <button className={`bn-item ${['personal','movies','tv','books','rugby','travel','budget','settings'].includes(tab)||moreOpen?'active':''}`} onClick={() => setMoreOpen(o=>!o)}><span className="bn-ic"><Icon name="menu" size={22} /></span><span className="bn-lbl">More</span></button>
         </nav>
         {moreOpen && (
           <div className="more-overlay" onClick={() => setMoreOpen(false)}>
             <div className="more-sheet" onClick={e => e.stopPropagation()}>
               <div className="more-grip" />
               <div className="more-grid">
-                {[['personal','Personal','user'],['movies','Films','film'],['tv','TV','tv'],['books','Books','book'],['travel','Travel','globe'],['budget','Budget','wallet'],['settings','Settings','gear']].map(([t,l,ic]) => (
+                {[['personal','Personal','user'],['movies','Films','film'],['tv','TV','tv'],['books','Books','book'],['rugby','Rugby','ball'],['travel','Travel','globe'],['budget','Budget','wallet'],['settings','Settings','gear']].map(([t,l,ic]) => (
                   <button key={t} className={`more-item ${tab===t?'active':''}`} onClick={() => setTab(t)}><span className="more-ic"><Icon name={ic} size={26} /></span><span>{l}</span></button>
                 ))}
               </div>
@@ -9888,6 +10366,9 @@
         )}
         {tab==='books' && (
           <BooksView bookData={bookData || makeDefaultBookData()} onUpdate={setBookData} />
+        )}
+        {tab==='rugby' && (
+          <RugbyView rugbyData={rugbyData || makeDefaultRugbyData()} onUpdate={setRugbyData} />
         )}
         {tab==='travel' && (
           <TravelView travelData={travelData || makeDefaultTravelData()} onUpdate={setTravelData} />
