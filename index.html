@@ -2044,6 +2044,23 @@
     .rg-hero .rg-team-r { justify-content:flex-start; }
     .rg-hero .rg-team:not(.rg-team-r) { justify-content:flex-start; }
     .rg-hero-score { text-align:center; }
+
+    /* films dual line chart */
+    .lc-legend { display:flex; flex-wrap:wrap; gap:6px 22px; margin:0 0 10px; font-size:var(--fs-sm); color:var(--text2); }
+    .lc-legend span { display:inline-flex; align-items:center; gap:8px; }
+    .lc-legend i { width:14px; height:4px; border-radius:2px; display:inline-block; }
+    .lc-legend b { color:var(--text); font-variant-numeric:tabular-nums; }
+    /* rugby my teams */
+    .rg-chip-sep { width:1px; height:20px; background:var(--hair-2); flex:none; margin:0 2px; }
+    .rg-mine-chip .ic { color:var(--g-c); }
+    .rg-mine-star { color:var(--g-c); margin-right:6px; vertical-align:-1px; }
+    .rg-follow { display:flex; flex-wrap:wrap; gap:8px; padding:0 0 14px; }
+    .rg-starbtn { background:none; border:none; padding:2px; margin-left:auto; color:var(--text3); cursor:pointer; border-radius:6px; display:inline-flex; }
+    .rg-starbtn:hover { color:var(--text); }
+    .rg-starbtn.on { color:var(--g-c); }
+    .rg-table td.team .rg-starbtn { margin-left:8px; opacity:.55; }
+    .rg-table tr:hover .rg-starbtn, .rg-starbtn.on { opacity:1; }
+    .rg-mine-chips { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
   </style>
 </head>
 <body class="dark">
@@ -2497,6 +2514,73 @@
               {(i % labelStep === 0 || i === data.length - 1) && <text x={xs[i]} y={H-8} textAnchor={i===0?'start':i===data.length-1?'end':'middle'} fontSize='12' fill='var(--text2)'>{d.label}</text>}
             </g>
           ))}
+        </svg>
+      </div>
+    );
+  }
+
+  function MultiLineChart({ series, height = 300 }) {
+    const ref = React.useRef(null);
+    const [W, setW] = React.useState(720);
+    React.useEffect(() => {
+      const el = ref.current; if (!el) return;
+      const upd = () => setW(Math.max(320, Math.floor(el.clientWidth)));
+      upd();
+      if (typeof ResizeObserver === 'undefined') return;
+      const ro = new ResizeObserver(upd); ro.observe(el);
+      return () => ro.disconnect();
+    }, []);
+    const [hover, setHover] = React.useState(null);
+    const base = (series && series[0] && series[0].data) || [];
+    if (base.length < 2) return <div ref={ref} />;
+    const H = height, PL = 44, PR = 20, PT = 22, PB = 36;
+    const iW = W - PL - PR, iH = H - PT - PB;
+    const max = Math.max(1, ...series.flatMap(s => s.data.map(d => d.value)));
+    const top = max <= 10 ? max : Math.ceil(max / 5) * 5;
+    const xs = base.map((_, i) => PL + (i / (base.length - 1)) * iW);
+    const yOf = v => PT + iH - (v / top) * iH;
+    const ticks = [...new Set([0, Math.round(top / 4), Math.round(top / 2), Math.round(top * 3 / 4), top])];
+    const labelStep = Math.max(1, Math.ceil(base.length / Math.max(2, Math.floor(iW / 56))));
+    const showVals = iW / base.length >= 34;
+    return (
+      <div ref={ref} style={{ width:'100%' }}>
+        <div className="lc-legend">
+          {series.map(s => <span key={s.label}><i style={{ background:s.color }} />{s.label}<b>{s.data.reduce((a, d) => a + d.value, 0)}</b></span>)}
+        </div>
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display:'block' }} role="img" onMouseLeave={() => setHover(null)}>
+          {ticks.map(v => (
+            <g key={v}>
+              <line x1={PL} y1={yOf(v)} x2={W - PR} y2={yOf(v)} stroke="var(--border)" strokeWidth="1" strokeDasharray={v === 0 ? undefined : '3 4'} />
+              <text x={PL - 10} y={yOf(v) + 4} textAnchor="end" fontSize="12" fill="var(--text2)">{v}</text>
+            </g>
+          ))}
+          {series.map((s, si) => {
+            const pts = s.data.map((d, i) => [xs[i], yOf(d.value)]);
+            const path = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+            return (
+              <g key={s.label}>
+                {si === 0 && <path d={`${path} L${xs[xs.length - 1].toFixed(1)},${yOf(0).toFixed(1)} L${xs[0].toFixed(1)},${yOf(0).toFixed(1)} Z`} fill={s.color} opacity="0.10" />}
+                <path d={path} fill="none" stroke={s.color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+                {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r={hover === i ? 5.5 : 3.5} fill={s.color} />)}
+                {showVals && s.data.map((d, i) => d.value > 0 && <text key={'v' + i} x={xs[i]} y={si === 0 ? yOf(d.value) - 10 : yOf(d.value) + 20} textAnchor="middle" fontSize="12" fontWeight="600" fill={s.color}>{d.value}</text>)}
+              </g>
+            );
+          })}
+          {base.map((d, i) => (i % labelStep === 0 || i === base.length - 1) && (
+            <text key={'x' + i} x={xs[i]} y={H - 10} textAnchor={i === 0 ? 'start' : i === base.length - 1 ? 'end' : 'middle'} fontSize="12" fill="var(--text2)">{d.label}</text>
+          ))}
+          {xs.map((x, i) => <rect key={'h' + i} x={x - iW / base.length / 2} y={PT} width={iW / base.length} height={iH} fill="transparent" onMouseEnter={() => setHover(i)} />)}
+          {hover != null && (() => {
+            const x = xs[hover], boxW = 150, bx = Math.min(Math.max(x - boxW / 2, PL), W - PR - boxW);
+            return (
+              <g pointerEvents="none">
+                <line x1={x} y1={PT} x2={x} y2={PT + iH} stroke="var(--text3)" strokeWidth="1" strokeDasharray="3 3" />
+                <rect x={bx} y={PT - 6} width={boxW} height={22 + series.length * 18} rx="8" fill="var(--surface2)" stroke="var(--hair-2)" />
+                <text x={bx + 10} y={PT + 12} fontSize="12" fontWeight="700" fill="var(--text)">{base[hover].label}</text>
+                {series.map((s, si) => <text key={s.label} x={bx + 10} y={PT + 30 + si * 18} fontSize="12" fill={s.color}>{s.label}: {s.data[hover].value}</text>)}
+              </g>
+            );
+          })()}
         </svg>
       </div>
     );
@@ -5762,6 +5846,14 @@
         if (wy && !isNaN(wy)) yearMap[wy]=(yearMap[wy]||0)+1;
       });
       const yearDist=Object.entries(yearMap).sort((a,b)=>a[0]-b[0]).map(([y,v])=>({label:String(y),value:v}));
+      // new releases: watched in the same year they were released
+      const newMap={};
+      movs.forEach(m=>{
+        const wy = m.watchDate ? parseInt(m.watchDate) : m.trackYear;
+        const ry = parseInt(m.releaseYear);
+        if (wy && ry && wy===ry) newMap[wy]=(newMap[wy]||0)+1;
+      });
+      const newDist=yearDist.map(d=>({label:d.label,value:newMap[d.label]||0}));
       // Release decade distribution
       const decadeMap={};
       movs.forEach(m=>{
@@ -5780,7 +5872,7 @@
       const topCountriesBar=Object.entries(countryCounts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([label,value])=>({label,value}));
       // Countries set
       const countriesSet=new Set(movs.map(m=>m.country).filter(Boolean));
-      return { count, avg, hours, totalMins, topGenres, topDirs, topLangs, topCountries, ratingDist, yearDist, decadeDist, runtimeDist, avgRatingByGenre, topCountriesBar, countriesSet, countryCounts };
+      return { count, avg, hours, totalMins, topGenres, topDirs, topLangs, topCountries, ratingDist, yearDist, newDist, decadeDist, runtimeDist, avgRatingByGenre, topCountriesBar, countriesSet, countryCounts };
     }
 
     const yearStats = React.useMemo(()=>computeStats(yearMovies), [JSON.stringify(yearMovies.map(m=>m.id+m.rating+m.runtime+m.language+m.country+(m.genres||[]).join()))]);
@@ -5871,8 +5963,11 @@
         {/* Films by Watch Year — line chart, full width */}
         {allStats.yearDist.length > 1 && (
           <div className="mv-chart-card" style={{marginBottom:14}}>
-            <div className="mv-chart-title">Films Watched by Year</div>
-            <LineChart data={allStats.yearDist}/>
+            <div className="mv-chart-title">Films watched by year</div>
+            <MultiLineChart height={320} series={[
+              { label:'Films watched', color:'#5b96e8', data:allStats.yearDist },
+              { label:'New releases watched', color:'#f2a54b', data:allStats.newDist },
+            ]} />
           </div>
         )}
 
@@ -6562,7 +6657,6 @@
               <div className="mv-at-header-tabs">
                 <button className={`mv-at-htab ${atTab==='films'?'active':''}`} onClick={()=>setAtTab('films')}>Top Films</button>
                 <button className={`mv-at-htab ${atTab==='directors'?'active':''}`} onClick={()=>setAtTab('directors')}>Directors</button>
-                <button className={`mv-at-htab ${atTab==='stats'?'active':''}`} onClick={()=>setAtTab('stats')}>Stats</button>
               </div>
 
               {atTab==='films' && (
@@ -6664,17 +6758,6 @@
                 )
               )}
 
-              {atTab==='stats' && (
-                movies.length===0 ? (
-                  <div className="mv-empty">
-                    <div className="mv-empty-icon"><Icon name="chart" size={40} /></div>
-                    <div className="mv-empty-ttl">No data yet</div>
-                    <div className="mv-empty-sub">Add films across years to see your lifetime stats.</div>
-                  </div>
-                ) : (
-                  <div className="mv-stats-section">{statsContent}</div>
-                )
-              )}
             </div>
           )}
         </div>
@@ -8074,7 +8157,7 @@
   const RUGBY_DEFAULT_FOLLOWED = ['242041','244293','289234','180659','270557','267979','270559','271937','164205','17567','256449'];
   const RUGBY_NATIONAL_GROUPS = ['International', 'Sevens'];
   const RUGBY_TZ_LIST = ['Australia/Sydney','Australia/Melbourne','Australia/Brisbane','Australia/Perth','Pacific/Auckland','Pacific/Fiji','Europe/London','Europe/Dublin','Europe/Paris','Europe/Rome','Africa/Johannesburg','America/Argentina/Buenos_Aires','America/New_York','America/Chicago','America/Los_Angeles','Asia/Tokyo','Asia/Hong_Kong','Asia/Singapore','Asia/Dubai','Asia/Kolkata','UTC'];
-  function makeDefaultRugbyData() { return { followed:[...RUGBY_DEFAULT_FOLLOWED], tz:'auto', notes:{} }; }
+  function makeDefaultRugbyData() { return { followed:[...RUGBY_DEFAULT_FOLLOWED], tz:'auto', notes:{}, myTeams:[], myOnly:false }; }
 
   const RG_BASE = 'https://site.api.espn.com/apis';
   const RG_CACHE_KEY = 'sidd_rugby_cache_v1';
@@ -8165,13 +8248,13 @@
     );
   }
 
-  function RugbyMatchRow({ m, tz, onOpen, note }) {
+  function RugbyMatchRow({ m, tz, onOpen, note, mine }) {
     const live = m.state === 'in', done = m.state === 'post';
     return (
       <div className="rg-match" onClick={() => onOpen(m)} role="button">
         <div className="rg-when">
           {done ? <span className="rg-final">FT</span> : live ? <span className="rg-live">Live</span> : <span className="rg-ko">{rgTime(m.date, tz)}</span>}
-          <span className="rg-lg">{m.lgName}</span>
+          <span className="rg-lg">{mine && <Icon name="star" size={12} fill className="rg-mine-star" />}{m.lgName}</span>
         </div>
         <RugbyTeam t={m.home} lg={m.lg} right />
         <div className={`rg-score ${done || live ? '' : 'rg-vs'}`}>{done || live ? `${m.home.score ?? '–'} – ${m.away.score ?? '–'}` : 'v'}</div>
@@ -8181,7 +8264,7 @@
     );
   }
 
-  function RugbyMatchDrawer({ m, tz, note, onNote, onClose }) {
+  function RugbyMatchDrawer({ m, tz, note, onNote, onClose, myTeams, onToggleTeam }) {
     const [sum, setSum] = React.useState(null);
     const [err, setErr] = React.useState('');
     React.useEffect(() => {
@@ -8205,6 +8288,13 @@
             <RugbyTeam t={m.home} lg={m.lg} right />
             <div className="rg-hero-score">{done || live ? `${m.home.score ?? '–'} – ${m.away.score ?? '–'}` : 'v'}</div>
             <RugbyTeam t={m.away} lg={m.lg} />
+          </div>
+          <div className="rg-follow">
+            {[m.home, m.away].map(t => (
+              <button key={t.name} className={`subnav-chip ${myTeams.includes(t.name) ? 'active' : ''}`} onClick={() => onToggleTeam(t.name)}>
+                <Icon name="star" size={13} fill={myTeams.includes(t.name)} /> {myTeams.includes(t.name) ? 'Following' : 'Follow'} {t.name}
+              </button>
+            ))}
           </div>
           <div className="rg-facts">
             <div><span>Kick-off</span>{rgFmt(m.date, tz, { weekday:'long', day:'numeric', month:'long', year:'numeric' })}, {rgTime(m.date, tz)} {rgTzShort(m.date, tz)}</div>
@@ -8279,6 +8369,49 @@
     );
   }
 
+
+  function RugbyTeamsModal({ feedData, followed, myTeams, onChange, onClose }) {
+    const [q, setQ] = React.useState('');
+    const comps = RUGBY_COMPS.filter(c => followed.includes(c.id));
+    const groups = comps.map(c => {
+      const names = new Map();
+      const d = feedData[c.id] || {};
+      (d.events || []).forEach(e => [e.home, e.away].forEach(t => { if (t.name && t.name !== 'TBC') names.set(t.name, t); }));
+      (d.standings || []).forEach(g => g.rows.forEach(r => { if (r.team && !names.has(r.team)) names.set(r.team, { name:r.team, logo:r.logo }); }));
+      return { comp:c, teams:[...names.values()].sort((a, b) => a.name.localeCompare(b.name)) };
+    }).filter(g => g.teams.length);
+    const toggle = n => onChange(myTeams.includes(n) ? myTeams.filter(x => x !== n) : [...myTeams, n]);
+    const ql = q.trim().toLowerCase();
+    return (
+      <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal">
+          <div className="modal-hdr"><div className="modal-title">My teams</div><button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button></div>
+          <div className="section-desc">Tick the teams you follow. Use the "My teams" filter to see only their fixtures, results and calendar.</div>
+          <input className="mv-form-in" placeholder="Search teams" value={q} onChange={e => setQ(e.target.value)} style={{marginBottom:6}} />
+          {myTeams.length > 0 && <div className="rg-mine-chips">{myTeams.map(n => <button key={n} className="subnav-chip active" onClick={() => toggle(n)}>{n} <Icon name="x" size={12} /></button>)}</div>}
+          {groups.length === 0 && <div className="section-desc" style={{marginTop:14}}>Teams appear once the competitions have loaded.</div>}
+          {groups.map(g => {
+            const list = g.teams.filter(t => !ql || t.name.toLowerCase().includes(ql));
+            if (!list.length) return null;
+            return (
+              <div key={g.comp.id} className="rg-block">
+                <div className="mv-chart-title">{g.comp.name}</div>
+                {list.map(t => (
+                  <label key={t.name} className="rg-check">
+                    <input type="checkbox" checked={myTeams.includes(t.name)} onChange={() => toggle(t.name)} />
+                    {(() => { const lu = rgLogo(t, g.comp.id); return lu ? <img className="rg-logo rg-logo-sm" src={lu} alt="" loading="lazy" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="rg-logo rg-logo-sm rg-logo-fb">{t.name.slice(0, 3).toUpperCase()}</span>; })()}
+                    {t.name}
+                  </label>
+                ))}
+              </div>
+            );
+          })}
+          <div className="modal-footer"><div className="modal-actions"><button className="btn-cancel" onClick={() => onChange([])}>Clear all</button><button className="btn-save" onClick={onClose}>Done</button></div></div>
+        </div>
+      </div>
+    );
+  }
+
   function RugbyLeaguesModal({ followed, onChange, onClose }) {
     const groups = ['Club', 'International', 'Sevens'];
     const toggle = id => onChange(followed.includes(id) ? followed.filter(x => x !== id) : [...followed, id]);
@@ -8317,6 +8450,9 @@
       });
     }, []);
     const feed = useRugbyFeed(followed);
+    const myTeams = rd.myTeams || [];
+    const myOnly = !!rd.myOnly && myTeams.length > 0;
+    const [teamsOpen, setTeamsOpen] = React.useState(false);
     const [view, setView] = React.useState('fixtures');
     const [lgFilter, setLgFilter] = React.useState('all');
     const [teamQ, setTeamQ] = React.useState('');
@@ -8335,13 +8471,17 @@
       return out.sort((a, b) => new Date(a.date) - new Date(b.date));
     }, [feed.data, followed.join(',')]);
     const q = teamQ.trim().toLowerCase();
-    const keep = m => (lgFilter === 'all' || m.lg === lgFilter) && (!q || m.home.name.toLowerCase().includes(q) || m.away.name.toLowerCase().includes(q) || (m.venue || '').toLowerCase().includes(q));
+    const isMine = m => myTeams.includes(m.home.name) || myTeams.includes(m.away.name);
+    const keep = m => (lgFilter === 'all' || m.lg === lgFilter) && (!myOnly || isMine(m)) && (!q || m.home.name.toLowerCase().includes(q) || m.away.name.toLowerCase().includes(q) || (m.venue || '').toLowerCase().includes(q));
     const nowMs = Date.now();
     // live matches, plus scheduled ones that have not kicked off yet; stale unplayed entries are hidden
     const upcoming = all.filter(m => (m.state === 'in' || (m.state === 'pre' && new Date(m.date).getTime() > nowMs - 4 * 3600 * 1000)) && keep(m));
     const results = all.filter(m => m.state === 'post' && keep(m)).sort((a, b) => new Date(b.date) - new Date(a.date));
     const setTz = v => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, tz:v }));
     const setFollowed = f => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, followed:f }));
+    const setMyTeams = list => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, myTeams:list, myOnly:(list.length > 0) ? (((d || {}).myOnly) || false) : false }));
+    const toggleTeam = n => setMyTeams(myTeams.includes(n) ? myTeams.filter(x => x !== n) : [...myTeams, n]);
+    const setMyOnly = v => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, myOnly:v }));
     const setNote = (id, n) => onUpdate(d => ({ ...makeDefaultRugbyData(), ...d, notes:{ ...((d || {}).notes || {}), [id]:n } }));
     const noteOf = id => (rd.notes || {})[id];
 
@@ -8351,7 +8491,7 @@
       return days.map(([k, ms]) => (
         <div key={k} className="rg-day">
           <div className="rg-day-hdr">{rgDayLabel(k, tz)}</div>
-          {ms.map(m => <RugbyMatchRow key={m.id} m={m} tz={tz} note={noteOf(m.id)} onOpen={setOpen} />)}
+          {ms.map(m => <RugbyMatchRow key={m.id} m={m} tz={tz} note={noteOf(m.id)} mine={isMine(m)} onOpen={setOpen} />)}
         </div>
       ));
     };
@@ -8377,6 +8517,8 @@
     const lgChips = (
       <div className="subnav-years">
         <span className="subnav-years-lbl">Competition</span>
+        <button className={`subnav-chip rg-mine-chip ${myOnly ? 'active' : ''}`} onClick={() => myTeams.length ? setMyOnly(!myOnly) : setTeamsOpen(true)} title="Show only matches involving your teams"><Icon name="star" size={13} fill={myOnly} /> My teams{myTeams.length ? <span className="subnav-count">{myTeams.length}</span> : null}</button>
+        <span className="rg-chip-sep" />
         <button className={`subnav-chip ${lgFilter === 'all' ? 'active' : ''}`} onClick={() => setLgFilter('all')}>All</button>
         {comps.map(c => <button key={c.id} className={`subnav-chip ${lgFilter === c.id ? 'active' : ''}`} onClick={() => setLgFilter(c.id)}>{c.name}</button>)}
       </div>
@@ -8402,6 +8544,7 @@
             </select>
           </label>
           <button className="ghost-btn" onClick={feed.reload} disabled={feed.loading}><Icon name="refresh" size={15} /> {feed.loading ? 'Loading…' : 'Refresh'}</button>
+          <button className="ghost-btn" onClick={() => setTeamsOpen(true)}><Icon name="star" size={15} /> My teams ({myTeams.length})</button>
           <button className="ghost-btn" onClick={() => setPicker(true)}><Icon name="layers" size={15} /> Competitions ({comps.length})</button>
         </div>
 
@@ -8440,7 +8583,7 @@
               </div>
               <div className="rg-agenda">
                 <div className="rg-day-hdr">{rgDayLabel(selDay, tz)}</div>
-                {(byKey[selDay] || []).length === 0 ? <div className="section-desc">No matches on this day.</div> : byKey[selDay].map(m => <RugbyMatchRow key={m.id} m={m} tz={tz} note={noteOf(m.id)} onOpen={setOpen} />)}
+                {(byKey[selDay] || []).length === 0 ? <div className="section-desc">No matches on this day.</div> : byKey[selDay].map(m => <RugbyMatchRow key={m.id} m={m} tz={tz} note={noteOf(m.id)} mine={isMine(m)} onOpen={setOpen} />)}
               </div>
             </>
           ) : (
@@ -8458,7 +8601,7 @@
                         <tbody>{g.rows.map((r, i) => (
                           <tr key={r.team + i}>
                             <td className="pos">{r.rank || r.playoffSeed || i + 1}</td>
-                            <td className="team">{(() => { const lu = rgLogo({ name:r.team, logo:r.logo }, stId); return lu ? <img className="rg-logo rg-logo-sm" src={lu} alt="" loading="lazy" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="rg-logo rg-logo-sm rg-logo-fb">{(() => { const w = String(r.team || '?').split(/\s+/).filter(x => x.length > 2); return (w.length > 1 ? w.map(x => x[0]).join('') : String(r.team || '?')).slice(0, 3).toUpperCase(); })()}</span>; })()}<span>{r.team}</span></td>
+                            <td className="team">{(() => { const lu = rgLogo({ name:r.team, logo:r.logo }, stId); return lu ? <img className="rg-logo rg-logo-sm" src={lu} alt="" loading="lazy" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="rg-logo rg-logo-sm rg-logo-fb">{(() => { const w = String(r.team || '?').split(/\s+/).filter(x => x.length > 2); return (w.length > 1 ? w.map(x => x[0]).join('') : String(r.team || '?')).slice(0, 3).toUpperCase(); })()}</span>; })()}<span>{r.team}</span><button className={`rg-starbtn ${myTeams.includes(r.team) ? 'on' : ''}`} onClick={() => toggleTeam(r.team)} title={myTeams.includes(r.team) ? 'Remove from my teams' : 'Add to my teams'} aria-label="Toggle my team"><Icon name="star" size={14} fill={myTeams.includes(r.team)} /></button></td>
                             <td>{r.gamesPlayed}</td><td>{r.gamesWon}</td><td>{r.gamesDrawn}</td><td>{r.gamesLost}</td>
                             <td>{r.pointsFor}</td><td>{r.pointsAgainst}</td><td>{r.pointsDifference}</td>
                             <td>{r.triesFor ?? '–'}</td><td>{r.triesAgainst ?? '–'}</td><td>{r.bonusPoints ?? '–'}</td>
@@ -8477,7 +8620,8 @@
           {updatedAt > 0 && <div className="rg-foot">Data from ESPN · updated {rgFmt(new Date(updatedAt).toISOString(), tz, { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' })}</div>}
         </div>
 
-        {open && <RugbyMatchDrawer m={open} tz={tz} note={noteOf(open.id)} onNote={n => setNote(open.id, n)} onClose={() => setOpen(null)} />}
+        {open && <RugbyMatchDrawer m={open} tz={tz} note={noteOf(open.id)} onNote={n => setNote(open.id, n)} onClose={() => setOpen(null)} myTeams={myTeams} onToggleTeam={toggleTeam} />}
+        {teamsOpen && <RugbyTeamsModal feedData={feed.data} followed={followed} myTeams={myTeams} onChange={setMyTeams} onClose={() => setTeamsOpen(false)} />}
         {picker && <RugbyLeaguesModal followed={followed} onChange={setFollowed} onClose={() => setPicker(false)} />}
       </div>
     );
