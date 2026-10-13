@@ -2019,6 +2019,31 @@
     .rg-where { text-align:center; }
 
     @media (max-width:820px) { .rg-match .rg-name { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.25; } }
+
+    /* rugby: wider match drawer, readable meetings */
+    @media (min-width:821px) { .modal.rg-modal { width:min(760px, 100vw); } }
+    .rg-modal .rg-hero { grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); padding:20px 0; }
+    .rg-modal .rg-hero .rg-team { gap:14px; }
+    .rg-modal .rg-hero .rg-name { font-size:var(--fs-md); line-height:1.25; }
+    .rg-modal .rg-hero .rg-logo { width:52px; height:52px; }
+    .rg-facts > div { display:flex; gap:12px; }
+    .rg-facts span { flex:none; }
+    .rg-meet-row { display:grid; grid-template-columns:150px minmax(0,1fr) 78px minmax(0,1fr); gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--hair); font-size:var(--fs-sm); }
+    .rg-meet-when { display:flex; flex-direction:column; color:var(--text2); }
+    .rg-meet-when span { font-size:var(--fs-xs); color:var(--text3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rg-meet-t { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .rg-meet-t:nth-of-type(2) { text-align:right; }
+    .rg-meet-s { text-align:center; font-weight:650; font-variant-numeric:tabular-nums; }
+    @media (max-width:820px) {
+      .rg-meet-row { grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr); }
+      .rg-meet-when { grid-column:1 / -1; flex-direction:row; gap:8px; }
+      .rg-modal .rg-hero .rg-logo { width:40px; height:40px; }
+    }
+
+    .rg-hero .rg-team, .rg-hero .rg-team-r { grid-area:auto; }
+    .rg-hero .rg-team-r { justify-content:flex-start; }
+    .rg-hero .rg-team:not(.rg-team-r) { justify-content:flex-start; }
+    .rg-hero-score { text-align:center; }
   </style>
 </head>
 <body class="dark">
@@ -8040,11 +8065,14 @@
     { id:'17567',  name:'Nations Championship',       group:'International' },
     { id:'164205', name:'Rugby World Cup',            group:'International' },
     { id:'289237', name:"Women's Rugby World Cup",    group:'International' },
+    { id:'256449', name:'Pacific Nations Cup',         group:'International' },
+    { id:'289230', name:'World Rugby Nations Cup',     group:'International' },
     { id:'268565', name:'British & Irish Lions Tour', group:'International' },
     { id:'282',    name:"Olympic Men's Sevens",       group:'Sevens' },
     { id:'283',    name:"Olympic Women's Sevens",     group:'Sevens' },
   ];
-  const RUGBY_DEFAULT_FOLLOWED = ['242041','244293','289234','180659','270557','267979','270559','271937','164205','17567'];
+  const RUGBY_DEFAULT_FOLLOWED = ['242041','244293','289234','180659','270557','267979','270559','271937','164205','17567','256449'];
+  const RUGBY_NATIONAL_GROUPS = ['International', 'Sevens'];
   const RUGBY_TZ_LIST = ['Australia/Sydney','Australia/Melbourne','Australia/Brisbane','Australia/Perth','Pacific/Auckland','Pacific/Fiji','Europe/London','Europe/Dublin','Europe/Paris','Europe/Rome','Africa/Johannesburg','America/Argentina/Buenos_Aires','America/New_York','America/Chicago','America/Los_Angeles','Asia/Tokyo','Asia/Hong_Kong','Asia/Singapore','Asia/Dubai','Asia/Kolkata','UTC'];
   function makeDefaultRugbyData() { return { followed:[...RUGBY_DEFAULT_FOLLOWED], tz:'auto', notes:{} }; }
 
@@ -8058,6 +8086,19 @@
   const rgTime = (iso, tz) => rgFmt(iso, tz, { hour:'numeric', minute:'2-digit', hour12:true }).replace(' ', '').toLowerCase();
   const rgDayLabel = (key, tz) => rgFmt(key + 'T12:00:00Z', 'UTC', { weekday:'long', day:'numeric', month:'long' });
   const rgTzShort = (iso, tz) => (rgFmt(iso, tz, { timeZoneName:'short' }).split(' ').pop() || tz);
+
+
+  const RG_FLAGS = { 'Australia':'au','New Zealand':'nz','South Africa':'za','Argentina':'ar','England':'gb-eng','Scotland':'gb-sct','Wales':'gb-wls','Ireland':'ie','France':'fr','Italy':'it','Fiji':'fj','Japan':'jp','Samoa':'ws','Tonga':'to','Georgia':'ge','Romania':'ro','Spain':'es','Portugal':'pt','Hong Kong':'hk','Hong Kong, China':'hk','United States of America':'us','USA':'us','United States':'us','Canada':'ca','Uruguay':'uy','Chile':'cl','Namibia':'na','Zimbabwe':'zw','Kenya':'ke','Uganda':'ug','Brazil':'br','Netherlands':'nl','Germany':'de','Belgium':'be','Russia':'ru','Poland':'pl','South Korea':'kr','Korea':'kr','Philippines':'ph','Sri Lanka':'lk','Malaysia':'my','Singapore':'sg','Kazakhstan':'kz','United Arab Emirates':'ae','UAE':'ae','India':'in','Papua New Guinea':'pg','Cook Islands':'ck','Lithuania':'lt','Switzerland':'ch','Sweden':'se','Czech Republic':'cz','Czechia':'cz','Colombia':'co','Paraguay':'py','Peru':'pe','Venezuela':'ve','Mexico':'mx','Jamaica':'jm','Trinidad and Tobago':'tt','Ivory Coast':'ci',"Côte d'Ivoire":'ci','Morocco':'ma','Tunisia':'tn','Madagascar':'mg','Senegal':'sn','Algeria':'dz','Ukraine':'ua','Croatia':'hr','Serbia':'rs','Slovenia':'si','Bulgaria':'bg','Hungary':'hu','Israel':'il','Denmark':'dk','Norway':'no','Finland':'fi','Austria':'at','Luxembourg':'lu','Malta':'mt','Moldova':'md','Latvia':'lv','Chinese Taipei':'tw','China':'cn','Thailand':'th','Indonesia':'id','Pakistan':'pk','Egypt':'eg','Nigeria':'ng','Ghana':'gh','Cameroon':'cm','Tanzania':'tz','Zambia':'zm','Botswana':'bw','Malawi':'mw','Mauritius':'mu','Dominican Republic':'do','Cayman Islands':'ky','Bermuda':'bm','Guyana':'gy','Barbados':'bb','Bahamas':'bs','Costa Rica':'cr','Panama':'pa','Guatemala':'gt','Honduras':'hn','El Salvador':'sv','Ecuador':'ec','Bolivia':'bo','Solomon Islands':'sb','Vanuatu':'vu','Niue':'nu','Tahiti':'pf','New Caledonia':'nc','Fiji Water Flying Fijians':'fj' };
+  // ESPN's fallback "countries/<code>.png" uses football codes (Hong Kong "HON" shows Honduras; USA Perpignan shows the US flag), so it is never trusted.
+  function rgLogo(t, lgId) {
+    const comp = RUGBY_COMPS.find(c => c.id === lgId);
+    const national = !!comp && RUGBY_NATIONAL_GROUPS.includes(comp.group);
+    const url = (t && t.logo) || '';
+    const reliable = url && url.indexOf('/countries/') === -1;
+    if (reliable) return url;
+    if (national) { const code = RG_FLAGS[t.name]; if (code) return `https://flagcdn.com/w80/${code}.png`; }
+    return '';
+  }
 
   function rgNorm(e, lg) {
     const c = (e.competitions || [])[0] || {};
@@ -8112,10 +8153,13 @@
     return { ...state, reload:() => load(true) };
   }
 
-  function RugbyTeam({ t, right }) {
+  function RugbyTeam({ t, right, lg }) {
+    const logo = rgLogo(t, lg);
+    const words = (t.name || '?').split(/\s+/).filter(w => w.length > 2);
+    const initials = (words.length > 1 ? words.map(w => w[0]).join('') : (t.name || '?')).slice(0, 3).toUpperCase();
     return (
       <div className={`rg-team ${right ? 'rg-team-r' : ''} ${t.winner ? 'rg-win' : ''}`}>
-        {t.logo ? <img className="rg-logo" src={t.logo} alt="" loading="lazy" /> : <span className="rg-logo rg-logo-fb">{(t.abbr || t.name || '?').slice(0, 3)}</span>}
+        {logo ? <img className="rg-logo" src={logo} alt="" loading="lazy" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="rg-logo rg-logo-fb">{initials}</span>}
         <span className="rg-name">{t.name}</span>
       </div>
     );
@@ -8129,9 +8173,9 @@
           {done ? <span className="rg-final">FT</span> : live ? <span className="rg-live">Live</span> : <span className="rg-ko">{rgTime(m.date, tz)}</span>}
           <span className="rg-lg">{m.lgName}</span>
         </div>
-        <RugbyTeam t={m.home} right />
+        <RugbyTeam t={m.home} lg={m.lg} right />
         <div className={`rg-score ${done || live ? '' : 'rg-vs'}`}>{done || live ? `${m.home.score ?? '–'} – ${m.away.score ?? '–'}` : 'v'}</div>
-        <RugbyTeam t={m.away} />
+        <RugbyTeam t={m.away} lg={m.lg} />
         <div className="rg-where">{[m.round, m.venue].filter(Boolean).join(' · ')}{note && note.rating ? ` · ★ ${note.rating}` : ''}</div>
       </div>
     );
@@ -8152,15 +8196,15 @@
     const done = m.state === 'post', live = m.state === 'in';
     return (
       <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-        <div className="modal">
+        <div className="modal rg-modal">
           <div className="modal-hdr">
             <div className="modal-title">{m.lgName}</div>
             <button className="modal-close" onClick={onClose} aria-label="Close"><Icon name="x" size={18} /></button>
           </div>
           <div className="rg-hero">
-            <RugbyTeam t={m.home} right />
+            <RugbyTeam t={m.home} lg={m.lg} right />
             <div className="rg-hero-score">{done || live ? `${m.home.score ?? '–'} – ${m.away.score ?? '–'}` : 'v'}</div>
-            <RugbyTeam t={m.away} />
+            <RugbyTeam t={m.away} lg={m.lg} />
           </div>
           <div className="rg-facts">
             <div><span>Kick-off</span>{rgFmt(m.date, tz, { weekday:'long', day:'numeric', month:'long', year:'numeric' })}, {rgTime(m.date, tz)} {rgTzShort(m.date, tz)}</div>
@@ -8201,12 +8245,25 @@
             </div>
           )}
 
-          {h2h.length > 0 && (
+          {h2h.length > 0 && (h2h[0].events || []).length > 0 && (
             <div className="rg-block">
               <div className="mv-chart-title">Recent meetings</div>
-              {(h2h[0] && h2h[0].events || []).slice(0, 5).map(ev => (
-                <div key={ev.id} className="rg-h2h"><span>{rgFmt(ev.gameDate, tz, { day:'numeric', month:'short', year:'numeric' })}</span><span>{ev.score || ''}</span><span className="rg-h2h-res">{ev.gameResult || ''}</span></div>
-              ))}
+              <div className="rg-meet">
+                {(h2h[0].events || []).slice(0, 6).map(ev => {
+                  const names = { [String(m.home.id)]:m.home.name, [String(m.away.id)]:m.away.name };
+                  const hn = names[String(ev.homeTeamId)] || (String(ev.homeTeamId) === String((h2h[0].team || {}).id) ? (h2h[0].team || {}).displayName : (ev.opponent || {}).displayName) || 'Home';
+                  const an = names[String(ev.awayTeamId)] || (String(ev.awayTeamId) === String((h2h[0].team || {}).id) ? (h2h[0].team || {}).displayName : (ev.opponent || {}).displayName) || 'Away';
+                  const hs = Number(ev.homeTeamScore), as = Number(ev.awayTeamScore);
+                  return (
+                    <div key={ev.id} className="rg-meet-row">
+                      <div className="rg-meet-when">{rgFmt(ev.gameDate, tz, { day:'numeric', month:'short', year:'numeric' })}<span>{ev.leagueName || ''}</span></div>
+                      <div className={`rg-meet-t ${hs > as ? 'rg-win' : ''}`}>{hn}</div>
+                      <div className="rg-meet-s">{ev.homeTeamScore} – {ev.awayTeamScore}</div>
+                      <div className={`rg-meet-t ${as > hs ? 'rg-win' : ''}`}>{an}</div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
@@ -8248,6 +8305,17 @@
     const rd = { ...makeDefaultRugbyData(), ...(rugbyData || {}) };
     const followed = rd.followed;
     const tz = rgTz(rd);
+    React.useEffect(() => {
+      // competitions added to the app later (e.g. Pacific Nations Cup) are followed once, then left to your choice
+      const known = rd.known || RUGBY_DEFAULT_FOLLOWED.filter(id => id !== '256449');
+      const fresh = RUGBY_DEFAULT_FOLLOWED.filter(id => !known.includes(id));
+      if (!rd.known || fresh.length) onUpdate(d => {
+        const b = { ...makeDefaultRugbyData(), ...d };
+        const kn = b.known || known;
+        const add = RUGBY_DEFAULT_FOLLOWED.filter(id => !kn.includes(id));
+        return { ...b, followed:[...new Set([...b.followed, ...add])], known:[...new Set([...kn, ...RUGBY_DEFAULT_FOLLOWED])] };
+      });
+    }, []);
     const feed = useRugbyFeed(followed);
     const [view, setView] = React.useState('fixtures');
     const [lgFilter, setLgFilter] = React.useState('all');
@@ -8390,7 +8458,7 @@
                         <tbody>{g.rows.map((r, i) => (
                           <tr key={r.team + i}>
                             <td className="pos">{r.rank || r.playoffSeed || i + 1}</td>
-                            <td className="team">{r.logo && <img className="rg-logo rg-logo-sm" src={r.logo} alt="" loading="lazy" />}<span>{r.team}</span></td>
+                            <td className="team">{(() => { const lu = rgLogo({ name:r.team, logo:r.logo }, stId); return lu ? <img className="rg-logo rg-logo-sm" src={lu} alt="" loading="lazy" onError={e => { e.currentTarget.style.display = 'none'; }} /> : <span className="rg-logo rg-logo-sm rg-logo-fb">{(() => { const w = String(r.team || '?').split(/\s+/).filter(x => x.length > 2); return (w.length > 1 ? w.map(x => x[0]).join('') : String(r.team || '?')).slice(0, 3).toUpperCase(); })()}</span>; })()}<span>{r.team}</span></td>
                             <td>{r.gamesPlayed}</td><td>{r.gamesWon}</td><td>{r.gamesDrawn}</td><td>{r.gamesLost}</td>
                             <td>{r.pointsFor}</td><td>{r.pointsAgainst}</td><td>{r.pointsDifference}</td>
                             <td>{r.triesFor ?? '–'}</td><td>{r.triesAgainst ?? '–'}</td><td>{r.bonusPoints ?? '–'}</td>
