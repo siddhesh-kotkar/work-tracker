@@ -1563,8 +1563,8 @@
       --fs-xs:12px; --fs-sm:13.5px; --fs-base:15px; --fs-md:17px; --fs-lg:21px; --fs-xl:28px;
       --r-sm:8px; --r-md:11px; --r-lg:16px; --r-xl:22px;
       --g-a:#e0566b; --g-b:var(--accent); --g-c:#f2a54b; --on-accent:#14141c;
-      --grad:linear-gradient(118deg, var(--g-a), var(--g-b) 52%, var(--g-c));
-      --grad-soft:linear-gradient(118deg, color-mix(in srgb,var(--g-a) 20%,transparent), color-mix(in srgb,var(--g-b) 20%,transparent) 52%, color-mix(in srgb,var(--g-c) 20%,transparent));
+      --grad:var(--accent);
+      --grad-soft:color-mix(in srgb, var(--text) 11%, transparent);
       --hair:color-mix(in srgb, var(--text) 10%, transparent);
       --hair-2:color-mix(in srgb, var(--text) 16%, transparent);
       --accent-soft:color-mix(in srgb, var(--accent) 16%, transparent);
@@ -1578,12 +1578,7 @@
     html { scrollbar-color:color-mix(in srgb,var(--text) 22%,transparent) transparent; }
 
     /* horizon light: the only place the gradient is used as ambience */
-    body::before { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
-      background:
-        radial-gradient(1200px 560px at 90% -12%, color-mix(in srgb, var(--g-c) 17%, transparent), transparent 70%),
-        radial-gradient(1000px 620px at 2% 112%, color-mix(in srgb, var(--g-a) 18%, transparent), transparent 70%),
-        linear-gradient(to top, color-mix(in srgb, var(--g-c) 8%, transparent), transparent 34%); }
-    body.light::before { opacity:.55; }
+        body.light::before { opacity:.55; }
 
     /* ── type scale: one family, six steps ── */
     h1, h2, .page-title, .home-greeting-name, .modal-title, .mv-topbar-title, .cal-month-title, .budget-month-label { font-family:var(--font-display); letter-spacing:-.02em; font-weight:600; }
@@ -1800,22 +1795,11 @@
     .toolbar { background:none; border-bottom:none; padding-top:6px; padding-bottom:10px; }
     .nav-logo { display:block; white-space:nowrap; }
     .nav-logo::before { display:inline-block; vertical-align:-5px; margin-right:10px; }
-    body::before {
-      background:
-        radial-gradient(1200px 600px at 92% -14%, color-mix(in srgb, var(--g-c) 26%, transparent), transparent 70%),
-        radial-gradient(1000px 640px at 0% 112%, color-mix(in srgb, var(--g-a) 28%, transparent), transparent 70%),
-        linear-gradient(to top, color-mix(in srgb, var(--g-c) 13%, transparent), transparent 36%); }
-
+    
     /* dusk sky: violet overhead, rose then amber toward the horizon (derived from the accent) */
-    body::before {
-      background:
-        radial-gradient(1300px 620px at 88% -16%, color-mix(in srgb, var(--g-sky, #5b4bd6) 34%, transparent), transparent 70%),
-        radial-gradient(1000px 640px at 0% 112%, color-mix(in srgb, var(--g-a) 26%, transparent), transparent 70%),
-        linear-gradient(to top, color-mix(in srgb, var(--g-c) 14%, transparent), transparent 34%); }
-    .topnav::after { background:linear-gradient(90deg, var(--g-sky, var(--g-a)), var(--g-a) 40%, var(--g-c)); }
 
-    :root { --panel-hi:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,0) 55%); }
-    body.light { --panel-hi:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0) 60%); --lift:0 1px 0 rgba(255,255,255,.8) inset, 0 8px 24px -14px rgba(30,40,80,.25); }
+    :root { --panel-hi:none; }
+    body.light { --panel-hi:none; --lift:none; }
 
     /* batch fix after first inspection */
     .home-stats .home-stat-card { display:flex; flex-direction:column; justify-content:flex-start; align-items:flex-start; padding:20px 22px !important; min-height:0; }
@@ -1842,12 +1826,7 @@
     .home-nav-icon { width:28px; height:28px; border-radius:0; background:none !important; color:var(--text2); }
     .home-nav-card:hover .home-nav-icon { color:var(--g-c); }
     /* ground: a whisper at the horizon, not mud */
-    body::before {
-      background:
-        radial-gradient(1300px 620px at 88% -16%, color-mix(in srgb, var(--g-sky, #5b4bd6) 32%, transparent), transparent 70%),
-        radial-gradient(1000px 640px at 0% 112%, color-mix(in srgb, var(--g-a) 13%, transparent), transparent 70%),
-        linear-gradient(to top, color-mix(in srgb, var(--g-c) 7%, transparent), transparent 30%); }
-    /* every readable bit at or above the 12.5px floor (calendar and time grid first) */
+        /* every readable bit at or above the 12.5px floor (calendar and time grid first) */
     .cal-evt, .cal-more, .cal-nodl-lbl, .tb-chip, .tb-evt-time, .tb-evt-notes, .week-evt-meta, .tg-allday-gutter, .tg-hour-lbl, .tg-bp-time, .tg-bp-notes, .uni-subj-code, .uni-subj-cr, .uni-pl-card-meta, .uni-pl-subj-code, .st-progress, .mv-top4-rank, .mv-top4-dir, .mv-no-rating, .mv-hm-badge, .enrich-detail, .mv-result-meta, .row-updated, .row-stale-badge, .cat-hint, .cat-row-tag, .mcard-stale, .mcard-recur, .budget-badge, .tv-status-badge, .mv-sb-count, .cal-day-n, .tg-bp-title, .week-evt-title, .st-count-pill, .nstat-l { font-size:var(--fs-xs); }
     .mv-rank-badge { font-size:12px; padding:2px 6px; }
     .tg-hour-lbl { font-variant-numeric:tabular-nums; }
@@ -2061,6 +2040,131 @@
     .rg-table td.team .rg-starbtn { margin-left:8px; opacity:.55; }
     .rg-table tr:hover .rg-starbtn, .rg-starbtn.on { opacity:1; }
     .rg-mine-chips { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
+
+    /* ╔══════════════════════════════════════════════════════════════╗
+       ║  TRUE-BLACK FLAT (taste-skill app style) — final layer        ║
+       ║  elevation by lightness · colour only on data · no gradients  ║
+       ╚══════════════════════════════════════════════════════════════╝ */
+    :root {
+      --text2:#b4b4b4; --text3:#949494;
+      --grad:var(--accent);                                                       /* data fills only */
+      --grad-soft:color-mix(in srgb, var(--text) 11%, transparent);               /* selected = a lightness step */
+      --accent-soft:color-mix(in srgb, var(--text) 10%, transparent);
+      --accent-line:color-mix(in srgb, var(--text) 24%, transparent);
+      --panel-hi:none;
+      --lift:none;
+      --hair:color-mix(in srgb, var(--text) 9%, transparent);
+      --hair-2:color-mix(in srgb, var(--text) 15%, transparent);
+      --btn-bg:var(--text); --btn-fg:var(--bg);
+      --r-sm:8px; --r-md:10px; --r-lg:14px;
+    }
+    body.light { --text2:#4c5873; --text3:#6f7a93; --panel-hi:none; --lift:none; }
+    body::before { display:none !important; }                                      /* no ambient glow */
+    ::selection { background:color-mix(in srgb, var(--text) 28%, transparent); }
+    input, textarea { caret-color:var(--text); }
+    button:focus-visible, a:focus-visible, [tabindex]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:2px solid var(--text); outline-offset:2px; box-shadow:none; }
+    input:focus, select:focus, textarea:focus { border-color:var(--hair-2) !important; box-shadow:none; }
+    input[type=checkbox], input[type=radio] { accent-color:var(--text); }
+
+    /* shell: one ground, no glass, no coloured rules */
+    .topnav { background:var(--bg); backdrop-filter:none; -webkit-backdrop-filter:none; height:52px; border-bottom:1px solid var(--hair); }
+    .topnav::after { display:none; }
+    .nav-logo::before { background:var(--accent); box-shadow:none; border-radius:6px; width:20px; height:20px; }
+    .nav-logo span { color:inherit; }
+    .nav-tab { color:var(--text2); font-weight:500; }
+    .nav-tab:hover { color:var(--text); background:none; }
+    .nav-tab.active { color:#fff; font-weight:600; }
+    body.light .nav-tab.active { color:#000; }
+    .nav-tab.active::after { display:none; }                                         /* the label alone marks the active item */
+    .nav-settings-btn.active { background:var(--surface2); border-color:transparent; color:var(--text); }
+    .file-pill { background:var(--surface); border:none; }
+    .bottom-nav { background:var(--bg); backdrop-filter:none; -webkit-backdrop-filter:none; border-top:1px solid var(--hair); }
+    .bn-item.active::before { background:var(--text); }
+    .bn-item.active .bn-ic { color:var(--text); }
+    .overlay, .sync-block { backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(0,0,0,.6); }
+
+    /* page title: a noun at 24/700 */
+    .page-hdr { padding-top:24px; }
+    .page-hdr h1, .home-greeting-name { font-size:24px; font-weight:700; letter-spacing:-.02em; }
+    .home-greeting-date, .page-hdr p { color:var(--text2); }
+
+    /* buttons: one primary by inversion, one quiet; fully round */
+    .add-btn, .mv-add-btn, .tv-add-btn, .travel-add-btn, .btn-save, .sbtn.primary, .mv-search-btn, .st-add-btn {
+      background:var(--btn-bg); color:var(--btn-fg); border:none; border-radius:999px; box-shadow:none; font-weight:600; filter:none; }
+    .add-btn:hover, .mv-add-btn:hover, .tv-add-btn:hover, .travel-add-btn:hover, .btn-save:hover, .sbtn.primary:hover, .mv-search-btn:hover, .st-add-btn:hover { filter:none; opacity:.86; }
+    .add-btn:active, .mv-add-btn:active, .tv-add-btn:active, .btn-save:active { transform:none; opacity:.78; }
+    .cal-nav-btn, .cal-today-btn, .cal-block-btn, .fbtn:not(.primary), .mv-enrich-btn, .btn-cancel, .uni-add-sem-btn, .sbtn:not(.primary):not(.danger), .budget-setup-btn, .uni-act-btn, .cat-row-edit-btn, .nav-settings-btn, .budget-arrow, .ghost-btn {
+      background:var(--surface2); border:none; border-radius:999px; color:var(--text); }
+    .cal-nav-btn:hover, .cal-today-btn:hover, .cal-block-btn:hover, .fbtn:not(.primary):hover, .mv-enrich-btn:hover, .btn-cancel:hover, .uni-add-sem-btn:hover, .sbtn:not(.primary):not(.danger):hover, .budget-setup-btn:hover, .nav-settings-btn:hover, .budget-arrow:hover, .ghost-btn:hover { background:color-mix(in srgb, var(--text) 16%, var(--surface2)); border:none; color:var(--text); }
+    .mv-enrich-btn.has-gap { color:var(--text); }
+    .cell-add, .cat-add-inline, .pcol-add, .week-add, .uni-add-assess, .uni-sem-add-subj, .add-proj-btn { border:1px dashed var(--hair-2); border-radius:var(--r-md); }
+    .cell-add:hover, .cat-add-inline:hover, .pcol-add:hover, .week-add:hover, .uni-add-assess:hover, .uni-sem-add-subj:hover, .add-proj-btn:hover { background:var(--surface2); color:var(--text); border-color:var(--hair-2); }
+
+    /* navigation roles: selection is a lightness step or an ink underline, never accent */
+    .subnav-tab.active::after, .uni-view-toggle:not(.uni-sem-filter) .uni-vtab.active::after, .tv-vtab.active::after, .mv-at-htab.active::after { background:var(--text); }
+    .vtab.active, .cal-vtab.active, .mv-vtab.active { background:var(--surface2); box-shadow:none; color:var(--text); }
+    body.light .vtab.active, body.light .cal-vtab.active, body.light .mv-vtab.active { background:#fff; }
+    .view-toggle, .cal-view-toggle, .mv-view-toggle { background:var(--surface); border:none; }
+    .ctry-btn.active, .tv-stab.active, .uni-sem-filter .uni-vtab.active, .subnav-chip.active { background:var(--text); color:var(--bg); border-color:transparent; font-weight:600; }
+    .ctry-btn, .tv-stab, .uni-sem-filter .uni-vtab, .subnav-chip { background:var(--surface); border:none; }
+    .rg-mine-chip .ic, .rg-mine-star { color:currentColor; }
+    .nav-settings-btn { background:var(--surface); }
+
+    /* surfaces: flat. one tone step, no borders, no shadows, no gradient overlays */
+    .home-stat-card, .home-nav-card, .mv-kpi-card, .mv-chart-card, .mv-map-card, .mv-country-goal, .uni-gpa-card, .uni-sem, .travel-stat, .tv-kpi, .settings-section, .bmt, .wf-card, .bw-chart-card, .cal-nodl-section, .mv-dir-card, .travel-map-wrap, .cal-agenda, .matrix-row, .uni-pl-row, .storage-status, .gh-conflict, .travel-country-group, .bk-reading-card, .rg-table-wrap, .home-stats {
+      background:var(--surface); border:none; box-shadow:none; border-radius:var(--r-lg); }
+    .pri-row, .mv-list-item, .home-task-row, .mv-rank-item, .tv-rank-item, .travel-visit-card, .cat-row, .mv-rank-unranked-item, .tv-unranked-item, .cal-nodl-row, .mv-hm-item, .rg-match {
+      background:var(--surface2); border:none; box-shadow:none; border-radius:var(--r-md); }
+    .pri-row:hover, .mv-list-item:hover, .home-task-row:hover, .travel-visit-card:hover, .rg-match:hover, .bk-reading-card:hover { background:color-mix(in srgb, var(--text) 9%, var(--surface2)); border-color:transparent; }
+    .matrix-row { background:var(--surface); }
+    .task-cell, .uni-pl-cell { background:var(--surface2); border:none; }
+    .mv-card, .tv-card { background:var(--surface); border:none; }
+    .mv-card:hover, .tv-card:hover { box-shadow:none; transform:none; background:var(--surface2); }
+    .home-stats { overflow:hidden; }
+    .home-nav-card, .home-nav-card:hover { background:none; box-shadow:none; }
+    .home-nav-card:hover { background:var(--surface); }
+    .modal { background:var(--surface); border:none; }
+    .modal-hdr, .modal-footer { background:var(--surface); }
+    .cal-grid, .tg-wrap, .week-col { border:none; background:var(--surface); }
+    .cal-cell, .cal-wday { background:var(--surface); }
+    .cal-dim { background:var(--bg); }
+    .cal-is-today { background:var(--surface2); }
+    .cal-today-n, .week-today-num { background:var(--text) !important; color:var(--bg) !important; }
+    .cal-sel .cal-day-n:not(.cal-today-n) { box-shadow:inset 0 0 0 2px var(--text); }
+    .ctx-menu, .modal, .sync-block-card { box-shadow:0 12px 32px rgba(0,0,0,.5); }      /* only what truly floats */
+
+    /* icons sit bare: no tinted squares */
+    .home-nav-icon, .sync-block-ic { background:none !important; color:var(--text2); width:auto; height:auto; }
+    .home-nav-card:hover .home-nav-icon { color:var(--text); }
+    .mv-empty-icon .ic, .tv-empty-icon .ic, .travel-empty-icon .ic, .budget-empty-icon .ic { background:none; padding:0; width:40px; height:40px; color:var(--text3); }
+
+    /* KPIs: type, not tiles. regular weight, tabular, 26px */
+    .home-stat-n, .mv-kpi-value, .uni-gpa-val, .travel-stat-n, .tv-kpi-val, .wf-income-val, .wf-subtotal-val { font-size:26px; font-weight:400; letter-spacing:-.02em; }
+    .home-stat-card.alert, .home-stat-card.warn, .home-stat-card.ok { background:none; }
+
+    /* colour goes on data: bars and fills use the one accent, status keeps its own colour */
+    .wf-bar-fill, .mv-cg-bar-fill, .bk-progress > span { background:var(--accent) !important; }
+    .st-box.checked, .st-item-box.checked, .st-count-pill, .mv-rank-badge { background:var(--text); color:var(--bg); border-color:transparent; }
+    .city-tag { background:var(--surface2); color:var(--text); }
+    .mv-rank-num.top3, .mv-li-rank.top3, .tv-rank-num.top3 { color:var(--text); }
+    .bmt th.bmt-focus { background:var(--surface2); color:var(--text); }
+
+    /* category cards: pale tint + dot (identity), no coloured borders */
+    .tint, .mcard.tinted { border:none !important; background:color-mix(in srgb, var(--cc) 12%, var(--surface2)) !important; }
+    .tint:hover, .mcard.tinted:hover { border-color:transparent !important; background:color-mix(in srgb, var(--cc) 20%, var(--surface2)) !important; }
+    .mcard { border:none; }
+    .mcard:hover { box-shadow:none; }
+
+    /* rugby, books: same flat rules */
+    .rg-chip { background:var(--surface2); border:none; }
+    .rg-f-W { background:color-mix(in srgb, var(--low) 30%, transparent); }
+    .gh-err { background:none; border:1px solid var(--hair-2); }
+    .gh-pill.conflict, .gh-pill.error, .gh-pill.auth { border-color:transparent; }
+    .accent-dot.sel, .tb-color-dot.sel { box-shadow:none; }
+
+    .task-cell.cell-onhold { border:none; opacity:.65; background:var(--surface2); }
+    .uni-pl-card.is-dragging, .mcard.is-dragging { border:none !important; opacity:.35; }
+    .task-cell.drag-over, .uni-pl-cell.drag-over, .pers-cards.drag-over { background:color-mix(in srgb, var(--text) 14%, var(--surface2)); outline:1px dashed var(--hair-2); outline-offset:-1px; border:none !important; }
   </style>
 </head>
 <body class="dark">
@@ -2455,7 +2559,8 @@
 
   // ── CHART COMPONENTS ─────────────────────────────────────────────
 
-  function HorizBar({ data, color='var(--accent)', maxW=220 }) {
+  function HorizBar({ data, color:_ignored, maxW=220 }) {
+    const color = 'var(--accent)';
     if (!data || !data.length) return null;
     const max = Math.max(...data.map(d=>d.value), 1);
     return (
@@ -2473,7 +2578,8 @@
     );
   }
 
-  function LineChart({ data, color='#5b96e8', fillColor='rgba(91,150,232,0.12)', height=176 }) {
+  function LineChart({ data, color:_ignored, fillColor:_ignoredFill, height=176 }) {
+    const color = 'var(--accent)', fillColor = 'color-mix(in srgb, var(--accent) 12%, transparent)';
     const ref = React.useRef(null);
     const [W, setW] = React.useState(560);
     React.useEffect(() => {
@@ -2603,7 +2709,8 @@
     );
   }
 
-  function VertBar({ data, color='var(--accent)' }) {
+  function VertBar({ data, color:_ignored }) {
+    const color = 'var(--accent)';
     if (!data || !data.length) return null;
     const max = Math.max(...data.map(d=>d.value), 1);
     const barH = 80;
@@ -5965,8 +6072,8 @@
           <div className="mv-chart-card" style={{marginBottom:14}}>
             <div className="mv-chart-title">Films watched by year</div>
             <MultiLineChart height={320} series={[
-              { label:'Films watched', color:'#5b96e8', data:allStats.yearDist },
-              { label:'New releases watched', color:'#f2a54b', data:allStats.newDist },
+              { label:'Films watched', color:'var(--accent)', data:allStats.yearDist },
+              { label:'New releases watched', color:'var(--text2)', data:allStats.newDist },
             ]} />
           </div>
         )}
@@ -9869,7 +9976,7 @@
       <div className="home-wrap">
         {/* GREETING */}
         <div className="home-greeting">
-          <div className="home-greeting-name">{greeting}, Sidd.</div>
+          <h1 className="home-greeting-name">{greeting}, Sidd.</h1>
           <div className="home-greeting-date">{dateLabel}</div>
         </div>
 
@@ -10120,9 +10227,9 @@
       if (theme === 'dark') {
         const bg = settings.darkBg || '#000000';
         root.style.setProperty('--bg',       bg);
-        root.style.setProperty('--surface',  mixHex(lightenHex(bg, 15), '#222a4a', .34));
-        root.style.setProperty('--surface2', mixHex(lightenHex(bg, 25), '#2a3358', .34));
-        root.style.setProperty('--border',   mixHex(lightenHex(bg, 38), '#3a4570', .32));
+        root.style.setProperty('--surface',  lightenHex(bg, 17));
+        root.style.setProperty('--surface2', lightenHex(bg, 30));
+        root.style.setProperty('--border',   lightenHex(bg, 42));
         root.style.setProperty('--shadow',   `0 4px 24px rgba(0,0,0,${bg==='#000000'?.7:.5})`);
       } else {
         ['--bg','--surface','--surface2','--border','--shadow'].forEach(v => root.style.removeProperty(v));
