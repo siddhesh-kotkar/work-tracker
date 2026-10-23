@@ -2165,6 +2165,21 @@
     .task-cell.cell-onhold { border:none; opacity:.65; background:var(--surface2); }
     .uni-pl-card.is-dragging, .mcard.is-dragging { border:none !important; opacity:.35; }
     .task-cell.drag-over, .uni-pl-cell.drag-over, .pers-cards.drag-over { background:color-mix(in srgb, var(--text) 14%, var(--surface2)); outline:1px dashed var(--hair-2); outline-offset:-1px; border:none !important; }
+
+    /* scores */
+    .scores { display:flex; flex-wrap:wrap; gap:2px 10px; margin-top:4px; font-size:var(--fs-xs); color:var(--text2); font-variant-numeric:tabular-nums; }
+    .scores b { font-weight:600; color:var(--text3); margin-right:3px; }
+    .score-panel { margin:16px 0 4px; }
+    .score-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .score-row { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+    .score-cell { background:var(--surface2); padding:10px 12px; }
+    .score-lbl { font-size:var(--fs-xs); color:var(--text2); }
+    .score-val { font-size:var(--fs-lg); font-variant-numeric:tabular-nums; margin-top:2px; }
+
+    /* ── square corners everywhere; only true dots and the now-marker stay round ── */
+    *, *::before, *::after { border-radius:0 !important; }
+    .accent-dot, .fpill-dot, .mhdr-dot, .pri-dot, .cat-row-swatch, .edit-swatch, .swatch, .tb-color-dot, .uni-pl-col-dot, .home-task-dot, .tg-now-dot, .rg-logo-fb, .mcard.tinted .mcard-bar, .tint::before, .enrich-status { border-radius:50% !important; }
+    input[type=radio] { border-radius:50% !important; }
   </style>
 </head>
 <body class="dark">
@@ -2363,6 +2378,63 @@
     if (!r.ok) throw new Error('Fetch failed');
     return (await r.json()).results || {};
   }
+
+  async function omdbScores(imdbId, key) {
+    const r = await fetch(`https://www.omdbapi.com/?i=${encodeURIComponent(imdbId)}&apikey=${encodeURIComponent(key)}`);
+    if (!r.ok) throw new Error('OMDb request failed (' + r.status + ')');
+    const d = await r.json();
+    if (d.Response === 'False') throw new Error(d.Error || 'Not found on OMDb');
+    const ok = v => (v && v !== 'N/A') ? v : '';
+    const rt = ((d.Ratings || []).find(x => x.Source === 'Rotten Tomatoes') || {}).Value;
+    return { imdb:ok(d.imdbRating), votes:ok(d.imdbVotes), mc:ok(d.Metascore), rt:ok(rt), at:Date.now() };
+  }
+  function ScoreChips({ s }) {
+    if (!s || !(s.imdb || s.rt || s.mc)) return null;
+    return (
+      <div className="scores">
+        {s.imdb && <span title="IMDb rating"><b>IMDb</b> {s.imdb}</span>}
+        {s.rt && <span title="Rotten Tomatoes (Tomatometer)"><b>RT</b> {s.rt}</span>}
+        {s.mc && <span title="Metacritic Metascore"><b>MC</b> {s.mc}</span>}
+      </div>
+    );
+  }
+  function ScoresPanel({ item, kind, tmdbKey, omdbKey, onChange }) {
+    const [busy, setBusy] = React.useState(false);
+    const [msg, setMsg] = React.useState('');
+    async function fetchNow() {
+      if (!omdbKey) return;
+      setBusy(true); setMsg('');
+      try {
+        let id = item.imdbId;
+        if (!id && item.tmdbId && tmdbKey) {
+          const d = kind === 'tv' ? await tmdbTVGetDetails(item.tmdbId, tmdbKey) : await tmdbGetDetails(item.tmdbId, tmdbKey);
+          id = kind === 'tv' ? ((d.external_ids || {}).imdb_id || '') : (d.imdb_id || '');
+        }
+        if (!id) { setMsg('No IMDb id found for this title. Search it with TMDB first.'); setBusy(false); return; }
+        onChange({ imdbId:id, scores:await omdbScores(id, omdbKey) });
+      } catch (e) { setMsg(e.message || 'Could not load scores'); }
+      setBusy(false);
+    }
+    React.useEffect(() => { if (omdbKey && !item.scores && (item.imdbId || item.tmdbId)) fetchNow(); }, [item.tmdbId, item.imdbId, omdbKey]);
+    const sc = item.scores || {};
+    const cell = (label, v, title) => <div className="score-cell" title={title}><div className="score-lbl">{label}</div><div className="score-val">{v || '–'}</div></div>;
+    return (
+      <div className="score-panel">
+        <div className="score-hdr">
+          <span className="mv-chart-title">Critic scores</span>
+          {omdbKey && <button className="ghost-btn" onClick={fetchNow} disabled={busy}><Icon name="refresh" size={14} /> {busy ? 'Loading…' : 'Refresh'}</button>}
+        </div>
+        {!omdbKey ? <div className="section-desc">Add a free OMDb key in Settings to show IMDb, Rotten Tomatoes and Metacritic scores.</div> : (
+          <div className="score-row">
+            {cell('IMDb', sc.imdb ? sc.imdb + ' / 10' : '', sc.votes ? sc.votes + ' votes' : 'IMDb rating')}
+            {cell('Rotten Tomatoes', sc.rt, 'Tomatometer')}
+            {cell('Metacritic', sc.mc ? sc.mc + ' / 100' : '', 'Metascore')}
+          </div>
+        )}
+        {msg && <div className="gh-err" style={{marginTop:8}}>{msg}</div>}
+      </div>
+    );
+  }
   function makeDefaultMovieData() { return { movies:[] }; }
   function makeDefaultTVData() { return { shows:[] }; }
   function makeDefaultTravelData() { return { visits:[] }; }
@@ -2433,7 +2505,7 @@
     return (await r.json()).results || [];
   }
   async function tmdbTVGetDetails(tmdbId, apiKey) {
-    const r = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${encodeURIComponent(apiKey)}&append_to_response=credits`);
+    const r = await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${encodeURIComponent(apiKey)}&append_to_response=credits,external_ids`);
     if (!r.ok) throw new Error('Fetch failed');
     return r.json();
   }
@@ -2681,7 +2753,7 @@
             return (
               <g pointerEvents="none">
                 <line x1={x} y1={PT} x2={x} y2={PT + iH} stroke="var(--text3)" strokeWidth="1" strokeDasharray="3 3" />
-                <rect x={bx} y={PT - 6} width={boxW} height={22 + series.length * 18} rx="8" fill="var(--surface2)" stroke="var(--hair-2)" />
+                <rect x={bx} y={PT - 6} width={boxW} height={22 + series.length * 18} rx="0" fill="var(--surface2)" stroke="var(--hair-2)" />
                 <text x={bx + 10} y={PT + 12} fontSize="12" fontWeight="700" fill="var(--text)">{base[hover].label}</text>
                 {series.map((s, si) => <text key={s.label} x={bx + 10} y={PT + 30 + si * 18} fontSize="12" fill={s.color}>{s.label}: {s.data[hover].value}</text>)}
               </g>
@@ -2727,7 +2799,7 @@
     );
   }
 
-  function WorldMapView({ countriesSet, countryCounts={}, heightRatio=0.5, scaleMultiplier=1 }) {
+  function WorldMapView({ countriesSet, countryCounts={}, heightRatio=0.5, scaleMultiplier=1, noun='film' }) {
     const ref = React.useRef(null);
     const tooltipRef = React.useRef(null);
     const [loaded, setLoaded] = React.useState(false);
@@ -2826,7 +2898,7 @@
                 .style('display','block')
                 .style('left', (event.offsetX + 12)+'px')
                 .style('top',  (event.offsetY - 8)+'px')
-                .html(`<strong>${name}</strong>${watched ? ` — ${cnt} film${cnt!==1?'s':''}` : ''}`);
+                .html(`<strong>${name}</strong>${watched ? ` — ${cnt} ${noun}${cnt!==1?'s':''}` : ''}`);
             })
             .on('mouseleave', () => { tooltip.style('display','none'); });
 
@@ -2859,7 +2931,7 @@
                   .style('display','block')
                   .style('left', (event.offsetX + 12)+'px')
                   .style('top',  (event.offsetY - 8)+'px')
-                  .html(`<strong>${d.name}</strong> — ${d.cnt} film${d.cnt!==1?'s':''}`);
+                  .html(`<strong>${d.name}</strong> — ${d.cnt} ${noun}${d.cnt!==1?'s':''}`);
               })
               .on('mouseleave', () => { tooltip.style('display','none'); });
           }
@@ -2891,7 +2963,7 @@
             {unmapped.map(name => {
               const cnt = countryCounts[name] || 1;
               return (
-                <span key={name} title={`${cnt} film${cnt!==1?'s':''}`} style={{
+                <span key={name} title={`${cnt} ${noun}${cnt!==1?'s':''}`} style={{
                   display:'inline-flex', alignItems:'center', gap:4,
                   background:'var(--accent)', color:'#fff',
                   borderRadius:5, padding:'2px 8px',
@@ -3206,6 +3278,7 @@
       darkBg: '#000000',
       fontId: 'system',
       tmdbKey: '',
+      omdbKey: '',
       ...(raw.settings || {}),
     };
     if (!settings.workCats || !settings.workCats.length) settings.workCats = [...DEFAULT_WORK_CATS];
@@ -5092,7 +5165,7 @@
     );
   }
 
-  function MovieAddModal({ movie, tmdbKey, defaultTrackYear, onSave, onDelete, onClose }) {
+  function MovieAddModal({ movie, tmdbKey, omdbKey, defaultTrackYear, onSave, onDelete, onClose }) {
     const isEdit = !!movie;
     const [q, setQ] = React.useState('');
     const [results, setResults] = React.useState([]);
@@ -5118,12 +5191,13 @@
     async function pickResult(r) {
       setLoadingDetails(true);
       const yr = r.release_date ? parseInt(r.release_date.slice(0,4)) : defaultTrackYear;
-      let director='', genres=[], runtime='', language='', country='', actors=[];
+      let director='', genres=[], runtime='', language='', country='', actors=[], imdbId='';
       if (tmdbKey) {
         try {
           const d = await tmdbGetDetails(r.id, tmdbKey);
           director = (d.credits?.crew||[]).find(c=>c.job==='Director')?.name || '';
           actors = (d.credits?.cast||[]).slice(0,6).map(c=>c.name);
+          imdbId = d.imdb_id || '';
           genres = (d.genres||[]).map(g=>g.name);
           runtime = d.runtime || '';
           language = d.original_language || r.original_language || '';
@@ -5136,7 +5210,7 @@
         genres=(r.genre_ids||[]).map(id=>TMDB_GENRES[id]).filter(Boolean);
         language = r.original_language || '';
       }
-      setForm(f=>({...f, tmdbId:r.id, title:r.title, releaseYear:yr, director, actors, genres, runtime, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
+      setForm(f=>({...f, tmdbId:r.id, imdbId, scores:null, title:r.title, releaseYear:yr, director, actors, genres, runtime, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
       setGenresStr(genres.join(', '));
       setActorsStr(actors.join(', '));
       setLoadingDetails(false);
@@ -5289,6 +5363,7 @@
             </div>
           </div>
           <div>
+            <ScoresPanel item={form} kind="movie" tmdbKey={tmdbKey} omdbKey={omdbKey} onChange={pt => setForm(f => ({ ...f, ...pt }))} />
             <WatchProviders tmdbId={form.tmdbId} tmdbKey={tmdbKey} title={form.title}/>
           </div>
           <div className="modal-footer">
@@ -5517,11 +5592,11 @@
     );
   }
 
-  function BulkEnrichModal({ movies, tmdbKey, onApply, onClose }) {
+  function BulkEnrichModal({ movies, tmdbKey, omdbKey, onApply, onClose }) {
     // Films that are missing any of: country, language, runtime, director, releaseYear, studio
     const needsEnrich = React.useMemo(()=>
-      movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || !(m.actors && m.actors.length) || m.watchAtRelease),
-      [movies]
+      movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || !(m.actors && m.actors.length) || (omdbKey && !m.scores) || m.watchAtRelease),
+      [movies, omdbKey]
     );
 
     const IDLE = 'idle', RUNNING = 'running', DONE = 'done';
@@ -5541,10 +5616,10 @@
       cancelRef.current = false;
       setPhase(RUNNING);
       const patches = {};
-      let enriched = 0, failed = 0, skipped = 0;
+      let enriched = 0, failed = 0, skipped = 0, limitHit = false;
 
       for (const row of needsEnrich) {
-        if (cancelRef.current) break;
+        if (cancelRef.current || limitHit) break;
         setRow(row.id, { status:'running', detail:'Searching…' });
 
         try {
@@ -5595,6 +5670,10 @@
             if (!orig.language  && language)  patch.language  = language;
             if (!orig.runtime   && runtime)   patch.runtime   = runtime;
             if (!orig.director  && director)  patch.director  = director;
+            if (omdbKey && !orig.scores && details.imdb_id) {
+              try { patch.scores = await omdbScores(details.imdb_id, omdbKey); patch.imdbId = details.imdb_id; }
+              catch (e) { if (/limit/i.test(e.message)) limitHit = true; }
+            }
             if ((!orig.actors||!orig.actors.length) && actors.length) patch.actors = actors;
             if ((!orig.genres||!orig.genres.length) && genres.length) patch.genres = genres;
             if (!orig.posterPath && posterPath) patch.posterPath = posterPath;
@@ -5623,7 +5702,7 @@
         await new Promise(r=>setTimeout(r,220));
       }
 
-      setSummary({ enriched, failed, skipped });
+      setSummary({ enriched, failed, skipped, limitHit });
       setPhase(DONE);
 
       // Apply all patches
@@ -5684,7 +5763,7 @@
     );
   }
 
-  function MoviesView({ movieData, onUpdate, tmdbKey }) {
+  function MoviesView({ movieData, onUpdate, tmdbKey, omdbKey }) {
     const [year, setYear] = React.useState('all');
     const [subView, setSubView] = React.useState('films');
     const [atTab, setAtTab] = React.useState('films');
@@ -5857,7 +5936,7 @@
       }));
     }
 
-    const enrichCount = movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || !(m.actors && m.actors.length) || m.watchAtRelease).length;
+    const enrichCount = movies.filter(m => !m.country || !m.language || !m.runtime || !m.director || !m.releaseYear || !m.studio || !(m.actors && m.actors.length) || (omdbKey && !m.scores) || m.watchAtRelease).length;
 
     // Year rankings DnD
     function onRankDragStart(e,id) { setDragId(id); e.dataTransfer.effectAllowed='move'; }
@@ -6309,7 +6388,7 @@
                           <div className="mv-li-poster"><Poster movie={movie}/></div>
                           <div className="mv-li-info">
                             <div className="mv-li-title">{movie.title}{movie.releaseYear ? <span className="mv-li-year"> {movie.releaseYear}</span> : null}</div>
-                            <div className="mv-li-meta">{[movie.director, (movie.actors||[]).slice(0,3).join(', '), movie.runtime?`${movie.runtime}m`:null].filter(Boolean).join(' · ')}</div>
+                            <div className="mv-li-meta">{[movie.director, (movie.actors||[]).slice(0,3).join(', '), movie.runtime?`${movie.runtime}m`:null].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                           </div>
                           <div className="mv-li-right">
                             {movie.rating
@@ -6333,7 +6412,7 @@
                         </div>
                         <div className="mv-card-body">
                           <div className="mv-card-title" title={movie.title}>{movie.title}</div>
-                          <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div>
+                          <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                           {movie.rating
                             ? <div className="mv-card-rating"><StarRating value={movie.rating} readOnly size={11}/><span style={{fontSize:10,color:'var(--text2)'}}>{movie.rating}</span></div>
                             : <div className="mv-no-rating">Unrated</div>}
@@ -6389,7 +6468,7 @@
                           </div>
                           <div className="mv-card-body">
                             <div className="mv-card-title" title={movie.title}>{movie.title}</div>
-                            <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div>
+                            <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                             {movie.rating
                               ? <div className="mv-card-rating"><StarRating value={movie.rating} readOnly size={11}/><span style={{fontSize:10,color:'var(--text2)'}}>{movie.rating}</span></div>
                               : <div className="mv-no-rating">Unrated</div>}
@@ -6439,7 +6518,7 @@
                               </div>
                               <div className="mv-card-body">
                                 <div className="mv-card-title" title={movie.title}>{movie.title}</div>
-                                <div className="mv-card-sub">{[movie.director, movie.trackYear ? `watched ${movie.trackYear}` : null].filter(Boolean).join(' · ')}</div>
+                                <div className="mv-card-sub">{[movie.director, movie.trackYear ? `watched ${movie.trackYear}` : null].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                                 {movie.rating
                                   ? <div className="mv-card-rating"><StarRating value={movie.rating} readOnly size={11}/><span style={{fontSize:10,color:'var(--text2)'}}>{movie.rating}</span></div>
                                   : <div className="mv-no-rating">Unrated</div>}
@@ -6491,7 +6570,7 @@
                               </div>
                               <div className="mv-card-body">
                                 <div className="mv-card-title" title={movie.title}>{movie.title}</div>
-                                <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div>
+                                <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                                 {movie.rating
                                   ? <div className="mv-card-rating"><StarRating value={movie.rating} readOnly size={11}/><span style={{fontSize:10,color:'var(--text2)'}}>{movie.rating}</span></div>
                                   : <div className="mv-no-rating">Unrated</div>}
@@ -6549,7 +6628,7 @@
                         </div>
                         <div className="mv-card-body">
                           <div className="mv-card-title" title={movie.title}>{movie.title}</div>
-                          <div className="mv-card-sub">{[movie.director, movie.releaseYear, (unratedSort==='runtime_asc'||unratedSort==='runtime_desc') && movie.runtime ? `${movie.runtime}m` : ''].filter(Boolean).join(' · ')}</div>
+                          <div className="mv-card-sub">{[movie.director, movie.releaseYear, (unratedSort==='runtime_asc'||unratedSort==='runtime_desc') && movie.runtime ? `${movie.runtime}m` : ''].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                           <div className="mv-no-rating mv-needs-rating">Needs rating</div>
                         </div>
                       </div>
@@ -6605,7 +6684,7 @@
                   </div>
                   <div className="mv-card-body">
                     <div className="mv-card-title" title={movie.title}>{movie.title}</div>
-                    <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div>
+                    <div className="mv-card-sub">{[movie.director, movie.releaseYear].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                     {movie.rating
                       ? <div className="mv-card-rating"><StarRating value={movie.rating} readOnly size={11}/><span style={{fontSize:10,color:'var(--text2)'}}>{movie.rating}</span></div>
                       : <div className="mv-no-rating">Unrated</div>}
@@ -6620,7 +6699,7 @@
                   <div className="mv-li-poster"><Poster movie={movie}/></div>
                   <div className="mv-li-info">
                     <div className="mv-li-title">{movie.title}{movie.isAllTime&&<span style={{fontSize:12,marginLeft:5}}>⭐</span>}{movie.honourableMention&&!movie.yearRank&&<span style={{fontSize:10,fontWeight:800,background:'rgba(201,138,16,.15)',color:'#c98a10',borderRadius:4,padding:'1px 5px',marginLeft:5}}>HM</span>}</div>
-                    <div className="mv-li-meta">{[movie.director, movie.releaseYear, movie.runtime?`${movie.runtime} min`:null, (movie.genres||[]).slice(0,2).join(' · ')].filter(Boolean).join(' · ')}</div>
+                    <div className="mv-li-meta">{[movie.director, movie.releaseYear, movie.runtime?`${movie.runtime} min`:null, (movie.genres||[]).slice(0,2).join(' · ')].filter(Boolean).join(' · ')}</div><ScoreChips s={movie.scores} />
                   </div>
                   <div className="mv-li-right">
                     {movie.rating ? <StarRating value={movie.rating} readOnly size={14}/> : <span className="mv-no-rating">Unrated</span>}
@@ -6875,6 +6954,7 @@
           <MovieAddModal
             movie={modal==='add' ? null : modal.movie}
             tmdbKey={tmdbKey}
+            omdbKey={omdbKey}
             defaultTrackYear={isSpecial ? new Date().getFullYear() : year}
             onSave={saveMovie}
             onDelete={deleteMovie}
@@ -6886,6 +6966,7 @@
           <BulkEnrichModal
             movies={movies}
             tmdbKey={tmdbKey}
+            omdbKey={omdbKey}
             onApply={applyEnrichPatches}
             onClose={()=>setEnrichModal(false)}
           />
@@ -6917,7 +6998,7 @@
 
   /* ── TV COMPONENTS ──────────────────────────────────────────── */
 
-  function TVAddModal({ show, tmdbKey, onSave, onDelete, onClose }) {
+  function TVAddModal({ show, tmdbKey, omdbKey, onSave, onDelete, onClose }) {
     const isEdit = !!show;
     const [q, setQ] = React.useState('');
     const [results, setResults] = React.useState([]);
@@ -6940,13 +7021,14 @@
     }
     async function pickResult(r) {
       setLoadingDetails(true);
-      let creator='', genres=[], seasons='', language='', country='', actors=[], network='';
+      let creator='', genres=[], seasons='', language='', country='', actors=[], network='', imdbId='';
       if (tmdbKey) {
         try {
           const d = await tmdbTVGetDetails(r.id, tmdbKey);
           creator = (d.created_by||[]).map(c=>c.name).join(', ');
           actors = (d.credits?.cast||[]).slice(0,6).map(c=>c.name);
           network = (d.networks||[])[0]?.name || '';
+          imdbId = (d.external_ids||{}).imdb_id || '';
           genres = (d.genres||[]).map(g=>g.name);
           seasons = d.number_of_seasons || '';
           language = d.original_language || r.original_language || '';
@@ -6954,7 +7036,7 @@
         } catch(e) { language = r.original_language || ''; }
       } else { language = r.original_language || ''; }
       const yr = r.first_air_date ? r.first_air_date.slice(0,4) : '';
-      setForm(f=>({...f, tmdbId:r.id, title:r.name||r.title||'', firstAired:yr, creator, actors, network, genres, seasons, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
+      setForm(f=>({...f, tmdbId:r.id, imdbId, scores:null, title:r.name||r.title||'', firstAired:yr, creator, actors, network, genres, seasons, posterPath:r.poster_path||'', overview:r.overview||'', language, country}));
       setGenresStr(genres.join(', '));
       setActorsStr(actors.join(', '));
       setLoadingDetails(false); setResults([]); setShowSearch(false);
@@ -7081,6 +7163,7 @@
             </div>
           </div>
           <div>
+            <ScoresPanel item={form} kind="tv" tmdbKey={tmdbKey} omdbKey={omdbKey} onChange={pt => setForm(f => ({ ...f, ...pt }))} />
             <WatchProviders tmdbId={form.tmdbId} tmdbKey={tmdbKey} title={form.title} kind="tv"/>
           </div>
           <div className="modal-footer">
@@ -7198,8 +7281,8 @@
   }
 
 
-  function TVEnrichModal({ shows, tmdbKey, onApply, onClose }) {
-    const needs = React.useMemo(() => shows.filter(sh => !sh.country || !sh.language || !sh.creator || !(sh.actors && sh.actors.length) || !sh.network || !sh.firstAired || !(sh.genres && sh.genres.length) || !sh.seasons || !sh.posterPath), [shows]);
+  function TVEnrichModal({ shows, tmdbKey, omdbKey, onApply, onClose }) {
+    const needs = React.useMemo(() => shows.filter(sh => !sh.country || !sh.language || !sh.creator || !(sh.actors && sh.actors.length) || !sh.network || !sh.firstAired || !(sh.genres && sh.genres.length) || !sh.seasons || !sh.posterPath || (omdbKey && !sh.scores)), [shows, omdbKey]);
     const [phase, setPhase] = React.useState('idle');
     const [rows, setRows] = React.useState(() => needs.map(sh => ({ id:sh.id, title:sh.title, status:'pending', detail:'' })));
     const [summary, setSummary] = React.useState(null);
@@ -7207,9 +7290,9 @@
     const setRow = (id, patch) => setRows(rs => rs.map(r => r.id === id ? { ...r, ...patch } : r));
     async function run() {
       setPhase('running'); cancelRef.current = false;
-      const patches = {}; let done = 0, failed = 0;
+      const patches = {}; let done = 0, failed = 0; let lim = false;
       for (const row of needs) {
-        if (cancelRef.current) break;
+        if (cancelRef.current || lim) break;
         setRow(row.id, { status:'running', detail:'Looking up…' });
         try {
           let d = null;
@@ -7219,7 +7302,7 @@
             const r = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${encodeURIComponent(tmdbKey)}&query=${encodeURIComponent(orig.title)}${orig.firstAired ? '&first_air_date_year=' + orig.firstAired : ''}`);
             if (r.ok) id = ((await r.json()).results || [])[0]?.id;
           }
-          if (id) { const r2 = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${encodeURIComponent(tmdbKey)}&append_to_response=credits`); if (r2.ok) d = await r2.json(); }
+          if (id) { const r2 = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${encodeURIComponent(tmdbKey)}&append_to_response=credits,external_ids`); if (r2.ok) d = await r2.json(); }
           if (!d) { setRow(row.id, { status:'failed', detail:'Not found on TMDB' }); failed++; }
           else {
             const patch = { tmdbId:d.id };
@@ -7229,6 +7312,9 @@
             const first = d.first_air_date ? d.first_air_date.slice(0, 4) : '';
             const country = (d.production_countries || [])[0]?.name || '';
             const genres = (d.genres || []).map(g => g.name);
+            if (omdbKey && !orig.scores && (d.external_ids || {}).imdb_id) {
+              try { patch.scores = await omdbScores(d.external_ids.imdb_id, omdbKey); patch.imdbId = d.external_ids.imdb_id; } catch (e) { if (/limit/i.test(e.message)) lim = true; }
+            }
             if (!orig.creator && creator) patch.creator = creator;
             if ((!orig.actors || !orig.actors.length) && actors.length) patch.actors = actors;
             if (!orig.network && network) patch.network = network;
@@ -7278,7 +7364,7 @@
     );
   }
 
-  function TVView({ tvData, onUpdate, tmdbKey }) {
+  function TVView({ tvData, onUpdate, tmdbKey, omdbKey }) {
     const [statusFilter, setStatusFilter] = React.useState('all');
     const [view, setView] = React.useState('library'); // library | rankings | stats | release | network | unrated
     const [tvSearchStr, setTvSearchStr] = React.useState('');
@@ -7298,7 +7384,7 @@
     const q = tvSearchStr.trim().toLowerCase();
     const matchesSearch = sh => !q || (sh.title||'').toLowerCase().includes(q) || (sh.creator||'').toLowerCase().includes(q) || (sh.network||'').toLowerCase().includes(q) || (sh.actors||[]).some(a => a.toLowerCase().includes(q)) || (sh.genres||[]).some(g => g.toLowerCase().includes(q));
     const filteredShows = (statusFilter==='all' ? shows : shows.filter(s=>s.status===statusFilter)).filter(matchesSearch);
-    const enrichCount = shows.filter(sh => !sh.country || !sh.language || !sh.creator || !(sh.actors && sh.actors.length) || !sh.network || !sh.firstAired || !(sh.genres && sh.genres.length) || !sh.seasons || !sh.posterPath).length;
+    const enrichCount = shows.filter(sh => !sh.country || !sh.language || !sh.creator || !(sh.actors && sh.actors.length) || !sh.network || !sh.firstAired || !(sh.genres && sh.genres.length) || !sh.seasons || !sh.posterPath || (omdbKey && !sh.scores)).length;
     function pickShow(pool) { if (!pool.length) return; setModal({ show: pool[Math.floor(Math.random() * pool.length)] }); }
     const unratedShows = shows.filter(sh => sh.rating == null && matchesSearch(sh));
     const toggleGroup = k => setCollapsedGroups(c => ({ ...c, [k]: !c[k] }));
@@ -7507,7 +7593,7 @@
               {tvStats.countriesSet.size > 0 && (
                 <div className="mv-map-card">
                   <div className="mv-chart-title">Countries of origin</div>
-                  <WorldMapView countriesSet={tvStats.countriesSet} countryCounts={tvStats.countryCounts} />
+                  <WorldMapView countriesSet={tvStats.countriesSet} countryCounts={tvStats.countryCounts} noun="show" />
                 </div>
               )}
               <div className="mv-charts-2col">
@@ -7546,7 +7632,7 @@
                 </div>
                 <div className="tv-card-body">
                   <div className="tv-card-title" title={show.title}>{show.title}</div>
-                  <div className="tv-card-meta">{[show.firstAired, show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : ''].filter(Boolean).join(' · ') || show.creator || ''}</div>
+                  <div className="tv-card-meta">{[show.firstAired, show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : ''].filter(Boolean).join(' · ') || show.creator || ''}</div><ScoreChips s={show.scores} />
                   {show.rating ? <div className="tv-card-meta">{show.rating}★</div> : <div className="mv-needs-rating tv-card-meta">Needs rating</div>}
                 </div>
               </div>
@@ -7582,7 +7668,7 @@
                     <div className="mv-li-poster">{show.posterPath ? <img src={TMDB_IMG+show.posterPath} alt={show.title}/> : <div className="tv-poster-fb"><Icon name="tv" size={18} /></div>}</div>
                     <div className="mv-li-info">
                       <div className="mv-li-title">{show.title}{show.firstAired ? <span className="mv-li-year"> {show.firstAired}</span> : null}</div>
-                      <div className="mv-li-meta">{[show.creator, (show.actors||[]).slice(0,3).join(', '), show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : null, show.network].filter(Boolean).join(' · ')}</div>
+                      <div className="mv-li-meta">{[show.creator, (show.actors||[]).slice(0,3).join(', '), show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : null, show.network].filter(Boolean).join(' · ')}</div><ScoreChips s={show.scores} />
                     </div>
                     <div className="mv-li-right">
                       {show.rating ? <StarRating value={show.rating} readOnly size={14}/> : <span className="mv-no-rating">Unrated</span>}
@@ -7608,7 +7694,7 @@
                       </div>
                       <div className="tv-card-body">
                         <div className="tv-card-title" title={show.title}>{show.title}</div>
-                        <div className="tv-card-meta">{show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : show.creator || ''}</div>
+                        <div className="tv-card-meta">{show.seasons ? `${show.seasons} season${show.seasons!==1?'s':''}` : show.creator || ''}</div><ScoreChips s={show.scores} />
                         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:4}}>
                           <StatusBadge status={show.status}/>
                           {show.rating && <span style={{fontSize:10,color:'var(--text2)'}}>{show.rating}★</span>}
@@ -7700,13 +7786,14 @@
           <TVAddModal
             show={modal==='add' ? null : modal.show}
             tmdbKey={tmdbKey}
+            omdbKey={omdbKey}
             onSave={saveShow}
             onDelete={deleteShow}
             onClose={()=>setModal(null)}
           />
         )}
         {enrichOpen && (
-          <TVEnrichModal shows={shows} tmdbKey={tmdbKey}
+          <TVEnrichModal shows={shows} tmdbKey={tmdbKey} omdbKey={omdbKey}
             onApply={patches => onUpdate(d => ({ ...d, shows: d.shows.map(sh => patches[sh.id] ? { ...sh, ...patches[sh.id] } : sh) }))}
             onClose={()=>setEnrichOpen(false)} />
         )}
@@ -8999,6 +9086,15 @@
             />
             {settings.tmdbKey && <div style={{ fontSize:12, color:'#4aac76', marginTop:2 }}>✓ Key saved — movie search is active</div>}
           </div>
+          <div style={{ display:'flex', flexDirection:'column', gap:6, marginTop:22 }}>
+            <div className="settings-label">OMDb API Key</div>
+            <div style={{ fontSize:12, color:'var(--text2)', marginBottom:6 }}>
+              Adds IMDb, Rotten Tomatoes and Metacritic scores to films and shows. Get a free key at{' '}
+              <a href="https://www.omdbapi.com/apikey.aspx" target="_blank" rel="noreferrer" style={{ color:'var(--accent)' }}>omdbapi.com</a> (the free plan allows 1,000 lookups a day).
+            </div>
+            <input type="password" className="settings-select" style={{ maxWidth:400 }} placeholder="Paste your OMDb key here" value={settings.omdbKey || ''} onChange={e => onUpdate(s => ({ ...s, omdbKey:e.target.value }))} />
+            {settings.omdbKey && <div style={{ fontSize:12, color:'#4aac76', marginTop:2 }}>✓ Key saved — scores are active</div>}
+          </div>
         </div>
 
         {/* TASK TRACKING */}
@@ -9808,7 +9904,7 @@
             <span className="travel-section-title">World Map</span>
             <button className="travel-add-btn" onClick={() => setModal('add')}>+ Add Visit</button>
           </div>
-          <WorldMapView countriesSet={visitedCountryNames} countryCounts={visitCounts} />
+          <WorldMapView countriesSet={visitedCountryNames} countryCounts={visitCounts} noun="visit" />
         </div>
 
         {/* VISITS LIST */}
@@ -10678,10 +10774,10 @@
           <UniView uniData={uniData || makeDefaultUniData()} onUpdate={setUniData} />
         )}
         {tab==='movies' && (
-          <MoviesView movieData={movieData || makeDefaultMovieData()} onUpdate={setMovieData} tmdbKey={settings.tmdbKey||''} />
+          <MoviesView movieData={movieData || makeDefaultMovieData()} onUpdate={setMovieData} tmdbKey={settings.tmdbKey||''} omdbKey={settings.omdbKey||''} />
         )}
         {tab==='tv' && (
-          <TVView tvData={tvData || makeDefaultTVData()} onUpdate={setTVData} tmdbKey={settings.tmdbKey||''} />
+          <TVView tvData={tvData || makeDefaultTVData()} onUpdate={setTVData} tmdbKey={settings.tmdbKey||''} omdbKey={settings.omdbKey||''} />
         )}
         {tab==='books' && (
           <BooksView bookData={bookData || makeDefaultBookData()} onUpdate={setBookData} />
