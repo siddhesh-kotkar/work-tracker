@@ -10074,7 +10074,7 @@
 
     // ── media
     const movies = (movieData || {}).movies || [];
-    const watchedThisYear = movies.filter(m => m.watchStatus === 'watched' && String(m.watchDate || m.trackYear || '') === year).length;
+    const watchedThisYear = movies.filter(m => String(m.watchDate || m.trackYear || '') === year).length;
     const shows = (tvData || {}).shows || [];
     const watching = shows.filter(s => s.status === 'watching');
     const books = (bookData || {}).books || [];
