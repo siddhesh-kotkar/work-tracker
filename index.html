@@ -2180,6 +2180,89 @@
     *, *::before, *::after { border-radius:0 !important; }
     .accent-dot, .fpill-dot, .mhdr-dot, .pri-dot, .cat-row-swatch, .edit-swatch, .swatch, .tb-color-dot, .uni-pl-col-dot, .home-task-dot, .tg-now-dot, .rg-logo-fb, .mcard.tinted .mcard-bar, .tint::before, .enrich-status { border-radius:50% !important; }
     input[type=radio] { border-radius:50% !important; }
+
+    /* ╔══════════════════════════════════════════════════════════════╗
+       ║  HOME DASHBOARD — snapshot grid, 7-day strip, panels          ║
+       ╚══════════════════════════════════════════════════════════════╝ */
+    .hv { display:flex; flex-direction:column; gap:28px; padding-bottom:40px; }
+    .hv-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px 24px; flex-wrap:wrap; }
+    .hv-head h1 { margin:0; }
+    .hv-head .home-greeting-date { margin:4px 0 0; font-size:14px; }
+    .hv-quick { display:flex; gap:8px; flex-wrap:wrap; }
+    .hv-quick button { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 16px; font-size:14px; cursor:pointer; }
+
+    .hv-alert { display:flex; align-items:center; gap:10px; width:100%; min-height:48px; padding:0 16px; background:color-mix(in srgb, var(--high) 14%, var(--surface)); color:var(--text); border:none; font:inherit; font-size:14px; font-weight:500; text-align:left; cursor:pointer; }
+    .hv-alert .ic { color:var(--high); flex:none; }
+    .hv-alert-go { margin-left:auto; color:var(--text2); font-weight:400; }
+    .hv-alert:hover .hv-alert-go { color:var(--text); }
+
+    .hv-grid { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:10px; }
+    .hv-card { display:flex; flex-direction:column; gap:8px; align-items:flex-start; padding:16px; min-height:128px; background:var(--surface); border:none; color:var(--text); font:inherit; text-align:left; cursor:pointer; }
+    .hv-card:hover { background:var(--surface2); }
+    .hv-card-top { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--text2); }
+    .hv-fig { font-size:30px; font-weight:400; letter-spacing:-.02em; line-height:1.1; font-variant-numeric:tabular-nums; margin-top:auto; }
+    .hv-fig-sm { font-size:20px; letter-spacing:-.01em; }
+    .hv-warn { color:var(--high); }
+    .hv-cap { font-size:13px; line-height:1.35; color:var(--text2); overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+    .hv-sec-hdr { display:flex; align-items:baseline; gap:12px; margin-bottom:12px; }
+    .hv-sec-hdr h2 { margin:0; font-size:16px; font-weight:600; letter-spacing:-.01em; }
+    .hv-sec-hdr span { font-size:13px; color:var(--text2); }
+    .hv-link { margin-left:auto; background:none; border:none; padding:6px 0; color:var(--text2); font:inherit; font-size:13px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+    .hv-link:hover { color:var(--text); }
+
+    .hv-days { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:8px; }
+    .hv-day { background:var(--surface); padding:12px; min-height:150px; display:flex; flex-direction:column; gap:10px; min-width:0; }
+    .hv-day.hv-today { background:var(--surface2); }
+    .hv-day-hdr { display:flex; align-items:baseline; justify-content:space-between; gap:6px; font-size:13px; color:var(--text2); }
+    .hv-day-hdr b { font-size:20px; font-weight:400; color:var(--text); font-variant-numeric:tabular-nums; }
+    .hv-today .hv-day-hdr span { color:var(--text); font-weight:600; }
+    .hv-none { color:var(--text3); font-size:13px; }
+    .hv-items { display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .hv-item { display:grid; grid-template-columns:8px minmax(0,1fr); gap:2px 8px; align-items:start; text-align:left; background:none; border:none; padding:4px 0; color:var(--text); font:inherit; font-size:13px; line-height:1.3; cursor:pointer; min-height:32px; }
+    .hv-item i { width:8px; height:8px; margin-top:5px; border-radius:50% !important; background:var(--text3); display:block; }
+    .hv-k-uni i { background:var(--accent); }
+    .hv-k-block i { background:var(--text); }
+    .hv-k-rugby i { background:var(--low); }
+    .hv-k-overdue i { background:var(--high); }
+    .hv-item-t { overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .hv-item-n { grid-column:2; font-size:12px; color:var(--text2); }
+    .hv-item:hover .hv-item-t { text-decoration:underline; text-underline-offset:3px; }
+    .hv-more { font-size:12px; color:var(--text2); padding-left:16px; }
+
+    .hv-lower { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; align-items:start; }
+    .hv-panel { background:var(--surface); padding:20px; display:flex; flex-direction:column; gap:4px; min-width:0; }
+    .hv-empty { font-size:14px; line-height:1.5; color:var(--text2); padding:4px 0; }
+    .hv-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; width:100%; padding:10px 0; background:none; border:none; border-top:1px solid var(--hair); color:var(--text); font:inherit; text-align:left; cursor:pointer; }
+    .hv-row:first-of-type { border-top:none; }
+    .hv-row:hover b { text-decoration:underline; text-underline-offset:3px; }
+    .hv-row-main { display:flex; flex-direction:column; gap:3px; min-width:0; flex:1; }
+    .hv-row-main b { font-size:14px; font-weight:500; overflow-wrap:anywhere; }
+    .hv-row-main small { font-size:13px; color:var(--text2); }
+    .hv-row-side { font-size:13px; color:var(--text2); text-align:right; flex:none; font-variant-numeric:tabular-nums; line-height:1.4; }
+    .hv-row .bk-progress { display:block; margin-top:6px; }
+
+    .hv-sync { display:flex; gap:12px; align-items:flex-start; padding:4px 0 12px; }
+    .hv-sync b { display:block; font-size:14px; font-weight:500; margin-bottom:3px; }
+    .hv-sync small { font-size:13px; line-height:1.45; color:var(--text2); }
+    .hv-dot { width:10px; height:10px; border-radius:50% !important; flex:none; margin-top:5px; background:var(--text3); }
+    .hv-dot-ok { background:var(--low); }
+    .hv-dot-busy { background:var(--med); }
+    .hv-dot-bad { background:var(--high); }
+    .hv-sync-btns { display:flex; gap:8px; flex-wrap:wrap; }
+    .hv-sync-btns button { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 16px; font-size:14px; cursor:pointer; }
+
+    @media (max-width:1180px) { .hv-lower { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+    @media (max-width:1000px) { .hv-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+    @media (max-width:960px) { .hv-days { grid-template-columns:repeat(7, minmax(132px,1fr)); overflow-x:auto; padding-bottom:6px; } }
+    @media (max-width:820px) {
+      .hv { gap:22px; }
+      .hv-quick { width:100%; display:grid; grid-template-columns:1fr 1fr; }
+      .hv-quick button { justify-content:center; }
+      .hv-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+      .hv-card { min-height:112px; padding:14px; }
+      .hv-lower { grid-template-columns:1fr; }
+    }
   </style>
 </head>
 <body class="dark">
@@ -5763,13 +5846,14 @@
     );
   }
 
-  function MoviesView({ movieData, onUpdate, tmdbKey, omdbKey }) {
+  function MoviesView({ movieData, onUpdate, tmdbKey, omdbKey, quickAdd, onQuickDone }) {
     const [year, setYear] = React.useState('all');
     const [subView, setSubView] = React.useState('films');
     const [atTab, setAtTab] = React.useState('films');
     const [gridMode, setGridMode] = React.useState('grid');
     const [groupByRelease, setGroupByRelease] = React.useState(false);
     const [modal, setModal] = React.useState(null);
+    React.useEffect(() => { if (quickAdd) { setModal('add'); onQuickDone && onQuickDone(); } }, [quickAdd]);
     const [enrichModal, setEnrichModal] = React.useState(false);
     const [bulkAddModal, setBulkAddModal] = React.useState(false);
     const [dupesModal, setDupesModal] = React.useState(false);
@@ -8045,12 +8129,13 @@
     );
   }
 
-  function BooksView({ bookData, onUpdate }) {
+  function BooksView({ bookData, onUpdate, quickAdd, onQuickDone }) {
     const [view, setView] = React.useState('library');   // library | rankings | stats | years | authors | unrated
     const [statusFilter, setStatusFilter] = React.useState('all');
     const [search, setSearch] = React.useState('');
     const [gridMode, setGridMode] = React.useState('grid');
     const [modal, setModal] = React.useState(null);
+    React.useEffect(() => { if (quickAdd) { setModal('add'); onQuickDone && onQuickDone(); } }, [quickAdd]);
     const [bulkOpen, setBulkOpen] = React.useState(false);
     const [dupesOpen, setDupesOpen] = React.useState(false);
     const [enrichOpen, setEnrichOpen] = React.useState(false);
@@ -9965,218 +10050,202 @@
   }
 
   /* ── HOME VIEW ───────────────────────────────────────────────── */
-  function HomeView({ tasks, workTasks, persTasks, uniData, movieData, tvData, bookData, settings, onNav }) {
-    const today = localDateStr(new Date());
-
-    // Stat computations
-    const allActive  = [...workTasks, ...persTasks].filter(t => t.column !== 'done' && t.column !== 'onhold');
-    const onHold     = [...workTasks, ...persTasks].filter(t => t.column === 'onhold');
-    const dueToday   = allActive.filter(t => t.deadline === today);
-    const overdue    = allActive.filter(t => t.deadline && t.deadline < today);
-    const highPri    = workTasks.filter(t => t.column !== 'done' && t.column !== 'onhold' && t.priority === 'high');
-    const stale      = allActive.filter(t => isStale(t, settings.staleThresholdDays));
-
-    // Upcoming tasks (next 14 days, sorted by deadline then priority)
-    const upcoming = allActive
-      .filter(t => t.deadline && t.deadline >= today)
-      .sort((a,b) => {
-        if (a.deadline < b.deadline) return -1;
-        if (a.deadline > b.deadline) return 1;
-        const pOrder = { high:0, medium:1, low:2 };
-        return (pOrder[a.priority]||1) - (pOrder[b.priority]||1);
-      })
-      .slice(0, 8);
-
-    // Uni upcoming assessments
-    const uniUpcoming = [];
-    if (uniData) {
-      for (const sem of (uniData.semesters||[])) {
-        for (const subj of (sem.subjects||[])) {
-          for (const a of (subj.assessments||[])) {
-            if (a.dueDate && a.dueDate >= today && a.score == null) {
-              uniUpcoming.push({ ...a, subjName: subj.name, subjCode: subj.code });
-            }
-          }
-        }
-      }
-      uniUpcoming.sort((a,b) => a.dueDate < b.dueDate ? -1 : 1);
-    }
-
-    // Nav card data
-    const watchingTV    = (tvData?.shows||[]).filter(s => s.status==='watching').length;
-    const watchedMovies = (movieData?.movies||[]).filter(m => m.watchStatus==='watched').length;
-    const activeSem     = uniData?.semesters?.find(s => {
-      const now = localDateStr(new Date());
-      return s.startDate <= now && s.endDate >= now;
-    });
-    const cumulWAMObj = computeWAM(uniData?.semesters);
-
-    // Greeting
-    const hour = new Date().getHours();
-    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function HomeView({ tasks, workTasks, persTasks, uniData, movieData, tvData, bookData, budgetData, travelData, rugbyData, timeBlocks, settings, sync, onNav, onQuick, onBackup, onSyncNow }) {
     const now = new Date();
-    const dateLabel = `${dayNames[now.getDay()]}, ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+    const today = localDateStr(now);
+    const year = String(now.getFullYear());
 
-    const NAV_CARDS = [
-      {
-        id:'calendar', icon:'calendar', label:'Calendar',
-        iconBg:'rgba(100,112,245,.15)',
-        sub: dueToday.length > 0 ? `${dueToday.length} due today` : 'View your schedule',
-        badge: null,
-      },
-      {
-        id:'work', icon:'briefcase', label:'Work',
-        iconBg:'transparent',
-        sub: `${workTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length} active task${workTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length!==1?'s':''}`,
-        badge: highPri.length > 0 ? `${highPri.length} high` : null,
-        badgeColor: '#e05252',
-      },
-      {
-        id:'uni', icon:'cap', label:'Uni',
-        iconBg:'rgba(144,112,216,.15)',
-        sub: cumulWAMObj ? `WAM ${cumulWAMObj.wam.toFixed(1)}%` : (activeSem ? activeSem.name : 'Academic tracker'),
-        badge: uniUpcoming.slice(0,3).length > 0 ? `${uniUpcoming.slice(0,3).length} due soon` : null,
-        badgeColor: '#c98a10',
-      },
-      {
-        id:'personal', icon:'check', label:'Personal',
-        iconBg:'rgba(74,172,118,.15)',
-        sub: `${persTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length} active item${persTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length!==1?'s':''}`,
-        badge: null,
-      },
-      {
-        id:'movies', icon:'film', label:'Films',
-        iconBg:'rgba(230,80,80,.12)',
-        sub: `${watchedMovies} watched`,
-        badge: null,
-      },
-      {
-        id:'tv', icon:'tv', label:'TV',
-        iconBg:'rgba(201,138,16,.12)',
-        sub: watchingTV > 0 ? `${watchingTV} currently watching` : 'Show tracker',
-        badge: null,
-      },
-      {
-        id:'books', icon:'book', label:'Books',
-        iconBg:'transparent',
-        sub: (() => { const bs = bookData?.books || []; const r = bs.filter(b => b.status === 'reading').length; return r > 0 ? `${r} currently reading` : `${bs.filter(b => b.status === 'want').length} on your list`; })(),
-        badge: null,
-      },
+    // ── tasks
+    const open = [...workTasks, ...persTasks].filter(t => t.column !== 'done' && t.column !== 'onhold');
+    const workOpen = workTasks.filter(t => t.column !== 'done' && t.column !== 'onhold');
+    const persOpen = persTasks.filter(t => t.column !== 'done' && t.column !== 'onhold');
+    const dueToday = open.filter(t => t.deadline === today);
+    const overdue = open.filter(t => t.deadline && t.deadline < today);
+    const high = workOpen.filter(t => t.priority === 'high');
+
+    // ── uni
+    const uniUpcoming = [];
+    for (const sem of ((uniData || {}).semesters || [])) for (const subj of (sem.subjects || [])) for (const a of (subj.assessments || [])) {
+      const due = a.dueDate || a.deadline;
+      if (due && due >= today && a.score == null) uniUpcoming.push({ ...a, dueDate:due, subjName:subj.name, subjCode:subj.code });
+    }
+    uniUpcoming.sort((a, b) => a.dueDate < b.dueDate ? -1 : 1);
+    const wam = computeWAM((uniData || {}).semesters);
+
+    // ── media
+    const movies = (movieData || {}).movies || [];
+    const watchedThisYear = movies.filter(m => m.watchStatus === 'watched' && String(m.watchDate || m.trackYear || '') === year).length;
+    const shows = (tvData || {}).shows || [];
+    const watching = shows.filter(s => s.status === 'watching');
+    const books = (bookData || {}).books || [];
+    const readingBooks = books.filter(b => b.status === 'reading');
+    const finishedThisYear = books.filter(b => b.status === 'finished' && String(b.finishDate || '').slice(0, 4) === year).length;
+    const visits = (travelData || {}).visits || [];
+    const countries = new Set(visits.map(v => v.country).filter(Boolean)).size;
+
+    // ── budget (this month, expenses only)
+    const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const md = getMonthData(budgetData, ym);
+    const EXP = ['rent', 'wifi', 'electricity', 'phone', 'groceries', 'purchases'];
+    const spent = EXP.reduce((s, id) => s + ((md.categories[id] || {}).actual || 0), 0);
+    const planned = EXP.reduce((s, id) => s + ((md.categories[id] || {}).budget || 0), 0);
+    const money = n => '$' + Math.round(n).toLocaleString();
+
+    // ── rugby (cached feed only; opening the Rugby tab refreshes it)
+    const tz = rgTz(rugbyData);
+    const myTeams = (rugbyData || {}).myTeams || [];
+    const cache = rgReadCache();
+    const upcomingRg = Object.values(cache).flatMap(l => l.events || []).filter(m => m.state === 'in' || (m.state === 'pre' && new Date(m.date).getTime() > Date.now() - 4 * 3600 * 1000)).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const mineRg = myTeams.length ? upcomingRg.filter(m => myTeams.includes(m.home.name) || myTeams.includes(m.away.name)) : [];
+
+    // ── 7 day strip
+    const dayKeys = Array.from({ length:7 }, (_, i) => localDateStr(new Date(now.getFullYear(), now.getMonth(), now.getDate() + i)));
+    const PRI = { high:'var(--high)', medium:'var(--med)', low:'var(--low)' };
+    const days = dayKeys.map((k, i) => {
+      const list = [
+        ...(i === 0 ? overdue.map(t => ({ kind:'overdue', label:t.title, tab:t.isPersonal ? 'personal' : 'work', note:'overdue' })) : []),
+        ...open.filter(t => t.deadline === k).map(t => ({ kind:t.isPersonal ? 'personal' : 'work', label:t.title, tab:t.isPersonal ? 'personal' : 'work', color:PRI[t.priority] })),
+        ...uniUpcoming.filter(a => a.dueDate === k).map(a => ({ kind:'uni', label:a.name, tab:'uni', note:a.subjCode })),
+        ...(timeBlocks || []).filter(b => b.date === k).sort((a, b) => (a.startTime || '').localeCompare(b.startTime || '')).map(b => ({ kind:'block', label:b.title, tab:'calendar', note:b.startTime })),
+        ...mineRg.filter(m => rgDayKey(m.date, tz) === k).map(m => ({ kind:'rugby', label:`${m.home.abbr || m.home.name} v ${m.away.abbr || m.away.name}`, tab:'rugby', note:rgTime(m.date, tz) })),
+      ];
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+      return { k, list, d, name:i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-AU', { weekday:'long' }) };
+    });
+    const weekTotal = days.reduce((s, d) => s + d.list.length, 0);
+
+    // ── greeting
+    const hour = now.getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const dateLabel = now.toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+    const nextRg = mineRg[0];
+    const nextUni = uniUpcoming[0];
+    const CARDS = [
+      { id:'work',     icon:'briefcase', label:'Work',     fig:workOpen.length, cap:`${high.length} high priority${overdue.filter(t => !t.isPersonal).length ? ` · ${overdue.filter(t => !t.isPersonal).length} overdue` : ''}`, warn:overdue.some(t => !t.isPersonal) },
+      { id:'personal', icon:'check',     label:'Personal', fig:persOpen.length, cap:`${persOpen.filter(t => t.deadline === today).length} due today` },
+      { id:'calendar', icon:'calendar',  label:'Calendar', fig:dueToday.length + (timeBlocks || []).filter(b => b.date === today).length, cap:dueToday.length || (timeBlocks || []).some(b => b.date === today) ? 'items today' : 'Nothing scheduled today' },
+      { id:'uni',      icon:'cap',       label:'Uni',      fig:wam ? wam.wam.toFixed(1) + '%' : '–', cap:nextUni ? `Next: ${nextUni.name} · ${fmtDate(nextUni.dueDate)}` : 'WAM · nothing due soon' },
+      { id:'movies',   icon:'film',      label:'Films',    fig:watchedThisYear, cap:`watched in ${year} · ${movies.length} logged` },
+      { id:'tv',       icon:'tv',        label:'TV',       fig:watching.length, cap:`watching · ${shows.filter(s => s.status === 'plan').length} to watch` },
+      { id:'books',    icon:'book',      label:'Books',    fig:readingBooks.length, cap:`reading · ${finishedThisYear} finished in ${year}` },
+      { id:'rugby',    icon:'ball',      label:'Rugby',    fig:nextRg ? rgFmt(nextRg.date, tz, { weekday:'short' }) + ' ' + rgTime(nextRg.date, tz) : '–', cap:nextRg ? `${nextRg.home.name} v ${nextRg.away.name}` : (myTeams.length ? 'No upcoming matches loaded' : 'Pick your teams in Rugby'), small:true },
+      { id:'travel',   icon:'globe',     label:'Travel',   fig:countries, cap:`countries · ${visits.length} visits` },
+      { id:'budget',   icon:'wallet',    label:'Budget',   fig:planned ? money(spent) : '–', cap:planned ? `of ${money(planned)} planned this month` : 'Set up your budget' },
     ];
 
-    const priColors = { high:'#e05252', medium:'#c98a10', low:'#4aac76' };
+    const ago = ts => { if (!ts) return ''; const m = Math.round((Date.now() - ts) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; };
+    const syncState = !sync.enabled ? 'off' : sync.status;
 
     return (
-      <div className="home-wrap">
-        {/* GREETING */}
-        <div className="home-greeting">
-          <h1 className="home-greeting-name">{greeting}, Sidd.</h1>
-          <div className="home-greeting-date">{dateLabel}</div>
-        </div>
+      <div className="home-wrap hv">
+        <header className="hv-head">
+          <div>
+            <h1 className="home-greeting-name">{greeting}, Sidd.</h1>
+            <p className="home-greeting-date">{dateLabel}</p>
+          </div>
+          <div className="hv-quick">
+            <button className="tv-add-btn" onClick={() => onQuick('task')}><Icon name="plus" size={15} /> Task</button>
+            <button className="ghost-btn" onClick={() => onQuick('film')}><Icon name="plus" size={15} /> Film</button>
+            <button className="ghost-btn" onClick={() => onQuick('book')}><Icon name="plus" size={15} /> Book</button>
+            <button className="ghost-btn" onClick={() => onQuick('block')}><Icon name="clock" size={15} /> Block time</button>
+          </div>
+        </header>
 
-        {/* STAT STRIP */}
-        <div className="home-section-title">Overview</div>
-        <div className="home-stats">
-          <div className={`home-stat-card ${overdue.length>0?'alert':dueToday.length>0?'warn':'ok'}`}>
-            <div className="home-stat-n" style={{ color: overdue.length>0?'#e05252':dueToday.length>0?'#c98a10':'#4aac76' }}>
-              {overdue.length > 0 ? overdue.length : dueToday.length}
-            </div>
-            <div className="home-stat-l">{overdue.length>0?'Overdue':'Due Today'}</div>
-            <div className="home-stat-sub">
-              {overdue.length>0
-                ? `+ ${dueToday.length} due today`
-                : overdue.length===0 && dueToday.length===0 ? 'All clear' : 'across work & personal'}
-            </div>
-          </div>
-          <div className={`home-stat-card ${highPri.length>0?'alert':''}`}>
-            <div className="home-stat-n" style={{ color: highPri.length>0?'#e05252':'var(--text)' }}>{highPri.length}</div>
-            <div className="home-stat-l">High Priority</div>
-            <div className="home-stat-sub">work tasks</div>
-          </div>
-          <div className={`home-stat-card ${stale.length>0?'warn':''}`}>
-            <div className="home-stat-n" style={{ color: stale.length>0?'#c98a10':'var(--text)' }}>{stale.length}</div>
-            <div className="home-stat-l">Stale</div>
-            <div className="home-stat-sub">not updated recently</div>
-          </div>
-          <div className="home-stat-card">
-            <div className="home-stat-n" style={{ color:'var(--accent)' }}>{allActive.length}</div>
-            <div className="home-stat-l">Active Tasks</div>
-            <div className="home-stat-sub">
-              {workTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length} work · {persTasks.filter(t=>t.column!=='done'&&t.column!=='onhold').length} personal
-              {onHold.length > 0 && ` · ${onHold.length} on hold`}
-            </div>
-          </div>
-        </div>
+        {(overdue.length > 0 || dueToday.length > 0) && (
+          <button className="hv-alert" onClick={() => onNav(overdue.some(t => !t.isPersonal) ? 'work' : 'personal')}>
+            <Icon name="alert" size={16} />
+            <span>{overdue.length > 0 ? `${overdue.length} overdue` : ''}{overdue.length > 0 && dueToday.length > 0 ? ' and ' : ''}{dueToday.length > 0 ? `${dueToday.length} due today` : ''}</span>
+            <span className="hv-alert-go">Open tasks</span>
+          </button>
+        )}
 
-        {/* NAV CARDS */}
-        <div className="home-section-title">Jump to</div>
-        <div className="home-nav-grid">
-          {NAV_CARDS.map(card => (
-            <div key={card.id} className="home-nav-card" onClick={() => onNav(card.id)}>
-              <div className="home-nav-icon" style={{ background: card.iconBg }}><Icon name={card.icon} size={20} /></div>
-              <div className="home-nav-info">
-                <div className="home-nav-title">{card.label}</div>
-                <div className="home-nav-sub">{card.sub}</div>
+        <section aria-label="Overview">
+          <div className="hv-grid">
+            {CARDS.map(c => (
+              <button key={c.id} className="hv-card" onClick={() => onNav(c.id)}>
+                <span className="hv-card-top"><Icon name={c.icon} size={16} />{c.label}</span>
+                <span className={`hv-fig ${c.small ? 'hv-fig-sm' : ''} ${c.warn ? 'hv-warn' : ''}`}>{c.fig}</span>
+                <span className="hv-cap">{c.cap}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="hv-week" aria-label="Next 7 days">
+          <div className="hv-sec-hdr"><h2>Next 7 days</h2><span>{weekTotal} item{weekTotal !== 1 ? 's' : ''}</span><button className="hv-link" onClick={() => onNav('calendar')}>Open calendar</button></div>
+          <div className="hv-days">
+            {days.map((dy, i) => (
+              <div key={dy.k} className={`hv-day ${i === 0 ? 'hv-today' : ''}`}>
+                <div className="hv-day-hdr"><span>{dy.name}</span><b>{dy.d.getDate()}</b></div>
+                {dy.list.length === 0 ? <div className="hv-none">–</div> : (
+                  <div className="hv-items">
+                    {dy.list.slice(0, 5).map((it, j) => (
+                      <button key={j} className={`hv-item hv-k-${it.kind}`} onClick={() => onNav(it.tab)} title={it.label}>
+                        <i style={it.color ? { background:it.color } : undefined} />
+                        <span className="hv-item-t">{it.label}</span>
+                        {it.note && <span className="hv-item-n">{it.note}</span>}
+                      </button>
+                    ))}
+                    {dy.list.length > 5 && <div className="hv-more">+{dy.list.length - 5} more</div>}
+                  </div>
+                )}
               </div>
-              {card.badge && (
-                <div className="home-nav-badge" style={{ color: card.badgeColor||'var(--text2)', borderColor: card.badgeColor ? card.badgeColor+'44' : 'var(--border)', background: card.badgeColor ? card.badgeColor+'12' : 'var(--surface2)' }}>
-                  {card.badge}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </section>
 
-        {/* LOWER: upcoming tasks + uni */}
-        <div className="home-lower">
-          <div>
-            <div className="home-section-title">Coming Up</div>
-            <div className="home-upcoming">
-              {upcoming.length === 0 && <div className="home-empty">No upcoming deadlines — you're all clear.</div>}
-              {upcoming.slice(0,6).map(t => {
-                const dl = dlStatus(t.deadline);
-                const dlColor = dl==='overdue'?'#e05252':dl==='soon'?'#c98a10':'var(--text2)';
-                return (
-                  <div key={t.id} className="home-task-row" onClick={() => onNav(t.isPersonal?'personal':'work')}>
-                    <div className="home-task-dot" style={{ background: priColors[t.priority]||'var(--text3)' }} />
-                    <div className="home-task-title">{t.title}</div>
-                    <div className="home-task-meta">
-                      <span className="home-task-dl" style={{ color:dlColor }}>{fmtDate(t.deadline)}</span>
-                      <span className="home-task-tag">{t.isPersonal?'Personal':'Work'}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+        <section className="hv-lower">
+          <div className="hv-panel">
+            <div className="hv-sec-hdr"><h2>Reading and watching</h2></div>
+            {readingBooks.length === 0 && watching.length === 0 && <div className="hv-empty">Nothing in progress. Start a book or a show and it appears here.</div>}
+            {readingBooks.slice(0, 3).map(b => {
+              const pct = b.pages && b.currentPage ? Math.min(100, Math.round(b.currentPage / b.pages * 100)) : 0;
+              return (
+                <button key={b.id} className="hv-row" onClick={() => onNav('books')}>
+                  <span className="hv-row-main"><b>{b.title}</b><small>{b.author}</small>{b.pages > 0 && <span className="bk-progress"><span style={{ width:pct + '%' }} /></span>}</span>
+                  <span className="hv-row-side">{b.pages ? `${pct}%` : ''}</span>
+                </button>
+              );
+            })}
+            {watching.slice(0, 4).map(sh => (
+              <button key={sh.id} className="hv-row" onClick={() => onNav('tv')}>
+                <span className="hv-row-main"><b>{sh.title}</b><small>{[sh.network, sh.seasons ? `${sh.seasons} season${sh.seasons !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ')}</small></span>
+                <span className="hv-row-side">TV</span>
+              </button>
+            ))}
           </div>
 
-          <div>
-            <div className="home-section-title">Uni — Assessments Due</div>
-            <div className="home-upcoming">
-              {uniUpcoming.length === 0 && <div className="home-empty">No upcoming assessments.</div>}
-              {uniUpcoming.slice(0,6).map((a,i) => {
-                const dl = dlStatus(a.dueDate);
-                const dlColor = dl==='overdue'?'#e05252':dl==='soon'?'#c98a10':'var(--text2)';
-                return (
-                  <div key={i} className="home-task-row" onClick={() => onNav('uni')}>
-                    <div className="home-task-dot" style={{ background:'#9070d8' }} />
-                    <div className="home-task-title">{a.name}</div>
-                    <div className="home-task-meta">
-                      <span className="home-task-dl" style={{ color:dlColor }}>{fmtDate(a.dueDate)}</span>
-                      <span className="home-task-tag">{a.subjCode||a.subjName}</span>
-                    </div>
-                  </div>
-                );
-              })}
+          <div className="hv-panel">
+            <div className="hv-sec-hdr"><h2>Rugby next up</h2><button className="hv-link" onClick={() => onNav('rugby')}>Open rugby</button></div>
+            {mineRg.length === 0 ? (
+              <div className="hv-empty">{myTeams.length ? 'No upcoming matches for your teams are loaded yet. Open Rugby to refresh.' : 'Choose your teams in Rugby and their next matches show here, in your timezone.'}</div>
+            ) : mineRg.slice(0, 4).map(m => (
+              <button key={m.id} className="hv-row" onClick={() => onNav('rugby')}>
+                <span className="hv-row-main"><b>{m.home.name} v {m.away.name}</b><small>{m.lgName}</small></span>
+                <span className="hv-row-side">{rgFmt(m.date, tz, { weekday:'short', day:'numeric', month:'short' })}<br />{rgTime(m.date, tz)}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="hv-panel">
+            <div className="hv-sec-hdr"><h2>Sync and backup</h2></div>
+            <div className="hv-sync">
+              <span className={`hv-dot hv-dot-${syncState === 'synced' ? 'ok' : syncState === 'off' ? 'off' : syncState === 'syncing' || syncState === 'idle' ? 'busy' : 'bad'}`} />
+              <div>
+                <b>{syncState === 'off' ? 'Not syncing' : syncState === 'synced' ? 'In sync with GitHub' : syncState === 'syncing' || syncState === 'idle' ? 'Syncing…' : 'Sync needs attention'}</b>
+                <small>{syncState === 'off' ? 'Your data lives only in this browser. Connect GitHub in Settings to use it on every device.' : syncState === 'synced' ? `Last synced ${ago(sync.last) || 'this session'}.` : 'Open Settings to fix the connection.'}</small>
+              </div>
+            </div>
+            <div className="hv-sync-btns">
+              {sync.enabled ? <button className="ghost-btn" onClick={onSyncNow}><Icon name="refresh" size={14} /> Sync now</button> : <button className="tv-add-btn" onClick={() => onNav('settings')}>Set up sync</button>}
+              <button className="ghost-btn" onClick={onBackup}><Icon name="download" size={14} /> Download backup</button>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     );
   }
-
 
   /* ── GITHUB SYNC (data lives in a private repo; token stays on each device) ───────────── */
   const GH_KEY = 'sidd_gh_sync_v1';
@@ -10300,6 +10369,13 @@
     const [blockModal,  setBlockModal] = useState(null); // null | { defaultDate } | { block }
 
     const { tasks, settings, uniData, movieData, tvData, bookData, rugbyData, travelData, budgetData, timeBlocks } = data;
+    const [quick, setQuick] = useState(null);
+    function homeQuick(kind) {
+      if (kind === 'task') setModal({ isPersonal:false, defaultCat:settings.workCats[0]?.id, defaultStatus:'todo', defaultCountry:'', defaultDl:'' });
+      else if (kind === 'block') setBlockModal({ defaultDate:localDateStr(new Date()) });
+      else if (kind === 'film') { setQuick('film'); setTab('movies'); }
+      else if (kind === 'book') { setQuick('book'); setTab('books'); }
+    }
     const setTasks      = fn => setData(d => ({ ...d, tasks:fn(d.tasks) }));
     const setSettings   = fn => setData(d => ({ ...d, settings:fn(d.settings) }));
     const setUniData    = fn => setData(d => ({ ...d, uniData: typeof fn === 'function' ? fn(d.uniData) : fn }));
@@ -10731,8 +10807,16 @@
             movieData={movieData}
             tvData={tvData}
             bookData={bookData}
+            budgetData={budgetData}
+            travelData={travelData}
+            rugbyData={rugbyData}
+            timeBlocks={timeBlocks || []}
             settings={settings}
+            sync={{ enabled:!!gh, status:ghStatus, last:ghLast }}
             onNav={t => setTab(t)}
+            onQuick={homeQuick}
+            onBackup={downloadBackup}
+            onSyncNow={() => ghSyncRef.current()}
           />
         )}
         {tab==='work' && workView==='board' && (
@@ -10774,13 +10858,13 @@
           <UniView uniData={uniData || makeDefaultUniData()} onUpdate={setUniData} />
         )}
         {tab==='movies' && (
-          <MoviesView movieData={movieData || makeDefaultMovieData()} onUpdate={setMovieData} tmdbKey={settings.tmdbKey||''} omdbKey={settings.omdbKey||''} />
+          <MoviesView movieData={movieData || makeDefaultMovieData()} onUpdate={setMovieData} tmdbKey={settings.tmdbKey||''} omdbKey={settings.omdbKey||''} quickAdd={quick==='film'} onQuickDone={() => setQuick(null)} />
         )}
         {tab==='tv' && (
           <TVView tvData={tvData || makeDefaultTVData()} onUpdate={setTVData} tmdbKey={settings.tmdbKey||''} omdbKey={settings.omdbKey||''} />
         )}
         {tab==='books' && (
-          <BooksView bookData={bookData || makeDefaultBookData()} onUpdate={setBookData} />
+          <BooksView bookData={bookData || makeDefaultBookData()} onUpdate={setBookData} quickAdd={quick==='book'} onQuickDone={() => setQuick(null)} />
         )}
         {tab==='rugby' && (
           <RugbyView rugbyData={rugbyData || makeDefaultRugbyData()} onUpdate={setRugbyData} />
