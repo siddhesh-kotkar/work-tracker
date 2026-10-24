@@ -8439,7 +8439,7 @@
   function makeDefaultRugbyData() { return { followed:[...RUGBY_DEFAULT_FOLLOWED], tz:'auto', notes:{}, myTeams:[], myOnly:false }; }
 
   const RG_BASE = 'https://site.api.espn.com/apis';
-  const RG_CACHE_KEY = 'sidd_rugby_cache_v1';
+  const RG_CACHE_KEY = 'sidd_rugby_cache_v2';
   const RG_TTL = 10 * 60 * 1000;
   const rgDeviceTz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch { return 'UTC'; } };
   const rgTz = rd => (rd && rd.tz && rd.tz !== 'auto') ? rd.tz : rgDeviceTz();
@@ -8488,7 +8488,7 @@
     const y = new Date().getFullYear();
     const years = [y, y + 1];
     const evs = {};
-    const batches = await Promise.all(years.map(yr => rgJson(`${RG_BASE}/site/v2/sports/rugby/${lg.id}/scoreboard?dates=${yr}`).catch(() => ({ events:[] }))));
+    const batches = await Promise.all(years.map(yr => rgJson(`${RG_BASE}/site/v2/sports/rugby/${lg.id}/scoreboard?dates=${yr}&limit=1000`).catch(() => ({ events:[] }))));
     batches.forEach(b => (b.events || []).forEach(e => { evs[e.id] = rgNorm(e, lg); }));
     let standings = [];
     try { standings = rgStandings(await rgJson(`${RG_BASE}/v2/sports/rugby/${lg.id}/standings`)); } catch {}
@@ -8734,6 +8734,8 @@
     const [teamsOpen, setTeamsOpen] = React.useState(false);
     const [view, setView] = React.useState('fixtures');
     const [lgFilter, setLgFilter] = React.useState('all');
+    const [grpFilter, setGrpFilter] = React.useState('all');   // all | club | intl
+    const [fxLimit, setFxLimit] = React.useState(120);
     const [teamQ, setTeamQ] = React.useState('');
     const [open, setOpen] = React.useState(null);
     const [picker, setPicker] = React.useState(false);
@@ -8751,7 +8753,8 @@
     }, [feed.data, followed.join(',')]);
     const q = teamQ.trim().toLowerCase();
     const isMine = m => myTeams.includes(m.home.name) || myTeams.includes(m.away.name);
-    const keep = m => (lgFilter === 'all' || m.lg === lgFilter) && (!myOnly || isMine(m)) && (!q || m.home.name.toLowerCase().includes(q) || m.away.name.toLowerCase().includes(q) || (m.venue || '').toLowerCase().includes(q));
+    const grpOf = id => { const c = RUGBY_COMPS.find(x => x.id === id); return c && c.group === 'Club' ? 'club' : 'intl'; };
+    const keep = m => (grpFilter === 'all' || grpOf(m.lg) === grpFilter) && (lgFilter === 'all' || m.lg === lgFilter) && (!myOnly || isMine(m)) && (!q || m.home.name.toLowerCase().includes(q) || m.away.name.toLowerCase().includes(q) || (m.venue || '').toLowerCase().includes(q));
     const nowMs = Date.now();
     // live matches, plus scheduled ones that have not kicked off yet; stale unplayed entries are hidden
     const upcoming = all.filter(m => (m.state === 'in' || (m.state === 'pre' && new Date(m.date).getTime() > nowMs - 4 * 3600 * 1000)) && keep(m));
@@ -8793,15 +8796,20 @@
     const calNav = d => { let m = calM + d, y = calY; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } setCalM(m); setCalY(y); };
 
     const tabs = [['fixtures', 'Fixtures', 'calendar'], ['results', 'Results', 'check'], ['calendar', 'Calendar', 'clock'], ['standings', 'Standings', 'chart']];
-    const lgChips = (
+    const setGrp = g => { setGrpFilter(g); setLgFilter('all'); };
+    const lgChips = (<>
+      <div className="subnav-years">
+        <span className="subnav-years-lbl">Type</span>
+        {[['all', 'All'], ['club', 'Club'], ['intl', 'International']].map(([id, label]) => <button key={id} className={`subnav-chip ${grpFilter === id ? 'active' : ''}`} onClick={() => setGrp(id)}>{label}</button>)}
+      </div>
       <div className="subnav-years">
         <span className="subnav-years-lbl">Competition</span>
         <button className={`subnav-chip rg-mine-chip ${myOnly ? 'active' : ''}`} onClick={() => myTeams.length ? setMyOnly(!myOnly) : setTeamsOpen(true)} title="Show only matches involving your teams"><Icon name="star" size={13} fill={myOnly} /> My teams{myTeams.length ? <span className="subnav-count">{myTeams.length}</span> : null}</button>
         <span className="rg-chip-sep" />
         <button className={`subnav-chip ${lgFilter === 'all' ? 'active' : ''}`} onClick={() => setLgFilter('all')}>All</button>
-        {comps.map(c => <button key={c.id} className={`subnav-chip ${lgFilter === c.id ? 'active' : ''}`} onClick={() => setLgFilter(c.id)}>{c.name}</button>)}
+        {comps.filter(c => grpFilter === 'all' || grpOf(c.id) === grpFilter).map(c => <button key={c.id} className={`subnav-chip ${lgFilter === c.id ? 'active' : ''}`} onClick={() => setLgFilter(c.id)}>{c.name}</button>)}
       </div>
-    );
+    </>);
 
     return (
       <div className="tv-wrap">
@@ -8833,7 +8841,7 @@
           ) : view === 'fixtures' ? (
             feed.loading && !all.length ? <div className="section-desc">Loading fixtures…</div>
             : upcoming.length === 0 ? <div className="mv-empty"><div className="mv-empty-icon"><Icon name="calendar" size={40} /></div><div className="mv-empty-ttl">No upcoming fixtures</div><div className="mv-empty-sub">Nothing scheduled for these competitions right now.</div></div>
-            : dayList(upcoming, 120)
+            : <>{dayList(upcoming, fxLimit)}{upcoming.length > fxLimit && <button className="ghost-btn" onClick={() => setFxLimit(l => l + 120)}>Show more ({upcoming.length - fxLimit} later)</button>}</>
           ) : view === 'results' ? (
             results.length === 0 ? <div className="mv-empty"><div className="mv-empty-icon"><Icon name="check" size={40} /></div><div className="mv-empty-ttl">No results yet</div><div className="mv-empty-sub">Completed matches appear here.</div></div>
             : <>{dayList(results, resLimit)}{results.length > resLimit && <button className="ghost-btn" onClick={() => setResLimit(l => l + 60)}>Show more ({results.length - resLimit} older)</button>}</>
