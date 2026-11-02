@@ -5860,8 +5860,7 @@
     const [subView, setSubView] = React.useState('films');
     const [atTab, setAtTab] = React.useState('films');
     const [gridMode, setGridMode] = React.useState('grid');
-    const [groupByRelease, setGroupByRelease] = React.useState(false);
-    const [allGroup, setAllGroup] = React.useState('none');   // none | rating | release | director | writer
+    const [allGroup, setAllGroup] = React.useState('none');   // none | rating | release | director | writer | genre (All films and every watch year)
     const [modal, setModal] = React.useState(null);
     React.useEffect(() => { if (quickAdd) { setModal('add'); onQuickDone && onQuickDone(); } }, [quickAdd]);
     const [enrichModal, setEnrichModal] = React.useState(false);
@@ -5889,6 +5888,25 @@
       (m.writer||'').toLowerCase().includes(search.toLowerCase()) ||
       (m.actors||[]).some(a => a.toLowerCase().includes(search.toLowerCase())) ||
       (m.studio||'').toLowerCase().includes(search.toLowerCase());
+
+    // Split a list of films into labelled groups (rating, release year, director, writer, primary genre)
+    const groupFilms = (list, mode) => {
+      const keyOf = {
+        rating:   m => m.rating ? m.rating + ' ★' : 'Unrated',
+        release:  m => m.releaseYear ? String(m.releaseYear) : 'Unknown release year',
+        director: m => m.director || 'Unknown director',
+        writer:   m => (m.writer || '').split(',')[0].trim() || 'Unknown writer (run Enrich)',
+        genre:    m => (m.genres || [])[0] || 'Unknown genre',
+      }[mode];
+      if (!keyOf) return [];
+      const byKey = new Map();
+      for (const m of list) { const k = keyOf(m); if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(m); }
+      const unknown = k => /^(Unrated|Unknown)/.test(k);
+      const cmp = mode === 'rating' ? (a, b) => (unknown(a[0]) - unknown(b[0])) || parseFloat(b[0]) - parseFloat(a[0])
+        : mode === 'release' ? (a, b) => (unknown(a[0]) - unknown(b[0])) || parseInt(b[0]) - parseInt(a[0])
+        : (a, b) => (unknown(a[0]) - unknown(b[0])) || a[0].localeCompare(b[0]);
+      return [...byKey.entries()].sort(cmp).map(([key, items]) => ({ key, items }));
+    };
 
     // Count per watch-year for sidebar badges
     const yearCounts = React.useMemo(() => {
@@ -6374,19 +6392,12 @@
               <button className={`mv-vtab ${gridMode==='list'?'active':''}`} onClick={()=>setGridMode('list')}>☰</button>
             </div>
           )}
-          {!isSpecial && !isUndated && subView==='films' && yearMovies.length > 0 && (
-            <button
-              className={`mv-vtab${groupByRelease?' active':''}`}
-              onClick={()=>setGroupByRelease(g=>!g)}
-              title="Group by release year"
-              style={{fontSize:13}}
-            ><Icon name="calendar" size={15} /> By era</button>
-          )}
-          {isAllMovies && movies.length > 0 && (
+          {((isAllMovies && movies.length > 0) || (!isSpecial && !isUndated && subView==='films' && yearMovies.length > 0)) && (
             <select className="mv-unrated-sort" value={allGroup} onChange={e => setAllGroup(e.target.value)} aria-label="Group films">
               <option value="none">No grouping</option>
               <option value="rating">Group by rating</option>
               <option value="release">Group by release year</option>
+              <option value="genre">Group by genre</option>
               <option value="director">Group by director</option>
               <option value="writer">Group by writer</option>
             </select>
@@ -6512,22 +6523,7 @@
                     </div>
                   );
                 };
-                const keyOf = {
-                  rating:   m => m.rating ? m.rating + ' ★' : 'Unrated',
-                  release:  m => m.releaseYear ? String(m.releaseYear) : 'Unknown release year',
-                  director: m => m.director || 'Unknown director',
-                  writer:   m => (m.writer || '').split(',')[0].trim() || 'Unknown writer (run Enrich)',
-                }[allGroup];
-                const allGroups = [];
-                if (keyOf) {
-                  const byKey = new Map();
-                  for (const m of allFiltered) { const k = keyOf(m); if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(m); }
-                  const unknown = k => /^(Unrated|Unknown)/.test(k);
-                  const cmp = allGroup === 'rating' ? (a, b) => (unknown(a[0]) - unknown(b[0])) || parseFloat(b[0]) - parseFloat(a[0])
-                    : allGroup === 'release' ? (a, b) => (unknown(a[0]) - unknown(b[0])) || parseInt(b[0]) - parseInt(a[0])
-                    : (a, b) => (unknown(a[0]) - unknown(b[0])) || a[0].localeCompare(b[0]);
-                  [...byKey.entries()].sort(cmp).forEach(([key, items]) => allGroups.push({ key, items }));
-                }
+                const allGroups = allGroup === 'none' ? [] : groupFilms(allFiltered, allGroup);
                 return allFiltered.length === 0 ? (
                   <div className="mv-empty">
                     <div className="mv-empty-icon"><Icon name="search" size={40} /></div>
@@ -6843,7 +6839,7 @@
               );
             }
 
-            if (!groupByRelease) {
+            if (allGroup === 'none') {
               return gridMode==='grid' ? (
                 <div className="mv-grid">{sortedYearMovies.map(m=><FilmCard key={m.id} movie={m}/>)}</div>
               ) : (
@@ -6851,41 +6847,24 @@
               );
             }
 
-            // ── Grouped by release year ──
-            const watchYr = parseInt(year);
-            const releaseGroups = {};
-            for (const m of sortedYearMovies) {
-              const ry = m.releaseYear ? String(m.releaseYear) : 'Unknown';
-              if (!releaseGroups[ry]) releaseGroups[ry] = [];
-              releaseGroups[ry].push(m);
-            }
-            const sortedRGs = Object.keys(releaseGroups)
-              .filter(k=>k!=='Unknown')
-              .sort((a,b)=>b-a);
-            if (releaseGroups['Unknown']) sortedRGs.push('Unknown');
-
-            const avgRating = grp => {
-              const rated = grp.filter(m=>m.rating);
-              return rated.length ? (rated.reduce((s,m)=>s+m.rating,0)/rated.length).toFixed(1) : null;
-            };
-
+            const watchYr = String(parseInt(year));
             return (
               <div>
-                {sortedRGs.map(ry => {
-                  const grp = releaseGroups[ry];
-                  const isNew = ry !== 'Unknown' && parseInt(ry) === watchYr;
-                  const avg = avgRating(grp);
+                {groupFilms(sortedYearMovies, allGroup).map(g => {
+                  const rated = g.items.filter(m => m.rating);
+                  const avg = rated.length ? (rated.reduce((sum, m) => sum + m.rating, 0) / rated.length).toFixed(1) : null;
+                  const isNew = allGroup === 'release' && g.key === watchYr;
                   return (
-                    <div key={ry} style={{marginBottom:24}}>
+                    <div key={g.key} style={{marginBottom:24}}>
                       <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:10,paddingBottom:6,borderBottom:'1px solid var(--border)'}}>
-                        <span style={{fontSize:15,fontWeight:800,color:'var(--text)'}}>{ry === 'Unknown' ? 'Unknown release year' : ry}</span>
+                        <span style={{fontSize:15,fontWeight:700,color:'var(--text)'}}>{g.key}</span>
                         {isNew && <span style={{fontSize:10,fontWeight:800,background:'var(--accent)',color:'#fff',borderRadius:5,padding:'2px 7px',letterSpacing:'.3px'}}>NEW RELEASE</span>}
-                        <span style={{fontSize:12,color:'var(--text3)'}}>{grp.length} film{grp.length!==1?'s':''}</span>
-                        {avg && <span style={{fontSize:12,color:'var(--text2)',marginLeft:'auto'}}>avg ★ {avg}</span>}
+                        <span style={{fontSize:12,color:'var(--text3)'}}>{g.items.length} film{g.items.length!==1?'s':''}</span>
+                        {avg && allGroup !== 'rating' && <span style={{fontSize:12,color:'var(--text2)',marginLeft:'auto'}}>avg ★ {avg}</span>}
                       </div>
                       {gridMode==='grid'
-                        ? <div className="mv-grid">{grp.map(m=><FilmCard key={m.id} movie={m}/>)}</div>
-                        : <div className="mv-list">{grp.map(m=><FilmListItem key={m.id} movie={m}/>)}</div>
+                        ? <div className="mv-grid">{g.items.map(m=><FilmCard key={m.id} movie={m}/>)}</div>
+                        : <div className="mv-list">{g.items.map(m=><FilmListItem key={m.id} movie={m}/>)}</div>
                       }
                     </div>
                   );
